@@ -38,7 +38,7 @@ Documentation: [](https://doc.laravue.dev)
 ### Installing
 ```bash
 # Clone the project and run composer
-composer create-project tuandm/laravue
+composer create-project test/laravue
 cd laravue
 
 # Migration and DB seeder (after changing your DB settings in .env)

@@ -11,19 +11,19 @@
   <a href="https://github.com/ElemeFE/element">
     <img src="https://img.shields.io/badge/element--ui-2.11.1-brightgreen.svg" alt="element-ui">
   </a>
-  <a href="https://github.com/tuandm/laravue/blob/master/LICENSE">
+  <a href="">
     <img src="https://img.shields.io/badge/license-MIT-brightgreen.svg" alt="license">
   </a>
 </p>
 
 # Laravue
-[Laravue](https://laravue.dev) (pronounced /ˈlarəvjuː/) is a beautiful dashboard combination of [Laravel](https://laravel.com/), [Vue.js](https://github.com/vuejs/vue) and the UI Toolkit [Element](https://github.com/ElemeFE/element). The work is inspired by  [vue-element-admin](http://panjiachen.github.io/vue-element-admin) with our love on top of that. With the powerful Laravel framework as the backend, Vue.js as the high performance on the frontend,  Laravue appears to be a full-stack solution for an enterprise application level.
+[Laravue]() (pronounced /ˈlarəvjuː/) is a beautiful dashboard combination of [Laravel](https://laravel.com/), [Vue.js](https://github.com/vuejs/vue) and the UI Toolkit [Element](https://github.com/ElemeFE/element). The work is inspired by  [vue-element-admin](http://panjiachen.github.io/vue-element-admin) with our love on top of that. With the powerful Laravel framework as the backend, Vue.js as the high performance on the frontend,  Laravue appears to be a full-stack solution for an enterprise application level.
 
-Documentation: [https://doc.laravue.dev](https://doc.laravue.dev)
+Documentation: [](https://doc.laravue.dev)
 
 ## Screenshot
 <p align="center">
-  <img width="900" src="https://cdn.laravue.dev/screenshot.png">
+  <img width="900" src="">
 </p>
 
 ## Getting started
@@ -76,11 +76,6 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 ## Versioning
 
 We use [SemVer](http://semver.org/) for versioning. For the versions available, please look at the [release tags](https://github.com/tuandm/laravue/tags) on this repository.
-
-## Authors
-
-* **Tuan Duong** - *Initial work* - [tuandm](https://github.com/tuandm).
-* **Tony Tin Nguyen** - *Frontend and Designer* - [nguyenquangtin](https://github.com/nguyenquangtin).
 
 See also the list of [contributors](https://github.com/tuandm/laravue/contributors) who participated in this project.
 

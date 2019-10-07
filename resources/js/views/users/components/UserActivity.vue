@@ -149,15 +149,50 @@
         </div>
       </el-tab-pane>
       <el-tab-pane v-loading="updating" label="Account" name="third">
-        <el-form-item label="Name">
+        <el-form-item label="Ф.И.О.">
           <el-input v-model="user.name" :disabled="user.role === 'admin'" />
+        </el-form-item>
+        <el-form-item label="Имя">
+          <el-input v-model="user.firstname" :disabled="user.role === 'admin'" />
+        </el-form-item>
+        <el-form-item label="Фамилия">
+          <el-input v-model="user.surname" :disabled="user.role === 'admin'" />
+        </el-form-item>
+        <el-form-item label="Отчество">
+          <el-input v-model="user.patronymic" :disabled="user.role === 'admin'" />
+        </el-form-item>
+        <el-form-item label="День рождения">
+          <el-date-picker
+            v-model="user.birthday"
+            :type="date"
+            format="MM.dd.yyyy"
+            value-format="yyyy-MM-dd"
+            placeholder="Дата дня рождения"
+            :disabled="user.role === 'admin'"
+          />
         </el-form-item>
         <el-form-item label="Email">
           <el-input v-model="user.email" :disabled="user.role === 'admin'" />
         </el-form-item>
+        <el-form-item label="Пароль">
+          <span class="svg-container">
+            <svg-icon icon-class="password" />
+          </span>
+          <span class="show-pwd" @click="showPwd">
+            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+          </span>
+          <el-input
+            key="passwordType"
+            :type="passwordType"
+            v-model="user.password"
+            placeholder="Введите пароль для его смены"
+            :disabled="user.role === 'admin'"
+          />
+
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" :disabled="user.role === 'admin'" @click="onSubmit">
-            Update
+            Обновить профиль
           </el-button>
         </el-form-item>
       </el-tab-pane>
@@ -172,11 +207,18 @@ const userResource = new Resource('users');
 export default {
   props: {
     user: {
+      passwordType: '',
+      updating: false,
       type: Object,
       default: () => {
         return {
           name: '',
+          firstname: '',
+          surname: '',
+          patronymic: '',
+          birthday: '',
           email: '',
+          password: '',
           avatar: '',
           roles: [],
         };
@@ -193,20 +235,31 @@ export default {
         'https://cdn.laravue.dev/photo4.jpg',
       ],
       updating: false,
+      passwordType: 'password',
     };
   },
   methods: {
+    showPwd() {
+      if (this.passwordType === 'password') {
+        this.passwordType = '';
+      } else {
+        this.passwordType = 'password';
+      }
+      this.$nextTick(() => {
+        this.$refs.password.focus();
+      });
+    },
     handleClick(tab, event) {
       console.log('Switching tab ', tab, event);
     },
     onSubmit() {
       this.updating = true;
       userResource
-        .update(this.user.id, this.user)
+        .update(this.user.id, this.user, this.firstname, this.surname, this.patronymic, this.birthday, this.password)
         .then(response => {
           this.updating = false;
           this.$message({
-            message: 'User information has been updated successfully',
+            message: 'Информация о пользователе успешно обновлена',
             type: 'success',
             duration: 5 * 1000,
           });

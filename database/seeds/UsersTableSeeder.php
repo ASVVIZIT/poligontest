@@ -3,6 +3,7 @@
 use Illuminate\Database\Seeder;
 use App\Laravue\Acl;
 use App\Laravue\Models\Role;
+use Faker\Generator as Faker;
 
 class UsersTableSeeder extends Seeder
 {
@@ -14,6 +15,8 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
         $userList = [
+            "Adriana",
+            "Max Max",
             "Adriana C. Ocampo Uria",
             "Albert Einstein",
             "Anna K. Behrensmeyer",
@@ -74,14 +77,45 @@ class UsersTableSeeder extends Seeder
                 Acl::ROLE_USER,
                 Acl::ROLE_VISITOR,
             ]);
+
+            $fullName = str_replace('. ', '._', $fullName);
+            $fullNamArray = str_replace(' ', '||', $fullName);
+            $fullNamArray = str_replace('._', '. ', $fullNamArray);
+                $fullNameBuffer = explode("||", $fullNamArray);
+
+                if (count($fullNameBuffer) === 3) {
+                    $firstname = $fullNameBuffer[0];
+                    $firstname_email = $firstname . '_';
+                    $surname = $fullNameBuffer[1];
+                    $patronymic = $fullNameBuffer[2];
+                } elseif (count($fullNameBuffer) === 2) {
+                    $firstname = $fullNameBuffer[0];
+                    $firstname_email = $firstname . '_';
+                    $surname = $fullNameBuffer[1];
+                    $patronymic = '';
+                } elseif (count($fullNameBuffer) === 1) {
+                    $firstname = $fullNameBuffer[0];
+                    $firstname_email = $firstname;
+                    $surname = '';
+                    $patronymic = '';
+                }
+
+            $fullName = str_replace('._', '. ', $fullName);
             $user = \App\Laravue\Models\User::create([
                 'name' => $fullName,
-                'email' => strtolower($name) . '@laravue.dev',
-                'password' => \Illuminate\Support\Facades\Hash::make('random'),
+                'firstname' => $firstname,
+                'surname' => $surname,
+                'patronymic' => $patronymic,
+                'birthday' => '1981-01-21 00:00:00',
+                'email' => strtolower($firstname_email . str_replace('.', '_', str_replace(' ', '', $surname))) . '@laravue.dev',
+                'password' => \Illuminate\Support\Facades\Hash::make('randomrandom'),
             ]);
-
             $role = Role::findByName($roleName);
             $user->syncRoles($role);
+            $firstname = '';
+            $surname = '';
+            $patronymic = '';
+
         }
     }
 }

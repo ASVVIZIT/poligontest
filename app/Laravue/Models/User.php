@@ -11,6 +11,10 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * Class User
  *
  * @property string $name
+ * @property string $surname
+ * @property string $firstname
+ * @property string $patronymic
+ * @property dateTime $birthday
  * @property string $email
  * @property string $password
  * @property Role[] $roles
@@ -23,12 +27,19 @@ class User extends Authenticatable implements JWTSubject
     use Notifiable, HasRoles;
 
     /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['created_at', 'updated_at', 'deleted_at'];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password'
+        'name', 'surname', 'firstname', 'patronymic', 'birthday', 'email', 'password',
     ];
 
     /**

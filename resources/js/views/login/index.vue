@@ -38,8 +38,8 @@
       </el-form-item>
       <div class="tips">
         <span style="margin-right:10px;"> {{ $t('login.lable_Profile') }}:</span>
-        <span style="margin-right:10px;"> {{ $t('login.lable_Email') }}: admin@laravue.dev</span>
-        <span>{{ $t('login.lable_password') }}: laravue</span>
+        <span style="margin-right:10px;"> {{ $t('login.lable_Email') }}:admin@laravue.dev</span>
+        <span>{{ $t('login.lable_password') }}: laravuelaravue</span>
       </div>
     </el-form>
   </div>
@@ -109,9 +109,6 @@ export default {
         this.redirect = route.query && route.query.redirect;
       },
       immediate: true,
-    },
-    lang() {
-      this.setOptions();
     },
   },
   created() {

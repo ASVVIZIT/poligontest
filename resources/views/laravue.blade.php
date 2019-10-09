@@ -23,13 +23,14 @@
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="/favicon/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
+    <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
     <link href="{{ mix('css/app.css') }}" type="text/css" rel="stylesheet" />
 </head>
 <body>
     <div id="app">
         <app></app>
     </div>
-
     <script src=/static/tinymce4.7.5/tinymce.min.js></script>
     <script src="{{ mix('js/vendor.js') }}"></script>
     <script src="{{ mix('js/manifest.js') }}"></script>

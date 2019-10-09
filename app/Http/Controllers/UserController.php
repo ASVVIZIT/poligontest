@@ -31,7 +31,7 @@ use Validator;
  */
 class UserController extends Controller
 {
-    const ITEM_PER_PAGE = 15;
+    const ITEM_PER_PAGE = 20;
 
     /**
      * Display a listing of the user resource.
@@ -53,6 +53,10 @@ class UserController extends Controller
 
         if (!empty($keyword)) {
             $userQuery->where('name', 'LIKE', '%' . $keyword . '%');
+            $userQuery->where('firstname', 'LIKE', '%' . $keyword . '%');
+            $userQuery->where('surname', 'LIKE', '%' . $keyword . '%');
+            $userQuery->where('patronymic', 'LIKE', '%' . $keyword . '%');
+            $userQuery->whereDate('birthday', 'LIKE', '%' . $keyword . '%');
             $userQuery->where('email', 'LIKE', '%' . $keyword . '%');
         }
 
@@ -85,6 +89,10 @@ class UserController extends Controller
             $params = $request->all();
             $user = User::create([
                 'name' => $params['name'],
+                'firstname' => $params['firstname'],
+                'surname' => $params['surname'],
+                'patronymic' => $params['patronymic'],
+                'birthday' => $params['birthday'],
                 'email' => $params['email'],
                 'password' => Hash::make($params['password']),
             ]);
@@ -126,14 +134,47 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 403);
         } else {
+            $firstname = $request->get('firstname');
+            $found = User::where('firstname', $firstname)->first();
+            if ($found && $found->id !== $user->id) {
+                return response()->json(['error' => 'firstname has been taken'], 403);
+            }
+            $surname = $request->get('surname');
+            $found = User::where('surname', $surname)->first();
+            if ($found && $found->id !== $user->id) {
+                return response()->json(['error' => 'surname has been taken'], 403);
+            }
+            $patronymic = $request->get('patronymic');
+            $found = User::where('patronymic', $patronymic)->first();
+            if ($found && $found->id !== $user->id) {
+                return response()->json(['error' => 'patronymic has been taken'], 403);
+            }
+            $birthday = $request->get('birthday');
+            $found = User::where('birthday', $birthday)->first();
+       //   if ($found && $found->id !== $user->id) {
+       //       return response()->json(['error' => 'birthday has been taken'], 403);
+       //   }
             $email = $request->get('email');
             $found = User::where('email', $email)->first();
             if ($found && $found->id !== $user->id) {
                 return response()->json(['error' => 'Email has been taken'], 403);
             }
+            $password = $request->get('password');
+            $found = User::where('password', $password)->first();
+            if ($found && $found->id !== $user->id) {
+                return response()->json(['error' => 'password has been taken'], 403);
+            }
+
+          //  $dt = Carbon::createFromFormat('Y-m-d', $birthday);
 
             $user->name = $request->get('name');
+            $user->firstname = $request->get('firstname');
+            $user->surname = $request->get('surname');
+            $user->patronymic = $request->get('patronymic');
+            $user->birthday = $request->get('birthday');
             $user->email = $email;
+            $user->password = \Illuminate\Support\Facades\Hash::make($password);
+            //$user->created_at = Carbon::now()->setTime(0,0)->format('Y-m-d H:i:s');
             $user->save();
             return new UserResource($user);
         }

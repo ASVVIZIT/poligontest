@@ -1,7 +1,7 @@
 <template>
   <div class="components-container">
     <p class="warn-content">
-      <a href="https://github.com/PanJiaChen/vue-countTo" target="_blank">CountTo component</a>
+      <a href="https://github.com/PanJiaChen/vue-countTo" target="_blank">CountTo component (Документация)</a>
     </p>
     <count-to
       ref="countTo"
@@ -15,7 +15,16 @@
       :autoplay="false"
       class="example"
     />
-    <div style="margin-left: 25%;margin-top: 40px;">
+    <div style="margin-left: 0%; margin-top: 50px; display: grid; grid-template-columns: 1fr 1fr;">
+      <div class="startBtn example-btn" style="text-align: center;" @click="start">
+        {{ _startLabel }}
+      </div>
+      <div class="pause-resume-btn example-btn" style="text-align: center;" @click="pauseResume">
+        {{ _pauseResumeLabel }}
+      </div>
+    </div>
+    <hr>
+    <div style="margin-left: 25%;margin-top: 50px;">
       <label class="label" for="startValInput">startVal:
         <input v-model.number="setStartVal" type="number" name="startValInput">
       </label>
@@ -25,12 +34,6 @@
       <label class="label" for="durationInput">duration:
         <input v-model.number="setDuration" type="number" name="durationInput">
       </label>
-      <div class="startBtn example-btn" @click="start">
-        Start
-      </div>
-      <div class="pause-resume-btn example-btn" @click="pauseResume">
-        {{ _pauseResumeLabel }}
-      </div>
       <br>
       <label class="label" for="decimalsInput">decimals:
         <input v-model.number="setDecimals" type="number" name="decimalsInput">
@@ -45,9 +48,12 @@
         <input v-model="setSuffix" name="suffixInput">
       </label>
     </div>
-    <code>&lt;count-to :start-val=&#x27;{{ _startVal }}&#x27; :end-val=&#x27;{{ _endVal }}&#x27; :duration=&#x27;{{ _duration }}&#x27;
-      :decimals=&#x27;{{ _decimals }}&#x27; :separator=&#x27;{{ _separator }}&#x27; :prefix=&#x27;{{ _prefix }}&#x27; :suffix=&#x27;{{ _suffix }}&#x27;
-      :autoplay=false&gt;</code>
+    <hr>
+    <div style="margin-left: 5%;margin-top: 50px;">
+      <code>&lt;count-to :start-val=&#x27;{{ _startVal }}&#x27; :end-val=&#x27;{{ _endVal }}&#x27; :duration=&#x27;{{ _duration }}&#x27;
+        :decimals=&#x27;{{ _decimals }}&#x27; :separator=&#x27;{{ _separator }}&#x27; :prefix=&#x27;{{ _prefix }}&#x27; :suffix=&#x27;{{ _suffix }}&#x27;
+        :autoplay=false&gt;</code>
+    </div>
   </div>
 </template>
 
@@ -60,15 +66,16 @@ export default {
   data() {
     return {
       setStartVal: 0,
-      setEndVal: 2017,
-      setDuration: 4000,
+      setEndVal: 2019,
+      setDuration: 10000,
       setDecimals: 0,
       setSeparator: ',',
-      setSuffix: ' per capita',
+      setSuffix: ' Многа зОлАтА',
       setPrefix: '$ ',
-      paused: true,
-      resumeLabel: 'Resume',
-      pauseLabel: 'Pause',
+      paused: false,
+      startLabel: 'Старт',
+      resumeLabel: 'Возобновить',
+      pauseLabel: 'Пауза',
     };
   },
   computed: {
@@ -113,14 +120,27 @@ export default {
     _prefix() {
       return this.setPrefix;
     },
+    _startLabel() {
+      return this.start ? this.startLabel : this.startLabel;
+    },
     _pauseResumeLabel() {
       return this.paused ? this.resumeLabel : this.pauseLabel;
     },
   },
   methods: {
     start() {
-      this.$refs.countTo.start();
-      this.paused = false;
+      if (this.pause()) {
+        this.pause();
+        this.paused = true;
+      } else {
+        this.$refs.countTo.start();
+        this.paused = this.$refs.countTo.paused;
+        this.paused = false;
+      }
+    },
+    pause() {
+      this.$refs.countTo.pause();
+      this.paused = this.$refs.countTo.paused;
     },
     pauseResume() {
       this.$refs.countTo.pauseResume();
@@ -134,6 +154,7 @@ export default {
 .example-btn {
   display: inline-block;
   margin-bottom: 0;
+  margin-right: 10px;
   font-weight: 500;
   text-align: center;
   -ms-touch-action: manipulation;
@@ -164,7 +185,6 @@ export default {
   border-color: #4AB7BD;
 }
 .example {
-  font-size: 50px;
   color: #F6416C;
   display: block;
   margin: 10px 0;
@@ -199,7 +219,7 @@ input {
 }
 
 .startBtn {
-  margin-left: 20px;
+  margin-left: 0;
   font-size: 20px;
   color: #30B08F;
   background-color: #fff;
@@ -221,6 +241,10 @@ input {
   background-color: #E65D6E;
   color: #fff;
   border-color: #E65D6E;
+}
+
+label > input {
+  min-width: 100px;
 }
 </style>
 

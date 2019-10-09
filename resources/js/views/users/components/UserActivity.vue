@@ -1,7 +1,218 @@
 <template>
   <el-card v-if="user.name">
     <el-tabs v-model="activeActivity" @tab-click="handleClick">
-      <el-tab-pane label="Activity" name="first">
+      <el-tab-pane v-loading="updating" label="Профиль" name="first">
+        <v-app id="inspire">
+          <div>
+            <v-toolbar flat color="primary" dark>
+              <v-toolbar-title>Данные пользователея</v-toolbar-title>
+            </v-toolbar>
+            <v-tabs
+              v-model="tab.tab"
+              background-color="blue darken-1"
+              class="elevation-1"
+              dark
+              :centered="tab.centered"
+              :grow="tab.grow"
+              :vertical="tab.vertical"
+              :right="tab.right"
+              :prev-icon="tab.prevIcon ? 'mdi-arrow-left-bold-box-outline' : undefined"
+              :next-icon="tab.nextIcon ? 'mdi-arrow-right-bold-box-outline' : undefined"
+              :icons-and-text="tab.icons"
+            >
+              <v-tabs-slider />
+              <v-tab :key="1">
+                <v-icon>mdi-account</v-icon>
+                Профиль
+              </v-tab>
+              <v-tab :key="2">
+                <v-icon>mdi-shield-refresh</v-icon>
+                Безопасность
+              </v-tab>
+              <v-tab :key="3">
+                <v-icon>mdi-lock-reset</v-icon>
+                Сброс пароля
+              </v-tab>
+              <v-tab :key="4">
+                <v-icon>mdi-city-variant-outline</v-icon>
+                Адрес
+              </v-tab>
+              <v-tab :key="5">
+                <v-icon>mdi-phone-classic</v-icon>
+                Телефон
+              </v-tab>
+              <v-tab :key="6">
+                <v-icon>mdi-settings-outline</v-icon>
+                Настройки
+              </v-tab>
+              <v-tab-item :key="1">
+                <v-card>
+                  <v-card-text>
+                    <el-form-item label="Имя">
+                      <el-input v-model="user.firstname" :disabled="user.role === 'admin'" />
+                    </el-form-item>
+                    <el-form-item label="Фамилия">
+                      <el-input v-model="user.surname" :disabled="user.role === 'admin'" />
+                    </el-form-item>
+                    <el-form-item label="Отчество">
+                      <el-input v-model="user.patronymic" :disabled="user.role === 'admin'" />
+                    </el-form-item>
+                    <el-form-item label="День рождения">
+                      <el-date-picker
+                        v-model="user.birthday"
+                        type="date"
+                        format="dd.MM.yyyy"
+                        value-format="yyyy-MM-dd"
+                        placeholder="Дата дня рождения"
+                        :disabled="user.role === 'admin'"
+                      />
+                    </el-form-item>
+                  </v-card-text>
+                  <v-card-text>
+                    <el-form-item>
+                      <el-button type="primary" :disabled="user.role === 'admin'" @click="onSubmitProfile">
+                        Обновить профиль
+                      </el-button>
+                    </el-form-item>
+                  </v-card-text>
+                </v-card>
+              </v-tab-item>
+              <v-tab-item :key="2">
+                <v-card>
+                  <v-card-text>
+                    <el-form-item label="Полное имя Ф.И.О.">
+                      <el-input v-model="user.name" :disabled="user.role === 'admin'" />
+                    </el-form-item>
+                    <el-form-item label="Имя">
+                      <el-input v-model="user.firstname" :disabled="user.role === 'admin'" />
+                    </el-form-item>
+                    <el-form-item label="Email">
+                      <el-input v-model="user.email" :disabled="user.role === 'admin'" />
+                    </el-form-item>
+                    <el-form-item label="Пароль">
+                      <span class="svg-container">
+                        <svg-icon icon-class="password" />
+                      </span>
+                      <span class="show-pwd" @click="showPwd">
+                        <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+                      </span>
+                      <el-input
+                        key="passwordType"
+                        v-model="user.password"
+                        :type="passwordType"
+                        placeholder="Введите пароль для его смены"
+                        :disabled="user.role === 'admin'"
+                      />
+                    </el-form-item>
+                  </v-card-text>
+                  <v-card-text>
+                    <el-form-item>
+                      <el-button type="primary" :disabled="user.role === 'admin'" @click="onSubmitAuthenticator">
+                        Обновить данные авторизации
+                      </el-button>
+                    </el-form-item>
+                  </v-card-text>
+                </v-card>
+              </v-tab-item>
+              <v-tab-item :key="3">
+                <v-card>
+                  <v-card-text>
+                    <el-form-item label="Пароль">
+                      <span class="svg-container">
+                        <svg-icon icon-class="password" />
+                      </span>
+                      <span class="show-pwd" @click="showPwd">
+                        <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+                      </span>
+                      <el-input
+                        key="passwordType"
+                        v-model="user.password"
+                        :type="passwordType"
+                        placeholder="Введите пароль для его смены"
+                        :disabled="user.role === 'admin'"
+                      />
+                    </el-form-item>
+                  </v-card-text>
+                  <v-card-text>
+                    <el-form-item>
+                      <el-button type="primary" :disabled="user.role === 'admin'" @click="onSubmitPassword">
+                        Сменить пароль
+                      </el-button>
+                    </el-form-item>
+                  </v-card-text>
+                </v-card>
+              </v-tab-item>
+              <v-tab-item :key="4">
+                <v-card>
+                  <el-form-item>
+                    <p>Внимание!!! данный раздел в разработке</p>
+                    <v-card-text>
+                      <p>тут будут поля для адресов</p>
+                    </v-card-text>
+                  </el-form-item>
+                </v-card>
+              </v-tab-item>
+              <v-tab-item :key="5">
+                <v-card>
+                  <p>Внимание!!! данный раздел в разработке</p>
+                  <v-card-text>
+                    <p>тут будут поля для телефонов</p>
+                  </v-card-text>
+                </v-card>
+              </v-tab-item>
+              <v-tab-item :key="6">
+                <v-card>
+                  <p>Внимание!!! данный раздел в разработке</p>
+                  <v-card-text>
+                    <p>тут будут поля для других настроек пользователя</p>
+                    <v-row
+
+                      justify="space-around"
+                    >
+                      <v-switch
+                        v-model="tab.icons"
+                        class="mx-2"
+                        label="Text + icons"
+                      />
+                      <v-switch
+                        v-model="tab.centered"
+                        class="mx-2"
+                        label="Centered"
+                        :disabled="tab.vertical"
+                      />
+                      <v-switch
+                        v-model="tab.grow"
+                        class="mx-2"
+                        label="Grow"
+                      />
+                      <v-switch
+                        v-model="tab.vertical"
+                        class="mx-2"
+                        label="Vertical"
+                      />
+                      <v-switch
+                        v-model="tab.true"
+                        class="mx-2"
+                        label="Right"
+                      />
+                      <v-col cols="12">
+                        <v-slider
+                          v-model="tab.tabs"
+                          min="0"
+                          max="10"
+                          label="Tabs number"
+                        />
+                      </v-col>
+                    </v-row>
+
+                  </v-card-text>
+                </v-card>
+              </v-tab-item>
+            </v-tabs>
+          </div>
+        </v-app>
+      </el-tab-pane>
+      <el-tab-pane label="Activity" name="second">
         <div class="user-activity">
           <div class="post">
             <div class="user-block">
@@ -117,7 +328,7 @@
           </div>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="Timeline" name="second">
+      <el-tab-pane label="Timeline" name="third">
         <div class="block">
           <el-timeline>
             <el-timeline-item timestamp="2019/4/17" placement="top">
@@ -148,19 +359,6 @@
           </el-timeline>
         </div>
       </el-tab-pane>
-      <el-tab-pane v-loading="updating" label="Account" name="third">
-        <el-form-item label="Name">
-          <el-input v-model="user.name" :disabled="user.role === 'admin'" />
-        </el-form-item>
-        <el-form-item label="Email">
-          <el-input v-model="user.email" :disabled="user.role === 'admin'" />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" :disabled="user.role === 'admin'" @click="onSubmit">
-            Update
-          </el-button>
-        </el-form-item>
-      </el-tab-pane>
     </el-tabs>
   </el-card>
 </template>
@@ -172,11 +370,18 @@ const userResource = new Resource('users');
 export default {
   props: {
     user: {
+      passwordType: '',
+      updating: false,
       type: Object,
       default: () => {
         return {
           name: '',
+          firstname: '',
+          surname: '',
+          patronymic: '',
+          birthday: '',
           email: '',
+          password: '',
           avatar: '',
           roles: [],
         };
@@ -193,20 +398,92 @@ export default {
         'https://cdn.laravue.dev/photo4.jpg',
       ],
       updating: false,
+      passwordType: 'password',
+      tab: {
+        tab: null,
+        icons: false,
+        centered: false,
+        grow: false,
+        vertical: true,
+        prevIcon: true,
+        nextIcon: true,
+        right: false,
+      },
     };
   },
   methods: {
+    showPwd() {
+      if (this.passwordType === 'password') {
+        this.passwordType = '';
+      } else {
+        this.passwordType = 'password';
+      }
+      this.$nextTick(() => {
+        this.$refs.password.focus();
+      });
+    },
     handleClick(tab, event) {
       console.log('Switching tab ', tab, event);
+    },
+    onSubmitProfile() {
+      this.updating = true;
+      userResource
+        .update(this.user.id, this.user, this.firstname, this.surname, this.patronymic, this.birthday)
+        .then(response => {
+          this.updating = false;
+          this.$message({
+            message: 'Информация о пользователе успешно обновлена',
+            type: 'success',
+            duration: 5 * 1000,
+          });
+        })
+        .catch(error => {
+          console.log(error);
+          this.updating = false;
+        });
+    },
+    onSubmitAuthenticator() {
+      this.updating = true;
+      userResource
+        .update(this.user.id, this.user, this.password)
+        .then(response => {
+          this.updating = false;
+          this.$message({
+            message: 'Информация о пользователе успешно обновлена',
+            type: 'success',
+            duration: 5 * 1000,
+          });
+        })
+        .catch(error => {
+          console.log(error);
+          this.updating = false;
+        });
+    },
+    onSubmitPassword() {
+      this.updating = true;
+      userResource
+        .update(this.user.id, this.user, this.password)
+        .then(response => {
+          this.updating = false;
+          this.$message({
+            message: 'Информация о пользователе успешно обновлена',
+            type: 'success',
+            duration: 5 * 1000,
+          });
+        })
+        .catch(error => {
+          console.log(error);
+          this.updating = false;
+        });
     },
     onSubmit() {
       this.updating = true;
       userResource
-        .update(this.user.id, this.user)
+        .update(this.user.id, this.user, this.firstname, this.surname, this.patronymic, this.birthday, this.password)
         .then(response => {
           this.updating = false;
           this.$message({
-            message: 'User information has been updated successfully',
+            message: 'Информация о пользователе успешно обновлена',
             type: 'success',
             duration: 5 * 1000,
           });

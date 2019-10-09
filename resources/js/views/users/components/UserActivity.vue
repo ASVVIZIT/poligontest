@@ -4,7 +4,7 @@
       <el-tab-pane v-loading="updating" label="Профиль" name="first">
         <v-app id="inspire">
           <div>
-            <!--   <v-row
+            <v-row
 
               justify="space-around"
             >
@@ -12,42 +12,42 @@
                 v-model="tab.icons"
                 class="mx-2"
                 label="Text + icons"
-              ></v-switch>
+              />
               <v-switch
                 v-model="tab.centered"
                 class="mx-2"
                 label="Centered"
                 :disabled="tab.vertical"
-              ></v-switch>
+              />
               <v-switch
                 v-model="grow"
                 class="mx-2"
                 label="Grow"
-              ></v-switch>
+              />
               <v-switch
                 v-model="tab.vertical"
                 class="mx-2"
                 label="Vertical"
-              ></v-switch>
+              />
               <v-switch
-                v-model="tab.right"
+                v-model="tab.true"
                 class="mx-2"
                 label="Right"
-              ></v-switch>
+              />
               <v-col cols="12">
                 <v-slider
                   v-model="tab.tabs"
                   min="0"
                   max="10"
                   label="Tabs number"
-                ></v-slider>
+                />
               </v-col>
-            </v-row> -->
+            </v-row>
             <v-toolbar flat color="primary" dark>
               <v-toolbar-title>Данные пользователея</v-toolbar-title>
             </v-toolbar>
             <v-tabs
-              v-model="tab"
+              v-model="tab.tab"
               background-color="blue darken-1"
               class="elevation-1"
               dark
@@ -55,34 +55,33 @@
               :grow="tab.grow"
               :vertical="tab.vertical"
               :right="tab.right"
-              :left="tab.left"
               :prev-icon="tab.prevIcon ? 'mdi-arrow-left-bold-box-outline' : undefined"
               :next-icon="tab.nextIcon ? 'mdi-arrow-right-bold-box-outline' : undefined"
               :icons-and-text="tab.icons"
             >
               <v-tabs-slider />
-              <v-tab>
-                <v-icon :key="1">mdi-account</v-icon>
+              <v-tab :right="true">
+                <v-icon>mdi-account</v-icon>
                 Профиль
               </v-tab>
-              <v-tab>
-                <v-icon :key="2">mdi-lock</v-icon>
+              <v-tab :right="true">
+                <v-icon>mdi-lock</v-icon>
                 Безопасность
               </v-tab>
-              <v-tab>
-                <v-icon :key="3">mdi-city-variant-outline</v-icon>
+              <v-tab :right="true">
+                <v-icon>mdi-city-variant-outline</v-icon>
                 Сброс пароля
               </v-tab>
-              <v-tab>
-                <v-icon :key="4">mdi-city-variant-outline</v-icon>
+              <v-tab :right="true">
+                <v-icon>mdi-city-variant-outline</v-icon>
                 Адрес
               </v-tab>
-              <v-tab>
-                <v-icon :key="5">mdi-city-variant-outline</v-icon>
+              <v-tab :right="true">
+                <v-icon>mdi-city-variant-outline</v-icon>
                 Телефон
               </v-tab>
-              <v-tab>
-                <v-icon :key="6">mdi-settings-outline</v-icon>
+              <v-tab :right="true">
+                <v-icon>mdi-settings-outline</v-icon>
                 Настройки
               </v-tab>
               <v-tab-item>
@@ -400,15 +399,14 @@ export default {
       updating: false,
       passwordType: 'password',
       tab: {
-        text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+        tab: null,
         icons: true,
         centered: false,
-        grow: true,
+        grow: false,
         vertical: true,
         prevIcon: false,
         nextIcon: false,
         right: false,
-        left: false,
       },
     };
   },

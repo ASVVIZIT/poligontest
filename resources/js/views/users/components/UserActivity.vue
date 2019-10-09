@@ -4,45 +4,6 @@
       <el-tab-pane v-loading="updating" label="Профиль" name="first">
         <v-app id="inspire">
           <div>
-            <v-row
-
-              justify="space-around"
-            >
-              <v-switch
-                v-model="tab.icons"
-                class="mx-2"
-                label="Text + icons"
-              />
-              <v-switch
-                v-model="tab.centered"
-                class="mx-2"
-                label="Centered"
-                :disabled="tab.vertical"
-              />
-              <v-switch
-                v-model="grow"
-                class="mx-2"
-                label="Grow"
-              />
-              <v-switch
-                v-model="tab.vertical"
-                class="mx-2"
-                label="Vertical"
-              />
-              <v-switch
-                v-model="tab.true"
-                class="mx-2"
-                label="Right"
-              />
-              <v-col cols="12">
-                <v-slider
-                  v-model="tab.tabs"
-                  min="0"
-                  max="10"
-                  label="Tabs number"
-                />
-              </v-col>
-            </v-row>
             <v-toolbar flat color="primary" dark>
               <v-toolbar-title>Данные пользователея</v-toolbar-title>
             </v-toolbar>
@@ -60,31 +21,31 @@
               :icons-and-text="tab.icons"
             >
               <v-tabs-slider />
-              <v-tab :right="true">
+              <v-tab :key="1">
                 <v-icon>mdi-account</v-icon>
                 Профиль
               </v-tab>
-              <v-tab :right="true">
-                <v-icon>mdi-lock</v-icon>
+              <v-tab :key="2">
+                <v-icon>mdi-shield-refresh</v-icon>
                 Безопасность
               </v-tab>
-              <v-tab :right="true">
-                <v-icon>mdi-city-variant-outline</v-icon>
+              <v-tab :key="3">
+                <v-icon>mdi-lock-reset</v-icon>
                 Сброс пароля
               </v-tab>
-              <v-tab :right="true">
+              <v-tab :key="4">
                 <v-icon>mdi-city-variant-outline</v-icon>
                 Адрес
               </v-tab>
-              <v-tab :right="true">
-                <v-icon>mdi-city-variant-outline</v-icon>
+              <v-tab :key="5">
+                <v-icon>mdi-phone-classic</v-icon>
                 Телефон
               </v-tab>
-              <v-tab :right="true">
+              <v-tab :key="6">
                 <v-icon>mdi-settings-outline</v-icon>
                 Настройки
               </v-tab>
-              <v-tab-item>
+              <v-tab-item :key="1">
                 <v-card>
                   <v-card-text>
                     <el-form-item label="Имя">
@@ -99,7 +60,7 @@
                     <el-form-item label="День рождения">
                       <el-date-picker
                         v-model="user.birthday"
-                        :type="date"
+                        type="date"
                         format="dd.MM.yyyy"
                         value-format="yyyy-MM-dd"
                         placeholder="Дата дня рождения"
@@ -116,7 +77,7 @@
                   </v-card-text>
                 </v-card>
               </v-tab-item>
-              <v-tab-item>
+              <v-tab-item :key="2">
                 <v-card>
                   <v-card-text>
                     <el-form-item label="Полное имя Ф.И.О.">
@@ -153,7 +114,7 @@
                   </v-card-text>
                 </v-card>
               </v-tab-item>
-              <v-tab-item>
+              <v-tab-item :key="3">
                 <v-card>
                   <v-card-text>
                     <el-form-item label="Пароль">
@@ -181,29 +142,69 @@
                   </v-card-text>
                 </v-card>
               </v-tab-item>
-              <v-tab-item>
+              <v-tab-item :key="4">
                 <v-card>
                   <el-form-item>
                     <p>Внимание!!! данный раздел в разработке</p>
                     <v-card-text>
-                      тут будут поля для адресов
+                      <p>тут будут поля для адресов</p>
                     </v-card-text>
                   </el-form-item>
                 </v-card>
               </v-tab-item>
-              <v-tab-item>
+              <v-tab-item :key="5">
                 <v-card>
                   <p>Внимание!!! данный раздел в разработке</p>
                   <v-card-text>
-                    тут будут поля для телефонов
+                    <p>тут будут поля для телефонов</p>
                   </v-card-text>
                 </v-card>
               </v-tab-item>
-              <v-tab-item>
+              <v-tab-item :key="6">
                 <v-card>
                   <p>Внимание!!! данный раздел в разработке</p>
                   <v-card-text>
-                    тут будут поля для других настроек пользователя
+                    <p>тут будут поля для других настроек пользователя</p>
+                    <v-row
+
+                      justify="space-around"
+                    >
+                      <v-switch
+                        v-model="tab.icons"
+                        class="mx-2"
+                        label="Text + icons"
+                      />
+                      <v-switch
+                        v-model="tab.centered"
+                        class="mx-2"
+                        label="Centered"
+                        :disabled="tab.vertical"
+                      />
+                      <v-switch
+                        v-model="tab.grow"
+                        class="mx-2"
+                        label="Grow"
+                      />
+                      <v-switch
+                        v-model="tab.vertical"
+                        class="mx-2"
+                        label="Vertical"
+                      />
+                      <v-switch
+                        v-model="tab.true"
+                        class="mx-2"
+                        label="Right"
+                      />
+                      <v-col cols="12">
+                        <v-slider
+                          v-model="tab.tabs"
+                          min="0"
+                          max="10"
+                          label="Tabs number"
+                        />
+                      </v-col>
+                    </v-row>
+
                   </v-card-text>
                 </v-card>
               </v-tab-item>
@@ -400,12 +401,12 @@ export default {
       passwordType: 'password',
       tab: {
         tab: null,
-        icons: true,
+        icons: false,
         centered: false,
         grow: false,
         vertical: true,
-        prevIcon: false,
-        nextIcon: false,
+        prevIcon: true,
+        nextIcon: true,
         right: false,
       },
     };

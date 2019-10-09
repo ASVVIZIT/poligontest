@@ -16,7 +16,6 @@
           <svg-icon
             v-model="loginForm.password"
             icon-class="password"
-            fill="red"
           />
         </span>
         <el-input
@@ -37,9 +36,9 @@
         </el-button>
       </el-form-item>
       <div class="tips">
-        <span style="margin-right:10px;"> {{ $t('login.lable_Profile') }}:</span>
-        <span style="margin-right:10px;"> {{ $t('login.lable_Email') }}:admin@laravue.dev</span>
-        <span>{{ $t('login.lable_password') }}: laravuelaravue</span>
+        <span style="margin-right:15px;"> {{ $t('login.lable_Profile') }}</span>
+        <span style="margin-right:15px;"> {{ $t('login.lable_Email') }}: admin@laravue.dev</span>
+        <span style="margin-right:15px;"> {{ $t('login.lable_password') }}: laravuelaravue</span>
       </div>
     </el-form>
   </div>
@@ -47,8 +46,8 @@
 
 <script>
 import local from './local';
-const viewName = 'i18nViewLogin';
 import LangSelect from '@/components/LangSelect';
+const viewName = 'i18nViewLogin';
 import { validEmail } from '@/utils/validate';
 
 export default {
@@ -110,9 +109,6 @@ export default {
       },
       immediate: true,
     },
-    lang() {
-      this.setOptions();
-    },
   },
   created() {
     if (!this.$i18n.getLocaleMessage('ru')[viewName]) {
@@ -121,7 +117,6 @@ export default {
       this.$i18n.mergeLocaleMessage('zh', local.zh);
       this.$i18n.mergeLocaleMessage('vi', local.vi);
     }
-    this.setOptions(); // set default select options
   },
   methods: {
     showPwd() {
@@ -200,7 +195,7 @@ $light_gray:#eee;
     position: absolute;
     left: 0;
     right: 0;
-    width: 520px;
+    width: 550px;
     max-width: 100%;
     padding: 35px 35px 15px 35px;
     margin: 120px auto;

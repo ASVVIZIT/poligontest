@@ -7,6 +7,7 @@
 @import 'sidebar';
 @import 'btn';
 @import 'laravue';
+@import url('https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css');
 
 body {
   height: 100%;
@@ -191,4 +192,14 @@ aside {
 
 .multiselect--active {
   z-index: 1000 !important;
+}
+
+.v-tabs--vertical>.v-tabs-bar .v-tab {
+  justify-content: left !important;
+  padding: 16px 16px;
+  height: 42px;
+  .v-icon {
+    font-size: 20px;
+    padding-right: 8px;
+  }
 }

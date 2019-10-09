@@ -65,7 +65,7 @@ export default {
         style.innerText = this.updateStyle(innerText, originalCluster, themeCluster);
       });
       this.$message({
-        message: 'Theme has been changed!',
+        message: ' '.concat(this.$t('theme.changes')),
         type: 'success',
       });
     },

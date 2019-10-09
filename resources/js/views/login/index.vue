@@ -38,7 +38,7 @@
       </el-form-item>
       <div class="tips">
         <span style="margin-right:10px;"> {{ $t('login.lable_Profile') }}:</span>
-        <span style="margin-right:10px;"> {{ $t('login.lable_Email') }}: admin@laravue.dev</span>
+        <span style="margin-right:10px;"> {{ $t('login.lable_Email') }}:admin@laravue.dev</span>
         <span>{{ $t('login.lable_password') }}: laravuelaravue</span>
       </div>
     </el-form>
@@ -200,7 +200,7 @@ $light_gray:#eee;
     position: absolute;
     left: 0;
     right: 0;
-    width: 530px;
+    width: 520px;
     max-width: 100%;
     padding: 35px 35px 15px 35px;
     margin: 120px auto;

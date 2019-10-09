@@ -3,7 +3,6 @@
 use Illuminate\Database\Seeder;
 use App\Laravue\Acl;
 use App\Laravue\Models\Role;
-use Faker\Generator as Faker;
 
 class UsersTableSeeder extends Seeder
 {
@@ -106,7 +105,7 @@ class UsersTableSeeder extends Seeder
                 'firstname' => $firstname,
                 'surname' => $surname,
                 'patronymic' => $patronymic,
-                'birthday' => '1981-01-21',
+                'birthday' => '1981-01-21 00:00:00',
                 'email' => strtolower($firstname_email . str_replace('.', '_', str_replace(' ', '', $surname))) . '@laravue.dev',
                 'password' => \Illuminate\Support\Facades\Hash::make('randomrandom'),
             ]);

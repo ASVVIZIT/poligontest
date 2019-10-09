@@ -62,7 +62,7 @@ const actions = {
           const { data } = response;
 
           if (!data) {
-            reject('Verification failed, please Login again.');
+            reject('Проверка не удалась, пожалуйста, войдите снова.');
           }
 
           const { roles, name, avatar, introduction, permissions, id } = data;

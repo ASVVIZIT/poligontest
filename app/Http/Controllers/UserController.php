@@ -126,7 +126,6 @@ class UserController extends Controller
         if ($user === null) {
             return response()->json(['error' => 'User not found'], 404);
         }
-
         if ($user->isAdmin()) {
             return response()->json(['error' => 'Admin can not be modified'], 403);
         }
@@ -137,9 +136,9 @@ class UserController extends Controller
         } else {
             $firstname = $request->get('firstname');
             $found = User::where('firstname', $firstname)->first();
-            //      if ($found && $found->id !== $user->id) {
-            //          return response()->json(['error' => 'firstname has been taken'], 403);
-            //     }
+            if ($found && $found->id !== $user->id) {
+                return response()->json(['error' => 'firstname has been taken'], 403);
+            }
             $surname = $request->get('surname');
             $found = User::where('surname', $surname)->first();
             if ($found && $found->id !== $user->id) {
@@ -152,9 +151,9 @@ class UserController extends Controller
             }
             $birthday = $request->get('birthday');
             $found = User::where('birthday', $birthday)->first();
-            //   if ($found && $found->id !== $user->id) {
-            //       return response()->json(['error' => 'birthday has been taken'], 403);
-            //   }
+       //   if ($found && $found->id !== $user->id) {
+       //       return response()->json(['error' => 'birthday has been taken'], 403);
+       //   }
             $email = $request->get('email');
             $found = User::where('email', $email)->first();
             if ($found && $found->id !== $user->id) {

@@ -3,14 +3,14 @@
   // Main container
   .main-container {
     min-height: 100%;
-    transition: margin-left .28s;
+    transition: margin-left .15s;
     margin-left: $sideBarWidth;
     position: relative;
   }
 
   // Sidebar container
   .sidebar-container {
-    transition: width 0.28s;
+    transition: width 0.15s;
     width: $sideBarWidth !important;
     height: 100%;
     position: fixed;

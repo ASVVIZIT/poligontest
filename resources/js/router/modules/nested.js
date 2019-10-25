@@ -1,9 +1,8 @@
 /** When your routing table is too long, you can split it into small modules**/
-import Layout from '@/layout';
 
 const nestedRoutes = {
   path: '/nested',
-  component: Layout,
+  component: () => import('@/views/nested/menu1/index'),
   redirect: '/nested/menu1',
   name: 'Nested',
   meta: {

@@ -1,9 +1,8 @@
 /** When your routing table is too long, you can split it into small modules**/
-import Layout from '@/layout';
 
 const errorRoutes = {
   path: '/error',
-  component: Layout,
+  component: () => import('@/views/error-page/401'),
   redirect: 'noredirect',
   name: 'ErrorPages',
   meta: {

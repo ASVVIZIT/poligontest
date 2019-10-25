@@ -69,6 +69,13 @@ class UsersTableSeeder extends Seeder
         ];
 
         foreach ($userList as $fullName) {
+
+            //Start point of our date range.
+            $start = strtotime("10 09 1971");
+            //End point of our date range.
+            $end = strtotime("22 06 1990");
+            $timestamp = mt_rand($start, $end);
+
             $name = str_replace(' ', '.', $fullName);
             $roleName = \App\Laravue\Faker::randomInArray([
                 Acl::ROLE_MANAGER,
@@ -105,7 +112,7 @@ class UsersTableSeeder extends Seeder
                 'firstname' => $firstname,
                 'surname' => $surname,
                 'patronymic' => $patronymic,
-                'birthday' => '1981-01-21 00:00:00',
+                'birthday' => date('Y-m-d', $timestamp),
                 'email' => strtolower($firstname_email . str_replace('.', '_', str_replace(' ', '', $surname))) . '@laravue.dev',
                 'password' => \Illuminate\Support\Facades\Hash::make('randomrandom'),
             ]);

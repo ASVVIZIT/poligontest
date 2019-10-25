@@ -3,7 +3,6 @@
 use Illuminate\Http\Request;
 use \App\Laravue\Faker;
 use \App\Laravue\JsonResponse;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -33,6 +32,14 @@ Route::group(['middleware' => 'api'], function () {
     Route::get('roles/{role}/permissions', 'RoleController@permissions')->middleware('permission:' . \App\Laravue\Acl::PERMISSION_PERMISSION_MANAGE);
     Route::apiResource('permissions', 'PermissionController')->middleware('permission:' . \App\Laravue\Acl::PERMISSION_PERMISSION_MANAGE);
 
+    Route::apiResource('orders', 'OrderController')->middleware('permission:' . \App\Laravue\Acl::PERMISSION_USER_MANAGE);
+    Route::get('orders/{order}/permissions', 'OrderController@permissions')->middleware('permission:' . \App\Laravue\Acl::PERMISSION_PERMISSION_MANAGE);
+    Route::put('orders/{order}/permissions', 'OrderController@updatePermissions')->middleware('permission:' . \App\Laravue\Acl::PERMISSION_PERMISSION_MANAGE);
+
+    Route::apiResource('reports', 'ReportController')->middleware('permission:' . \App\Laravue\Acl::PERMISSION_USER_MANAGE);
+    Route::get('reports/{report}/permissions', 'ReportController@permissions')->middleware('permission:' . \App\Laravue\Acl::PERMISSION_PERMISSION_MANAGE);
+    Route::put('reports/{report}/permissions', 'ReportController@updatePermissions')->middleware('permission:' . \App\Laravue\Acl::PERMISSION_PERMISSION_MANAGE);
+
     // Fake APIs
     Route::get('/table/list', function () {
         $rowsNumber = mt_rand(20, 30);
@@ -45,22 +52,6 @@ Route::group(['middleware' => 'api'], function () {
                 'pageviews' => mt_rand(100, 10000),
                 'status' => Faker::randomInArray(['deleted', 'published', 'draft']),
                 'title' => Faker::randomString(mt_rand(20, 50)),
-            ];
-
-            $data[] = $row;
-        }
-
-        return response()->json(new JsonResponse(['items' => $data]));
-    });
-
-    Route::get('/orders', function () {
-        $rowsNumber = 8;
-        $data = [];
-        for ($rowIndex = 0; $rowIndex < $rowsNumber; $rowIndex++) {
-            $row = [
-                'order_no' => 'LARAVUE' . mt_rand(1000000, 9999999),
-                'price' => mt_rand(10000, 999999),
-                'status' => Faker::randomInArray(['success', 'pending']),
             ];
 
             $data[] = $row;
@@ -84,11 +75,11 @@ Route::group(['middleware' => 'api'], function () {
                 'status' => Faker::randomInArray(['deleted', 'published', 'draft']),
                 'forecast' => mt_rand(100, 9999) / 100,
                 'image_uri' => 'https://via.placeholder.com/400x300',
-                'importance' => mt_rand(1, 3),
+                'importance' => mt_rand(1, 5),
                 'pageviews' => mt_rand(10000, 999999),
                 'reviewer' => Faker::randomString(mt_rand(5, 10)),
                 'timestamp' => Faker::randomDateTime()->getTimestamp(),
-                'type' => Faker::randomInArray(['US', 'VI', 'JA']),
+                'type' => Faker::randomInArray(['RU', 'US', 'VI', 'JA']),
 
             ];
 
@@ -114,7 +105,7 @@ Route::group(['middleware' => 'api'], function () {
             'pageviews' => mt_rand(10000, 999999),
             'reviewer' => Faker::randomString(mt_rand(5, 10)),
             'timestamp' => Faker::randomDateTime()->getTimestamp(),
-            'type' => Faker::randomInArray(['US', 'VI', 'JA']),
+            'type' => Faker::randomInArray(['RU', 'US', 'VI', 'JA']),
 
         ];
 

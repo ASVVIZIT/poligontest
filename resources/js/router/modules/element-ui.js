@@ -1,9 +1,8 @@
-import Layout from '@/layout';
-
+import Content from '@/content';
 const elementUiRoutes = {
-  path: '/element-ui',
-  component: Layout,
-  redirect: '/element-ui/form',
+  path: '/form',
+  component: Content,
+  redirect: '/form/index',
   name: 'Element UI',
   meta: {
     title: 'elementUi',
@@ -12,22 +11,22 @@ const elementUiRoutes = {
   },
   children: [
     {
-      path: 'form',
+      path: '/form',
       name: 'Form',
       component: () => import('@/views/form/index'),
-      meta: { title: 'form', icon: 'form' },
+      meta: { title: 'form', icon: 'form', noCache: false },
     },
     {
-      path: 'icons',
-      component: () => import('@/views/icons/index'),
+      path: '/form/icons',
       name: 'Icons',
-      meta: { title: 'icons', icon: 'icon', noCache: true },
+      component: () => import('@/views/form/icons/index'),
+      meta: { title: 'icons', icon: 'icon', noCache: false },
     },
     {
-      path: 'tab',
-      component: () => import('@/views/tab'),
+      path: '/form/ElementUI/tab',
       name: 'Tab',
-      meta: { title: 'tab', icon: 'tab' },
+      component: () => import('@/views/form/ElementUI/tab/index'),
+      meta: { title: 'tab', icon: 'tab', noCache: false },
     },
   ],
 };

@@ -98,5 +98,10 @@ class DatabaseSeeder extends Seeder
         $user->syncRoles($userRole);
         $visitor->syncRoles($visitorRole);
         $this->call(UsersTableSeeder::class);
+        $this->call(OrdersTableSeeder::class);
+        $this->call(ReportsTableSeeder::class);
+        factory(App\User::class)->create();
+        //factory(App\Laravue\Models\Order::class)->create();
+        //factory(App\Laravue\Models\Report::class)->create();
     }
 }

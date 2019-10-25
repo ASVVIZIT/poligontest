@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="query.keyword" :placeholder="$t('table.keyword')" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="query.role" :placeholder="$t('table.role')" clearable style="width: 90px" class="filter-item" @change="handleFilter">
+      <el-select v-model="query.role" :placeholder="$t('table.role')" clearable style="width: 110px" class="filter-item" @change="handleFilter">
         <el-option v-for="item in roles" :key="item" :label="item | uppercaseFirst" :value="item" />
       </el-select>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
@@ -155,8 +155,9 @@ export default {
       userCreating: false,
       query: {
         page: 1,
-        limit: 15,
+        limit: 12,
         keyword: '',
+        status: '',
         role: '',
       },
       roles: ['admin', 'manager', 'editor', 'user', 'visitor'],
@@ -294,8 +295,7 @@ export default {
       });
     },
     handleDelete(id, name) {
-      this.$confirm('\n' +
-        'Это навсегда удалит пользователя ' + name + '. Продолжить?', 'Внимание!!!', {
+      this.$confirm('Это навсегда удалит пользователя ' + name + '. Продолжить?', 'Внимание!!!', {
         confirmButtonText: 'Да',
         cancelButtonText: 'Отмена',
         type: 'warning',
@@ -342,7 +342,7 @@ export default {
             .store(this.newUser)
             .then(response => {
               this.$message({
-                message: 'Номый пользователь ' + this.newUser.name + ' (' + this.newUser.email + ') был успешно создан.',
+                message: 'Новый пользователь ' + this.newUser.name + ' (' + this.newUser.email + ') был успешно создан.',
                 type: 'success',
                 duration: 5 * 1000,
               });
@@ -351,6 +351,11 @@ export default {
               this.handleFilter();
             })
             .catch(error => {
+              this.$message({
+                message: 'Ошибка - Номый пользователь ' + this.newUser.name + ' (' + this.newUser.email + ') не создан.',
+                type: 'error',
+                duration: 5 * 1000,
+              });
               console.log(error);
             })
             .finally(() => {

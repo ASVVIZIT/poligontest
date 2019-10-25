@@ -1,33 +1,53 @@
 <template>
-  <el-table
-    v-loading="loading"
-    :data="list"
-    style="width: 100%;padding-top: 15px;"
-  >
-    <el-table-column label="Order #" min-width="200">
-      <template slot-scope="scope">
-        {{ scope.row && scope.row.order_no | orderNoFilter }}
-      </template>
-    </el-table-column>
-    <el-table-column label="Price" width="195" align="center">
-      <template slot-scope="scope">
-        ¥{{ scope.row && scope.row.price | toThousandFilter }}
-      </template>
-    </el-table-column>
-    <el-table-column label="Status" width="100" align="center">
-      <template slot-scope="scope">
-        <el-tag :type="scope.row && scope.row.status | statusFilter">
-          {{ scope.row && scope.row.status }}
-        </el-tag>
-      </template>
-    </el-table-column>
-  </el-table>
+  <div>
+    <el-table
+      v-loading="loading"
+      :data="list"
+      border
+      fit
+      highlight-current-row
+      style="width: 100%; padding-top: 0px;"
+    >
+      <el-table-column label="ID" min-width="70" width="70" align="center">
+        <template slot-scope="scope">
+          {{ scope.row && scope.row.index }}
+        </template>
+      </el-table-column>
+      <el-table-column label="Заказ #" min-width="100" max-width="150" width="150" align="left">
+        <template slot-scope="scope">
+          {{ scope.row && scope.row.order_id }}
+        </template>
+      </el-table-column>
+      <el-table-column label="Комментарий" min-width="100" width="150" align="left">
+        <template slot-scope="scope">
+          {{ scope.row && scope.row.note }}
+        </template>
+      </el-table-column>
+      <el-table-column label="Цена" min-width="50" width="90" align="center">
+        <template slot-scope="scope">
+          {{ scope.row && scope.row.sum }}
+        </template>
+      </el-table-column>
+      <el-table-column label="Статус" min-width="50" width="90" align="center">
+        <template slot-scope="scope">
+          <el-tag>
+            {{ scope.row && scope.row.status }}
+          </el-tag>
+        </template>
+      </el-table-column>
+    </el-table>
+    <pagination v-show="total>0" :total="total" :page.sync="query.page" :limit.sync="query.limit" align="center" @pagination="getList" />
+  </div>
 </template>
 
 <script>
-import { fetchList } from '@/api/order';
+import Pagination from '@/components/PaginationOrderDashboard'; // Secondary package based on el-pagination
+import OrderResource from '@/api/order';
+const orderResource = new OrderResource();
 
 export default {
+  name: 'OrderListDash',
+  components: { Pagination },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -42,17 +62,28 @@ export default {
   },
   data() {
     return {
-      list: [{ order_no: '1', price: '2', status: 'pending' }],
+      list: null,
+      total: 0,
+      query: {
+        page: 1,
+        limit: 8,
+      },
       loading: true,
     };
   },
   created() {
-    this.fetchData();
+    this.getList();
   },
   methods: {
-    async fetchData() {
-      const { data } = await fetchList();
-      this.list = data.items.slice(0, 8);
+    async getList() {
+      const { limit, page } = this.query;
+      this.loading = true;
+      const { data, meta } = await orderResource.list(this.query);
+      this.list = data;
+      this.list.forEach((element, index) => {
+        element['index'] = (page - 1) * limit + index + 1;
+      });
+      this.total = meta.total;
       this.loading = false;
     },
   },

@@ -6,6 +6,8 @@
       :page-size.sync="pageSize"
       :layout="layout"
       :page-sizes="pageSizes"
+      :page.sync="page"
+      :limit.sync="limit"
       :total="total"
       v-bind="$attrs"
       @size-change="handleSizeChange"
@@ -35,7 +37,7 @@ export default {
     pageSizes: {
       type: Array,
       default() {
-        return [10, 15, 20, 30, 50];
+        return [3, 5, 10, 15, 20, 30, 50, 100, 150, 200, 300, 500, 1000];
       },
     },
     layout: {
@@ -93,7 +95,7 @@ export default {
 <style scoped>
 .pagination-container {
   background: #fff;
-  padding: 32px 16px;
+  padding: 12px 12px;
 }
 .pagination-container.hidden {
   display: none;

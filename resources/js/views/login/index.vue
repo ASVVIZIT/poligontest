@@ -139,6 +139,13 @@ export default {
               this.loading = false;
             });
         } else {
+          this.$message({
+            message: ''.concat(this.$t('i18nViewLogin.title'),
+              ' ',
+              this.$t('i18nViewLogin.password_error'),
+            ),
+            type: 'error',
+          });
           console.log('error submit!!');
           return false;
         }

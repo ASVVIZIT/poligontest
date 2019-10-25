@@ -56,22 +56,22 @@ export default {
         legend: {
           left: 'center',
           bottom: '10',
-          data: ['Industries', 'Technology', 'Forex', 'Gold', 'Forecasts'],
+          data: ['Индустриализация', 'Технологии', 'Forex', 'Золото', 'Прогнозы'],
         },
         calculable: true,
         series: [
           {
-            name: 'WEEKLY WRITE ARTICLES',
+            name: 'Еженедельно написанные статьи',
             type: 'pie',
             roseType: 'radius',
             radius: [15, 95],
             center: ['50%', '38%'],
             data: [
-              { value: 320, name: 'Industries' },
-              { value: 240, name: 'Technology' },
+              { value: 320, name: 'Индустриализация' },
+              { value: 240, name: 'Технологии' },
               { value: 149, name: 'Forex' },
-              { value: 100, name: 'Gold' },
-              { value: 59, name: 'Forecasts' },
+              { value: 100, name: 'Золото' },
+              { value: 59, name: 'Прогнозы' },
             ],
             animationEasing: 'cubicInOut',
             animationDuration: 2600,

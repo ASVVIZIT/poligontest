@@ -43,23 +43,21 @@ class UserController extends Controller
     {
         $searchParams = $request->all();
         $userQuery = User::query();
+        $userQuery_role = User::query();
+
         $limit = Arr::get($searchParams, 'limit', static::ITEM_PER_PAGE);
         $role = Arr::get($searchParams, 'role', '');
         $keyword = Arr::get($searchParams, 'keyword', '');
 
         if (!empty($role)) {
-            $userQuery->whereHas('roles', function($q) use ($role) { $q->where('name', $role); });
+            $userQuery_role->whereHas('roles', function($q) use ($role) { $q->where('name', $role); });
+            return UserResource::collection($userQuery_role->paginate($limit));
         }
-
         if (!empty($keyword)) {
             $userQuery->where('name', 'LIKE', '%' . $keyword . '%');
-            $userQuery->where('firstname', 'LIKE', '%' . $keyword . '%');
-            $userQuery->where('surname', 'LIKE', '%' . $keyword . '%');
-            $userQuery->where('patronymic', 'LIKE', '%' . $keyword . '%');
-            $userQuery->whereDate('birthday', 'LIKE', '%' . $keyword . '%');
             $userQuery->where('email', 'LIKE', '%' . $keyword . '%');
+            return UserResource::collection($userQuery->paginate($limit));
         }
-
         return UserResource::collection($userQuery->paginate($limit));
     }
 
@@ -77,7 +75,11 @@ class UserController extends Controller
             array_merge(
                 $this->getValidationRules(),
                 [
-                    'password' => ['required', 'min:6'],
+                    'firstname' => 'nullable',
+                    'surname' => 'nullable',
+                    'patronymic' => 'nullable',
+                    'birthday' => 'nullable',
+                    'password' => ['required', 'min:8'],
                     'confirmPassword' => 'same:password',
                 ]
             )
@@ -89,10 +91,6 @@ class UserController extends Controller
             $params = $request->all();
             $user = User::create([
                 'name' => $params['name'],
-                'firstname' => $params['firstname'],
-                'surname' => $params['surname'],
-                'patronymic' => $params['patronymic'],
-                'birthday' => $params['birthday'],
                 'email' => $params['email'],
                 'password' => Hash::make($params['password']),
             ]);
@@ -259,6 +257,10 @@ class UserController extends Controller
     {
         return [
             'name' => 'required',
+            'firstname' => 'nullable',
+            'surname' => 'nullable',
+            'patronymic' => 'nullable',
+            'birthday' => 'nullable',
             'email' => $isNew ? 'required|email|unique:users' : 'required|email',
             'roles' => [
                 'required',

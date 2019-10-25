@@ -72,18 +72,18 @@ export default {
             },
           },
           indicator: [
-            { name: 'Sales', max: 10000 },
-            { name: 'Administration', max: 20000 },
-            { name: 'Information Techology', max: 20000 },
-            { name: 'Customer Support', max: 20000 },
-            { name: 'Development', max: 20000 },
-            { name: 'Marketing', max: 20000 },
+            { name: 'Продажи', max: 10000 },
+            { name: 'Администрация', max: 20000 },
+            { name: 'Информационные технологии', max: 22000 },
+            { name: 'Служба поддержки', max: 20000 },
+            { name: 'Развитие разработки', max: 20000 },
+            { name: 'Маркетинг', max: 20000 },
           ],
         },
         legend: {
           left: 'center',
           bottom: '10',
-          data: ['Allocated Budget', 'Expected Spending', 'Actual Spending'],
+          data: ['Выделенный бюджет', 'Ожидаемые расходы', 'Фактические расходы'],
         },
         series: [{
           type: 'radar',
@@ -100,15 +100,15 @@ export default {
           data: [
             {
               value: [5000, 7000, 12000, 11000, 15000, 14000],
-              name: 'Allocated Budget',
+              name: 'Выделенный бюджет',
             },
             {
               value: [4000, 9000, 15000, 15000, 13000, 11000],
-              name: 'Expected Spending',
+              name: 'Ожидаемые расходы',
             },
             {
               value: [5500, 11000, 12000, 15000, 12000, 12000],
-              name: 'Actual Spending',
+              name: 'Фактические расходы',
             },
           ],
           animationDuration: animationDuration,

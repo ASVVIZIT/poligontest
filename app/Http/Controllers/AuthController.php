@@ -32,7 +32,8 @@ class AuthController extends Controller
             return response()->json(new UserResource(Auth::user()), Response::HTTP_OK)->header('Authorization', $token);
         }
 
-        return response()->json(new JsonResponse([], 'login_error'), Response::HTTP_UNAUTHORIZED);
+        return response()->json(new JsonResponse([], 'Ошибка входа'), Response::HTTP_UNAUTHORIZED);
+
     }
 
     public function logout()

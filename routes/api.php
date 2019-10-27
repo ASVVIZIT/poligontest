@@ -42,7 +42,7 @@ Route::group(['middleware' => 'api'], function () {
 
     // Fake APIs
     Route::get('/table/list', function () {
-        $rowsNumber = mt_rand(20, 30);
+        $rowsNumber = mt_rand(200, 300);
         $data = [];
         for ($rowIndex = 0; $rowIndex < $rowsNumber; $rowIndex++) {
             $row = [
@@ -57,7 +57,7 @@ Route::group(['middleware' => 'api'], function () {
             $data[] = $row;
         }
 
-        return response()->json(new JsonResponse(['items' => $data]));
+        return response()->json(new JsonResponse(['items' => $data, 'total' => mt_rand(1000, 10000)]));
     });
 
     Route::get('/articles', function () {

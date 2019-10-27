@@ -12,38 +12,42 @@
       </template>
     </el-table-column>
 
-    <el-table-column width="180px" align="center" label="Date">
+    <el-table-column width="180px" align="center" label="Дата">
       <template slot-scope="scope">
         <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
       </template>
     </el-table-column>
 
-    <el-table-column min-width="300px" label="Title">
+    <el-table-column min-width="130px" label="Заголовок">
       <template slot-scope="scope">
         <span>{{ scope.row.title }}</span>
         <el-tag>{{ scope.row.type }}</el-tag>
       </template>
     </el-table-column>
-
-    <el-table-column width="110px" align="center" label="Author">
+    <el-table-column width="90px" label="Страна">
+      <template slot-scope="scope">
+        <el-tag>{{ scope.row.type }}</el-tag>
+      </template>
+    </el-table-column>
+    <el-table-column width="110px" align="center" label="Автор">
       <template slot-scope="scope">
         <span>{{ scope.row.author }}</span>
       </template>
     </el-table-column>
 
-    <el-table-column width="120px" label="Importance">
+    <el-table-column width="120px" label="Важно">
       <template slot-scope="scope">
         <svg-icon v-for="n in +scope.row.importance" :key="n" icon-class="star" />
       </template>
     </el-table-column>
 
-    <el-table-column align="center" label="Readings" width="95">
+    <el-table-column align="center" label="Показания" width="120">
       <template slot-scope="scope">
         <span>{{ scope.row.pageviews }}</span>
       </template>
     </el-table-column>
 
-    <el-table-column class-name="status-col" label="Status" width="110">
+    <el-table-column class-name="status-col" label="Статус" width="110">
       <template slot-scope="scope">
         <el-tag :type="scope.row.status | statusFilter">
           {{ scope.row.status }}
@@ -78,7 +82,7 @@ export default {
       list: null,
       listQuery: {
         page: 1,
-        limit: 5,
+        limit: 10,
         type: this.type,
         sort: '+id',
       },

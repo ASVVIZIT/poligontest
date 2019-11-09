@@ -21,6 +21,29 @@ class OrderResource extends Resource {
     });
   }
 }
+
+export function fetchOrder(id) {
+  return request({
+    url: '/orders/' + id,
+    method: 'get',
+  });
+}
+
+export function fetchPv(id) {
+  return request({
+    url: '/orders/' + id + '/pageviews',
+    method: 'get',
+  });
+}
+
+export function createOrder(data) {
+  return request({
+    url: '/orders/create',
+    method: 'post',
+    data,
+  });
+}
+
 export function fetchList(query) {
   return request({
     url: '/orders',

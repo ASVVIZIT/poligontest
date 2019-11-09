@@ -66,7 +66,7 @@ export default {
         },
         xAxis: [{
           type: 'category',
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          data: ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресение'],
           axisTick: {
             alignWithLabel: true,
           },
@@ -78,25 +78,25 @@ export default {
           },
         }],
         series: [{
-          name: 'pageA',
+          name: 'Бригада A',
           type: 'bar',
-          stack: 'vistors',
+          stack: 'Число часов',
           barWidth: '60%',
-          data: [79, 52, 200, 334, 390, 330, 220],
+          data: [65, 62, 200, 334, 390, 567, 220],
           animationDuration,
         }, {
-          name: 'pageB',
+          name: 'Бригада B',
           type: 'bar',
-          stack: 'vistors',
+          stack: 'Число часов',
           barWidth: '60%',
-          data: [80, 52, 200, 334, 390, 330, 220],
+          data: [80, 52, 200, 666, 567, 330, 220],
           animationDuration,
         }, {
-          name: 'pageC',
+          name: 'Бригада C',
           type: 'bar',
-          stack: 'vistors',
+          stack: 'Число часов',
           barWidth: '60%',
-          data: [30, 52, 200, 334, 390, 330, 220],
+          data: [30, 67, 367, 334, 390, 456, 567],
           animationDuration,
         }],
       });

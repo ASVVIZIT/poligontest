@@ -19,14 +19,15 @@ class CreateOrdersTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('user_id')->unsigned();
             $table->bigInteger('order_id')->unsigned();
-            $table->bigInteger('report_id')->unsigned()->unique();
-            $table->bigInteger('orderer_id')->unsigned()->unique();
-            $table->bigInteger('executor_id')->unsigned()->unique();
+            $table->bigInteger('report_id')->nullable();
+            $table->bigInteger('orderer_id')->unsigned();
+            $table->bigInteger('executor_id')->unsigned();
             $table->enum('status',['1','2','3','4','5'])->default(1);
 
             $table->timestamps();
             $table->softDeletes();
 
+            $table->text('title')->nullable();
             $table->text('note')->nullable();
             $table->float('sum')->nullable();
         });

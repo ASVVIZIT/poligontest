@@ -9,15 +9,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Class Order
  *
  * @property integer $user_id
- * @property integer $order_id  53535345
+ * @property integer $order_id
  * @property integer $report_id
  * @property integer $orderer_id
  * @property integer $executor_id
  * @property DataTime $created_at
  * @property DataTime $updated_at
  * @property DataTime $deleted_at
- * @property string $note sdfsdfdsf
- * @property float $sum 000.00
+ * @property string $note
+ * @property float $sum
  *
  * @method static Order create(array $order)
  * @package App
@@ -35,13 +35,13 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
-        'order_id',
-        'report_id',
         'orderer_id',
         'executor_id',
         'created_at',
         'updated_at',
         'deleted_at',
+        'status',
+        'title',
         'note',
         'sum',
     ];
@@ -59,4 +59,17 @@ class Order extends Model
 
         return false;
     }
+
+    /**
+     *
+     */
+    public function report()
+    {
+        return $this->hasMany('Report', 'order_id', 'id') ;
+    }
+
+    public function user() {
+        return $this->belongsTo('User', 'id', 'user_id') ;
+    }
+
 }

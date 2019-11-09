@@ -50,6 +50,7 @@ export default {
       tinymceId: this.id,
       fullscreen: false,
       languageTypeList: {
+        'ru': 'ru',
         'en': 'en',
         'zh': 'zh_CN',
       },

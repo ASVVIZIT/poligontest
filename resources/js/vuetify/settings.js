@@ -13,17 +13,17 @@ const themeCache = new LRU({
 const vuetify = new Vuetify({
   theme: {
     themes: {
-      light: {
+      dark: {
         primary: {
-          base: colors.blue.darken2,
+          base: '#3f51b5',
           darken2: colors.blue.darken1,
         },
-        secondary: colors.grey.lighten3,
-        accent: colors.shades.black,
+        secondary: '#000000',
+        accent: colors.shades.white,
         error: colors.red.accent3,
       },
-      dark: {
-        primary: colors.blue.lighten1,
+      light: {
+        primary: colors.blue.darken2,
       },
     },
     options: {

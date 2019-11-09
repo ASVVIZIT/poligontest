@@ -37,7 +37,7 @@ export default {
     pageSizes: {
       type: Array,
       default() {
-        return [3, 5, 8, 10, 15, 20, 30, 50, 100, 150, 200, 300, 500, 1000];
+        return [1, 3, 5, 8, 10, 15, 20, 30, 50, 100, 150, 200, 300, 500, 1000];
       },
     },
     layout: {
@@ -101,4 +101,5 @@ export default {
 .pagination-container.hidden {
   display: none;
 }
+
 </style>

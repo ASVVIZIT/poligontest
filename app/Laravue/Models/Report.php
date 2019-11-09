@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $title
  * @property float $price
  *
- * @method static Order create(array $order)
+ * @method static Order create(array $report)
  * @package App
  */
 
@@ -39,6 +39,7 @@ class Report extends Model
         'updated_at',
         'deleted_at',
         'title',
+        'note',
         'price',
     ];
 
@@ -52,7 +53,9 @@ class Report extends Model
                 return true;
             }
         }
-
         return false;
+    }
+    public function order() {
+        return $this->belongsTo('Order', 'id', 'order_id') ;
     }
 }

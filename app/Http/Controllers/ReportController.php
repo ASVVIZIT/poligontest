@@ -3,13 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\PermissionResource;
-use App\Http\Resources\OrderResource;
 use App\Http\Resources\ReportResource;
 use App\Laravue\Acl;
 use App\Laravue\JsonResponse;
 use App\Laravue\Models\Permission;
 use App\Laravue\Models\Role;
-use App\Laravue\Models\Order;
 use App\Laravue\Models\Report;
 use Illuminate\Http\Request;
 
@@ -20,7 +18,7 @@ use Validator;
 
 class ReportController extends Controller
 {
-    const ITEM_PER_PAGE = 20;
+    const ITEM_PER_PAGE = 5;
     /**
      * Display a listing of the resource.
      *
@@ -34,7 +32,6 @@ class ReportController extends Controller
         $reportQuery_role = Report::query();
         $reportQuery_status = Report::query();
         $limit = Arr::get($searchParams, 'limit', static::ITEM_PER_PAGE);
-
 
         $role = Arr::get($searchParams, 'role', '');
         $status = Arr::get($searchParams, 'status', '');
@@ -51,7 +48,6 @@ class ReportController extends Controller
         if (!empty($keyword)) {
             $reportQuery->where('id', 'LIKE', '%' . $keyword . '%');
             $reportQuery->where('user_id', 'LIKE', '%' . $keyword . '%');
-            $reportQuery->where('order_id', 'LIKE', '%' . $keyword . '%');
             return ReportResource::collection($reportQuery->paginate($limit));
         }
 
@@ -71,7 +67,7 @@ class ReportController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -82,7 +78,7 @@ class ReportController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\laravue\Models\Report  $report
+     * @param  \App\laravue\Models\Report $report)
      *
      * @return ReportResource
      */
@@ -94,7 +90,7 @@ class ReportController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\laravue\Models\Report  $report
+     * @param  \App\laravue\Models\Report $report
      * @return \Illuminate\Http\Response
      */
     public function edit(Report $report)
@@ -106,7 +102,7 @@ class ReportController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\laravue\Models\Report  $report
+     * @param  \App\laravue\Models\Report $report
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Report $report)
@@ -117,7 +113,7 @@ class ReportController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\laravue\Models\Report  $report
+     * @param  \App\laravue\Models\Report $report
      * @return \Illuminate\Http\Response
      */
     public function destroy(Report $report)
@@ -133,7 +129,7 @@ class ReportController extends Controller
     {
         return [
             'user_id' => 'required',
-            'order_id' => 'required',
+            'report_id' => 'nullable',
             'orderer_id' => 'nullable',
             'status' => 'nullable',
             'roles' => [

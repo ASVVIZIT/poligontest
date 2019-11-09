@@ -1,9 +1,10 @@
 {
-    "name": "tuandm/laravue",
+    "name": "asvvizit/poligontest",
     "description": "The beautiful dashboard for Laravel built by VueJS.",
     "keywords": [
         "laravel",
         "laravue",
+        "poligontest",
         "vue",
         "admin",
         "dashboard"
@@ -11,15 +12,15 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Tuan Duong",
-            "email": "bacduong@gmail.com",
-            "homepage": "https://laravue.dev",
+            "name": "Sergey Andrianov",
+            "email": "dillerasvasviner@gmail.com",
+            "homepage": "https://laravue.interiorasv.ru",
             "role": "Developer"
         }
     ],
     "type": "project",
     "require": {
-        "php": "^7.1.3",
+        "php": "^7.2.0",
         "fideloper/proxy": "^4.0",
         "laravel/framework": "5.8.*",
         "laravel/tinker": "^1.0",

@@ -29,7 +29,7 @@
           :search="expand.search"
           :custom-filter="filterSearch"
         >
-          {{ list.user_id }}
+          {{ list.order_id }}
           <template v-slot:top>
             <v-toolbar flat color="withe">
               <v-toolbar-title>Список заказов</v-toolbar-title>
@@ -40,6 +40,11 @@
                 append-icon="search"
                 hide-details
               />
+              <router-link :to="'/orders/order/create'">
+                <el-button type="primary" size="small" icon="el-icon-edit">
+                  Создать заказ
+                </el-button>
+              </router-link>
               <v-spacer />
               <v-switch v-model="expand.singleExpand" label="Одиночный режим" />
             </v-toolbar>
@@ -87,25 +92,41 @@
               <div style="padding: 20px; align-content: center">
                 <v-toolbar flat color="withe">
                   <v-toolbar-title>
-                    Список отчётов
+                    Список отчётов в заказе
                   </v-toolbar-title>
                 </v-toolbar>
                 <div>
                   <div class="filter-container">
-                    <el-input v-model="query.keyword" :placeholder="$t('table.keyword')" style="width: 250px;" class="filter-item" @keyup.enter.native="handleFilter" />
-                    <el-select v-model="query.role" :placeholder="$t('table.role')" clearable style="width: 120px" class="filter-item" @change="handleFilter">
-                      <el-option v-for="item in roles" :key="item" :label="item | uppercaseFirst" :value="item" />
-                    </el-select>
-                    <el-select v-model="query.status" :placeholder="$t('table.status')" clearable style="width: 110px" class="filter-item" @change="handleFilter">
+                    <el-input v-model="queryReport.keyword" :placeholder="$t('table.keyword')" style="width: 250px;" class="filter-item" @keyup.enter.native="handleFilterReport" />
+                    <el-select v-model="queryReport.status" :placeholder="$t('table.status')" clearable style="width: 110px" class="filter-item" @change="handleFilterReport">
                       <el-option v-for="item in status" :key="item" :label="item | uppercaseFirst" :value="item">
                         <span>
-                          <svg-icon v-for="items in status" :key="items" v-model="query.status" icon-class="star" class="meta-item__icon" />
+                          <div v-if="item === '1'">
+                            <svg-icon v-for="n in +item" :key="n" icon-class="star" class="meta-item__icon" />
+                          </div>
+                          <div v-else-if="item === '2'">
+                            <svg-icon v-for="n in +item" :key="n" icon-class="star" class="meta-item__icon" />
+                          </div>
+                          <div v-else-if="item === '3'">
+                            <svg-icon v-for="n in +item" :key="n" icon-class="star" class="meta-item__icon" />
+                          </div>
+                          <div v-else-if="item === '4'">
+                            <svg-icon v-for="n in +item" :key="n" icon-class="star" class="meta-item__icon" />
+                          </div>
+                          <div v-else-if="item === '5'">
+                            <svg-icon v-for="n in +item" :key="n" icon-class="star" class="meta-item__icon" />
+                          </div>
                         </span>
                       </el-option>
                     </el-select>
-                    <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+                    <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilterReport">
                       {{ $t('table.search') }}
                     </el-button>
+                    <router-link :to="'/reports/report/create'">
+                      <el-button type="primary" class="el-button filter-item el-button--primary el-button--medium" size="medium" icon="el-icon-edit">
+                        Добавить отчёт
+                      </el-button>
+                    </router-link>
                     <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-plus" @click="handleCreate">
                       {{ $t('table.add') }}
                     </el-button>
@@ -113,9 +134,9 @@
                       {{ $t('table.export') }}
                     </el-button>
                   </div>
-                  <pagination v-show="total>0" :total="total" :page.sync="query.page" :limit.sync="query.limit" align="center" @pagination="getList" />
+                  <pagination v-show="total>0" :total="total" :page.sync="queryReport.page" :limit.sync="queryReport.limit" align="left" style="margin-left: 20px" @pagination="getListReport" />
 
-                  <el-table v-loading="loading" :data="list" border stripe highlight-current-row style="width: 100%">
+                  <el-table v-loading="loadingReport" :data="listReport" :row-class-name="tableRowClassName" border stripe highlight-current-row style="width: 100%">
                     <el-table-column align="center" label="ID" width="120">
                       <template slot-scope="scope">
                         <span>{{ scope.row.index }}</span>
@@ -131,21 +152,6 @@
                         <span>{{ scope.row.order_id }}</span>
                       </template>
                     </el-table-column>
-                    <el-table-column align="center" label="report_id" width="150">
-                      <template slot-scope="scope">
-                        <span>{{ scope.row.report_id }}</span>
-                      </template>
-                    </el-table-column>
-                    <el-table-column align="center" label="orderer_id" width="150">
-                      <template slot-scope="scope">
-                        <span>{{ scope.row.orderer_id }}</span>
-                      </template>
-                    </el-table-column>
-                    <el-table-column align="center" label="executor_id" width="150">
-                      <template slot-scope="scope">
-                        <span>{{ scope.row.executor_id }}</span>
-                      </template>
-                    </el-table-column>
                     <el-table-column :label="$t('table.status')" width="110px">
                       <template slot-scope="scope">
                         <span>
@@ -154,27 +160,36 @@
                         </span>
                       </template>
                     </el-table-column>
-                    <el-table-column align="center" label="note" width="280">
+                    <el-table-column align="center" label="title" width="280">
                       <template slot-scope="scope">
-                        <span>{{ scope.row.note }}</span>
+                        <span>{{ scope.row.title }}</span>
                       </template>
                     </el-table-column>
-                    <el-table-column align="center" label="sum" width="80">
+                    <el-table-column align="center" label="price" width="80">
                       <template slot-scope="scope">
-                        <span>{{ scope.row.sum }}</span>
+                        <span>{{ scope.row.price }}</span>
                       </template>
                     </el-table-column>
-                    <el-table-column align="center" label="created_at_year" width="140">
+                    <el-table-column align="center" label="Actions" width="220">
+                      <template slot-scope="scope">
+                        <router-link :to="'/reports/report/edit/'+scope.row.id">
+                          <el-button type="primary" size="small" icon="el-icon-edit">
+                            Изменить
+                          </el-button>
+                        </router-link>
+                      </template>
+                    </el-table-column>
+                    <el-table-column align="center" label="created_at_year" width="130">
                       <template slot-scope="scope">
                         <span>{{ scope.row.created_at | parseTime('{d}/{m}/{y}') }}</span>
                       </template>
                     </el-table-column>
-                    <el-table-column align="center" label="created_at_time" width="160">
+                    <el-table-column align="center" label="created_at_time" width="130">
                       <template slot-scope="scope">
                         <span>{{ scope.row.created_at | parseTime('{h}:{i}:{s}') }}</span>
                       </template>
                     </el-table-column>
-                    <el-table-column align="center" label="updated_at_year" width="160">
+                    <el-table-column align="center" label="updated_at_year" width="130">
                       <template slot-scope="scope">
                         <span v-if="scope.row.updated_at !== ''">
                           {{ scope.row.updated_at | parseTime('{d}/{m}/{y}') }}
@@ -215,7 +230,7 @@
                       </template>
                     </el-table-column>
                   </el-table>
-                  <pagination v-show="total>0" :total="total" :page.sync="query.page" :limit.sync="query.limit" align="center" @pagination="getList" />
+                  <pagination v-show="total>0" :total="total" :page.sync="queryReport.page" :limit.sync="queryReport.limit" align="left" style="margin-left: 20px" @pagination="getListReport" />
                 </div>
               </div>
             </td>
@@ -282,14 +297,16 @@
 <script>
 import Pagination from '@/components/Pagination'; // Secondary package based on el-pagination
 
-import OrderResource from '@/api/order';
 import Resource from '@/api/resource';
+import OrderResource from '@/api/order';
+import ReportResource from '@/api/report';
 
 import waves from '@/directive/waves'; // Waves directive
 import permission from '@/directive/permission'; // Waves directive
 import checkPermission from '@/utils/permission'; // Permission checking
 
 const orderResource = new OrderResource();
+const reportResource = new ReportResource();
 const permissionResource = new Resource('permissions');
 
 export default {
@@ -325,6 +342,13 @@ export default {
           {
             text: 'Отчёты...',
             value: 'data-table-expand',
+            filterable: false,
+            sortable: false,
+          },
+          {
+            isEditorBottom: 'true',
+            text: 'Действия',
+            value: 'data-btn',
             filterable: false,
             sortable: false,
           },
@@ -415,15 +439,23 @@ export default {
         ],
       },
       list: null,
+      listReport: null,
       total: 1,
       loading: false,
+      loadingReport: false,
       downloading: false,
       orderCreating: false,
       query: {
         page: 1,
-        limit: 1000,
+        limit: 50000,
         keyword: '',
         role: '',
+        status: '',
+      },
+      queryReport: {
+        page: 1,
+        limit: 3,
+        keyword: '',
         status: '',
       },
       roles: ['admin', 'manager', 'editor', 'user', 'visitor'],
@@ -527,12 +559,20 @@ export default {
   },
   created() {
     this.resetNewOrder();
-    this.getList();
+    this.getListOrder();
     if (checkPermission(['manage permission'])) {
       this.getPermissions();
     }
   },
   methods: {
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex === 1) {
+        return 'warning-row';
+      } else if (rowIndex === 3) {
+        return 'success-row';
+      }
+      return '';
+    },
     filterSearch(value, search, item) {
       return value != null &&
         search != null &&
@@ -547,7 +587,7 @@ export default {
       this.menuPermissions = menu;
       this.otherPermissions = other;
     },
-    async getList() {
+    async getListOrder() {
       const { limit, page } = this.query;
       this.loading = true;
       const { data, meta } = await orderResource.list(this.query);
@@ -558,9 +598,24 @@ export default {
       this.total = meta.total;
       this.loading = false;
     },
+    async getListReport() {
+      const { limit, page } = this.queryReport;
+      this.loadingReport = true;
+      const { data, meta } = await reportResource.list(this.queryReport);
+      this.listReport = data;
+      this.listReport.forEach((element, index) => {
+        element['index'] = (page - 1) * limit + index + 1;
+      });
+      this.total = meta.total;
+      this.loadingReport = false;
+    },
     handleFilter() {
       this.query.page = 1;
-      this.getList();
+      this.getListOrder();
+    },
+    handleFilterReport() {
+      this.queryReport.page = 1;
+      this.getListReport();
     },
     handleCreate() {
       this.resetNewOrder();
@@ -692,7 +747,7 @@ export default {
         excel.export_json_to_excel({
           header: tHeader,
           data,
-          filename: 'order-list',
+          filename: 'order-id' + this.orderer_id + '-list',
         });
         this.downloading = false;
       });
@@ -745,20 +800,20 @@ export default {
     save() {
       this.expand.snack = true;
       this.expand.snackColor = 'success';
-      this.expand.snackText = 'Данные сохранены';
+      this.expand.snackText = 'Введенны данные подготовлены для сохранения';
     },
     cancel() {
       this.expand.snack = true;
       this.expand.snackColor = 'error';
-      this.expand.snackText = 'Отменено';
+      this.expand.snackText = 'Ввод отмененн';
     },
     open() {
       this.expand.snack = true;
       this.expand.snackColor = 'info';
-      this.expand.snackText = 'Диалог открыт';
+      this.expand.snackText = 'Диалог ввода открыт';
     },
     close() {
-      console.log('Диалог закрыт');
+      console.log('Диалог ввода закрыт');
     },
   },
 };
@@ -790,5 +845,11 @@ export default {
   .clear-left {
     clear: left;
   }
+}
+.el-table .warning-row {
+  background: oldlace;
+}
+.el-table .success-row {
+  background: #f0f9eb;
 }
 </style>

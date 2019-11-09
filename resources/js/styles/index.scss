@@ -146,11 +146,35 @@ aside {
   padding: 0;
 }
 /* is used to set the current page element global table. The background color when a line is selected*/
-.el-table__body tr.current-row>td{
+.el-table__body tr.current-row>td,
+.el-table__body tr.current-row.warning-row>td,
+.el-table__body tr.current-row.success-row>td,
+.el-table__body tr.current-row.finish-row>td{
   background-color: #75c6f1 !important;
   /* color: #f19944; */ /* Set the text color, you can choose not to set */
 }
+/* is used to set the current page element global table. The background color when a line is selected*/
+.el-table__body tr.warning-row>td{
+  background-color: #F5C2C2 !important;
+  /* color: #f19944; */ /* Set the text color, you can choose not to set */
+}
+/* is used to set the current page element global table. The background color when a line is selected*/
+.el-table__body tr.success-row>td{
+  background-color: #A0E17F !important;
+  /* color: #f19944; */ /* Set the text color, you can choose not to set */
+}
+/* is used to set the current page element global table. The background color when a line is selected*/
+.el-table__body tr.finish-row>td{
+  background-color: #79c3e1 !important;
+  /* color: #f19944; */ /* Set the text color, you can choose not to set */
+}
 /* is used to set the current page element global table mouse background color when moving to a line */
+
+.el-table__body tr.hover-row:hover,
+.el-table__body tr.hover-row:hover>td,
+.el-table__body tr.el-table__row.hover-row:hover>td,
+.el-table__body tr.el-table__row--striped.hover-row:hover,
+.el-table__body tr.el-table__row--striped.hover-row:hover>td,
 .el-table--enable-row-hover .el-table__body tr:hover>td {
   background-color: #f19944 !important;
 }

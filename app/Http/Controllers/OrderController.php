@@ -33,7 +33,6 @@ class OrderController extends Controller
         $orderQuery_status = Order::query();
         $limit = Arr::get($searchParams, 'limit', static::ITEM_PER_PAGE);
 
-
         $role = Arr::get($searchParams, 'role', '');
         $status = Arr::get($searchParams, 'status', '');
         $keyword = Arr::get($searchParams, 'keyword', '');

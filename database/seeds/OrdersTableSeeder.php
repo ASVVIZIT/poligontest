@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use Illuminate\Foundation\Auth\User;
+use App\Laravue\Models\Report;
 
 class OrdersTableSeeder extends Seeder
 {
@@ -47,21 +48,22 @@ class OrdersTableSeeder extends Seeder
             $arrayRundomTime = [null, date('Y-m-d h:m:s', $timestamp), date('Y-m-d h:m:s', $timestamp), date('Y-m-d h:m:s', $timestamp), date('Y-m-d h:m:s', $timestamp)];
             $summod = (rand(1, 9) & 0x00FFFFFF * 10);
             $summod_value = $summod * 1000;
-
+            $arrayOrderer = ['1', '2', '3', '4', '5', '6', '7'];
+            $arrayExecutor = ['1', '2', '3', '4', '5', '6', '7'];
             if ($summod_value % 10000 != 0) {
-                $summod_value1 = $summod_value;
+                $summod_value = $summod_value;
             }
             $data[] = [
                 'user_id' => User::all()->random()->id,
                 'order_id' => $string1 . $i,
-                'report_id' => $string2 . $i,
-                'orderer_id' => $string2 . $i,
-                'executor_id' => $string3 . $i,
+                'orderer_id' => $arrayOrderer[rand(0, 6)],
+                'executor_id' => $arrayExecutor[rand(0, 6)],
                 'status' => $arrayStatus[rand(0, 4)],
                 'created_at' => $arrayRundomTime[rand(1, 4)],
                 'updated_at' => $arrayRundomTime[rand(0, 4)],
-                'note' => 'text text text text',
-                'sum' => $summod_value1,
+                'title' => 'titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder ',
+                'note' => 'textOrder textOrder textOrder textOrder',
+                'sum' => $summod_value,
             ];
         }
       DB::table('orders')->insert($data);

@@ -40,6 +40,7 @@ final class Faker
 
     /**
      * @return \DateTime
+     * @throws \Exception
      */
     public static function randomDateTime(): \DateTime
     {

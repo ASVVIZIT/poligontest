@@ -1,5 +1,6 @@
 <?php
 
+use App\Laravue\Models\Order;
 use Illuminate\Database\Seeder;
 use Illuminate\Foundation\Auth\User;
 
@@ -30,7 +31,7 @@ class ReportsTableSeeder extends Seeder
         //End point of our date range.
         $end = strtotime("2019-01-01 12:10:10");
 
-        for ($i = 1; $i <= 250; $i++) {
+        for ($i = 1; $i <= 500; $i++) {
             $string1 = str_shuffle($pin1);
             $string2 = str_shuffle($pin2);
             //Custom range.
@@ -41,17 +42,17 @@ class ReportsTableSeeder extends Seeder
             $summod_value = $summod * 1000;
 
             if ($summod_value % 10000 != 0) {
-                $summod_value1 = $summod_value;
+                $summod_value = $summod_value;
             }
             $data[] = [
                 'user_id' => User::all()->random()->id,
-                'order_id' => $string1 . $i,
-                'report_id' => $string2 . $i,
+                'order_id' => Order::all()->random()->id,
                 'status' => $arrayStatus[rand(0, 4)],
                 'created_at' => $arrayRundomTime[rand(1, 4)],
                 'updated_at' => $arrayRundomTime[rand(0, 4)],
-                'title' => 'title title title title title title title title ',
-                'price' => $summod_value1,
+                'title' => 'titleReport titleReport titleReport titleReport titleReport titleReport titleReport titleReport ',
+                'note' => 'textReport textReport textReport textReport',
+                'price' => $summod_value,
             ];
         }
       DB::table('reports')->insert($data);

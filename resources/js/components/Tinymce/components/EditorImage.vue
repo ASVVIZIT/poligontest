@@ -1,7 +1,7 @@
 <template>
   <div class="upload-container">
     <el-button :style="{background:color,borderColor:color}" icon="el-icon-upload" size="mini" type="primary" @click=" dialogVisible=true">
-      Upload Image
+      Загрузить изображение
     </el-button>
     <el-dialog :visible.sync="dialogVisible">
       <el-upload
@@ -16,14 +16,14 @@
         list-type="picture-card"
       >
         <el-button size="small" type="primary">
-          Click here to upload
+          Нажмите здесь, чтобы загрузить
         </el-button>
       </el-upload>
       <el-button @click="dialogVisible = false">
-        Cancel
+        Отмена
       </el-button>
       <el-button type="primary" @click="handleSubmit">
-        Confirm
+        Подтвердить
       </el-button>
     </el-dialog>
   </div>
@@ -52,7 +52,7 @@ export default {
     handleSubmit() {
       const arr = Object.keys(this.listObj).map(v => this.listObj[v]);
       if (!this.checkAllSuccess()) {
-        this.$message('Please wait for all images to be uploaded successfully or there is a network problem, please refresh the page and re-upload!');
+        this.$message('Подождите, пока все изображения будут успешно загружены или возникли проблемы с сетью, обновите страницу и загрузите заново!');
         return;
       }
       this.$emit('successCBK', arr);

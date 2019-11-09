@@ -18,14 +18,15 @@ class CreateReportsTable extends Migration
 
             $table->bigIncrements('id');
             $table->bigInteger('user_id')->unsigned();
-            $table->bigInteger('order_id')->unsigned();
-            $table->bigInteger('report_id')->unsigned();
+            $table->bigInteger('order_id')->nullable();
+            $table->bigInteger('report_id')->nullable();
             $table->enum('status',['1','2','3','4','5'])->default(1);
 
             $table->timestamps();
             $table->softDeletes();
 
             $table->text('title')->nullable();
+            $table->text('note')->nullable();
             $table->float('price')->nullable();
         });
     }

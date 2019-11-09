@@ -11,7 +11,7 @@
     >
       <i class="el-icon-upload" />
       <div class="el-upload__text">
-        Drag files here or <em>Click to upload</em>
+        Перетащите файлы сюда или <em>Нажмите, чтобы загрузить</em>
       </div>
     </el-upload>
     <div class="image-preview image-app-preview">

@@ -20,6 +20,7 @@ class SetupRolePermissions extends Migration
             Role::findOrCreate($role, 'api');
         }
         $adminRole = Role::findByName(Acl::ROLE_ADMIN);
+        $moderatorRole = Role::findByName(Acl::ROLE_MODERATOR);
         $managerRole = Role::findByName(Acl::ROLE_MANAGER);
         $editorRole = Role::findByName(Acl::ROLE_EDITOR);
         $userRole = Role::findByName(Acl::ROLE_USER);
@@ -31,6 +32,8 @@ class SetupRolePermissions extends Migration
 
         // Setup basic permission
         $adminRole->givePermissionTo(Acl::permissions());
+        $moderatorRole->givePermissionTo(Acl::menuPermissions());
+        $moderatorRole->givePermissionTo(Acl::permissions([Acl::PERMISSION_PERMISSION_MODERATOR]));
         $managerRole->givePermissionTo(Acl::permissions([Acl::PERMISSION_PERMISSION_MANAGE]));
         $editorRole->givePermissionTo(Acl::menuPermissions());
         $editorRole->givePermissionTo(Acl::PERMISSION_ARTICLE_MANAGE);

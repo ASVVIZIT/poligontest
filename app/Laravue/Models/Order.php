@@ -2,6 +2,7 @@
 
 namespace App\Laravue\Models;
 
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -9,14 +10,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Class Order
  *
  * @property integer $user_id
- * @property integer $order_id
- * @property integer $report_id
  * @property integer $orderer_id
  * @property integer $executor_id
- * @property DataTime $created_at
- * @property DataTime $updated_at
- * @property DataTime $deleted_at
+ * @property string $title
  * @property string $note
+ * @property data $deleted_at
+ * @property string $content
+ * @property string $content_short
  * @property float $sum
  *
  * @method static Order create(array $order)
@@ -26,7 +26,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Order extends Model
 {
 
-    use SoftDeletes;
+    use Notifiable, SoftDeletes;
     /**
      * The attributes that are mass assignable.
      *
@@ -37,14 +37,16 @@ class Order extends Model
         'user_id',
         'orderer_id',
         'executor_id',
-        'created_at',
-        'updated_at',
-        'deleted_at',
         'status',
         'title',
         'note',
+        'deleted_at',
+        'content',
+        'content_short',
         'sum',
     ];
+
+    private $status;
 
     /**
      * @return bool
@@ -59,6 +61,20 @@ class Order extends Model
 
         return false;
     }
+
+    /**
+     * Атрибуты, для которых запрещено массовое назначение.
+     *
+     * @var array
+     */
+    protected $guarded = [];
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['deleted_at'];
 
     /**
      *

@@ -51,7 +51,8 @@ class ReportsTableSeeder extends Seeder
                 'created_at' => $arrayRundomTime[rand(1, 4)],
                 'updated_at' => $arrayRundomTime[rand(0, 4)],
                 'title' => 'titleReport titleReport titleReport titleReport titleReport titleReport titleReport titleReport ',
-                'note' => 'textReport textReport textReport textReport',
+                'content' => 'contentReport contentReport contentReport contentReport contentReport contentReport contentReport contentReport contentReport contentReport contentReport contentReport',
+                'content_short' => 'content_short_textReport content_short_textReport content_short_textReport content_short_textReport',
                 'price' => $summod_value,
             ];
         }

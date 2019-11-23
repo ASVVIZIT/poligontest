@@ -5,13 +5,13 @@ const state = {
       executor_id: '1',
       value: 'lab1',
       label: 'Электролаборатория ООО ЭлектроСити 1',
-      photo: '/favicon/android-icon-192x192.png',
+      photo: '/favicon/favicon-32x32.png',
     },
     {
       executor_id: '2',
       value: 'lab2',
       label: 'Электролаборатория ООО ЭлектроСити 2',
-      photo: '/favicon/favicon-32x32.png',
+      photo: '/favicon/android-icon-192x192.png',
     },
     {
       executor_id: '3',

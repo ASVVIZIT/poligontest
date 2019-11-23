@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use Illuminate\Foundation\Auth\User;
-use App\Laravue\Models\Report;
+use App\Laravue\Models\Order;
 
 class OrdersTableSeeder extends Seeder
 {
@@ -15,11 +15,11 @@ class OrdersTableSeeder extends Seeder
     public function run()
     {
         $data = [];
-// Available alpha caracters
+        // Available alpha caracters
         // $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
          $characters = '0123456789';
          $characters2 = '01234567';
-// generate a pin based on 2 * 7 digits + a random character
+        // generate a pin based on 2 * 7 digits + a random character
         $pin = mt_rand(10000, 100000)
             . mt_rand(10000, 100000)
             . $characters[rand(3, strlen($characters - 3))];
@@ -32,7 +32,7 @@ class OrdersTableSeeder extends Seeder
         $pin3 = mt_rand(100, 999)
             . mt_rand(100, 999)
             . $characters[rand(3, strlen($characters2 - 3))];
-// shuffle the result
+        // shuffle the result
         //Start point of our date range.
         $start = strtotime("2015-01-01 01:10:10");
         //End point of our date range.
@@ -55,14 +55,15 @@ class OrdersTableSeeder extends Seeder
             }
             $data[] = [
                 'user_id' => User::all()->random()->id,
-                'order_id' => $string1 . $i,
                 'orderer_id' => $arrayOrderer[rand(0, 6)],
                 'executor_id' => $arrayExecutor[rand(0, 6)],
                 'status' => $arrayStatus[rand(0, 4)],
                 'created_at' => $arrayRundomTime[rand(1, 4)],
                 'updated_at' => $arrayRundomTime[rand(0, 4)],
-                'title' => 'titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder ',
+                'title' => 'titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder  titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder titleOrder',
                 'note' => 'textOrder textOrder textOrder textOrder',
+                'content' => 'contentOrder contentOrder contentOrder contentOrder contentOrder contentOrder contentOrder contentOrder contentOrder contentOrder contentOrder contentOrder',
+                'content_short' => 'content_short_textOrder content_short_textOrder content_short_textOrder content_short_textOrder',
                 'sum' => $summod_value,
             ];
         }

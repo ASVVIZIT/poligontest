@@ -4,12 +4,10 @@
       <sticky :class-name="'sub-navbar '+postForm.status">
         <el-row>
           <el-col :span="6">
-            <label>Заказчик: </label>
-            <SelectOrdererDropdown v-model="postForm.orderer_id" :options="orderersData" />
+            <div hidden>1</div>
           </el-col>
           <el-col :span="7">
-            <label>Исполнитель: </label>
-            <SelectExecutorDropdown v-model="postForm.executor_id" :options="executorsData" />
+            <div hidden>2</div>
           </el-col>
           <el-col :span="6">
             <el-dropdown trigger="click">
@@ -115,7 +113,7 @@
             autosize
             placeholder="Пожайлуста введите содержание"
           />
-          <span v-show="contentShortLength" class="word-counter">{{ contentShortLength }} word</span>
+          <span v-show="contentShortLength" class="word-counter">{{ contentShortLength }} Введено символов</span>
         </el-form-item>
 
         <el-form-item prop="content" style="margin-bottom: 30px;" label-width="190px" label="Полное описание:">
@@ -139,8 +137,6 @@ import { validURL } from '@/utils/validate';
 import { fetchReport } from '@/api/report';
 import { userSearch } from '@/api/search';
 import {
-  SelectOrdererDropdown,
-  SelectExecutorDropdown,
   CommentDropdown,
   PlatformDropdown,
   SourceUrlDropdown,
@@ -150,6 +146,7 @@ import { mapState } from 'vuex';
 const defaultForm = {
   status: '0',
   title: '',
+  created_at: new Date(),
   content: '',
   content_short: '',
   source_uri: '',
@@ -164,8 +161,6 @@ const defaultForm = {
 export default {
   name: 'ReportDetail',
   components: {
-    SelectOrdererDropdown,
-    SelectExecutorDropdown,
     Tinymce,
     MDinput,
     Upload,
@@ -238,6 +233,7 @@ export default {
     if (this.isEdit) {
       const id = this.$route.params && this.$route.params.id;
       this.fetchData(id);
+      this.fetchReport(id);
     } else {
       this.postForm = Object.assign({}, defaultForm);
     }
@@ -300,13 +296,13 @@ export default {
         this.postForm.title.length === 0
       ) {
         this.$message({
-          message: 'Please enter required title and content',
+          message: 'Пожалуйста, введите необходимый заголовок и содержание',
           type: 'warning',
         });
         return;
       }
       this.$message({
-        message: 'Successfully saved',
+        message: 'Успешно сохранено',
         type: 'success',
         showClose: true,
         duration: 1000,

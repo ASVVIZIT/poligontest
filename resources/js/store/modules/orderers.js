@@ -2,6 +2,12 @@
 const state = {
   data: [
     {
+      orderer_id: '0',
+      value: 'null',
+      label: 'Выбирите заказчика',
+      photo: '',
+    },
+    {
       orderer_id: '1',
       value: 'pyterochka',
       label: 'Магазин OOO "Пятерочка"',

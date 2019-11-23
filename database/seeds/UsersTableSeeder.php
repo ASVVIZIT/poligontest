@@ -1,8 +1,12 @@
 <?php
 
+use App\Laravue\Models\User;
+use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
 use App\Laravue\Acl;
 use App\Laravue\Models\Role;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class UsersTableSeeder extends Seeder
 {
@@ -67,15 +71,16 @@ class UsersTableSeeder extends Seeder
             "Wilhelm Conrad Roentgen",
             "Wolfgang Ernst Pauli",
         ];
-
+        //Start point of our date range.
+        $start = strtotime("1961-09-10 12:10:10");
+        //End point of our date range.
+        $end = strtotime("1990-06-22 24:00:00");
+        $faker = Faker::create('Ru_RU');
         foreach ($userList as $fullName) {
-
-            //Start point of our date range.
-            $start = strtotime("10 09 1971");
-            //End point of our date range.
-            $end = strtotime("22 06 1990");
+            // Returns always random genders according to the name, inclusive mixed !!
+            $gender = ['male', 'female'];
             $timestamp = mt_rand($start, $end);
-
+            $arrayRundomTime = [null, date('Y-m-d h:m:s', $timestamp), date('Y-m-d h:m:s', $timestamp), date('Y-m-d h:m:s', $timestamp), date('Y-m-d h:m:s', $timestamp)];
             $name = str_replace(' ', '.', $fullName);
             $roleName = \App\Laravue\Faker::randomInArray([
                 Acl::ROLE_MANAGER,
@@ -87,7 +92,7 @@ class UsersTableSeeder extends Seeder
             $fullName = str_replace('. ', '._', $fullName);
             $fullNamArray = str_replace(' ', '||', $fullName);
             $fullNamArray = str_replace('._', '. ', $fullNamArray);
-                $fullNameBuffer = explode("||", $fullNamArray);
+            $fullNameBuffer = explode("||", $fullNamArray);
 
                 if (count($fullNameBuffer) === 3) {
                     $firstname = $fullNameBuffer[0];
@@ -107,14 +112,20 @@ class UsersTableSeeder extends Seeder
                 }
 
             $fullName = str_replace('._', '. ', $fullName);
-            $user = \App\Laravue\Models\User::create([
+            $user = User::create([
                 'name' => $fullName,
                 'firstname' => $firstname,
                 'surname' => $surname,
                 'patronymic' => $patronymic,
-                'birthday' => date('Y-m-d', $timestamp),
+                'gender' => $gender[rand(0, 1)],
+                'birthday' => $arrayRundomTime[rand(1, 4)],
                 'email' => strtolower($firstname_email . str_replace('.', '_', str_replace(' ', '', $surname))) . '@laravue.dev',
-                'password' => \Illuminate\Support\Facades\Hash::make('randomrandom'),
+                'phone1' => $faker->phoneNumber,
+                'phone2' => $faker->phoneNumber,
+                'skype' => $faker->userName,
+                'address' => $faker->address,
+                'password' => Hash::make('randomrandom'),
+                'remember_token' => str::random(20),
             ]);
             $role = Role::findByName($roleName);
             $user->syncRoles($role);

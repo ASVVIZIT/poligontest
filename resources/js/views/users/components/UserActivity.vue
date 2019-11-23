@@ -57,16 +57,31 @@
                     <el-form-item label="Отчество">
                       <el-input v-model="user.patronymic" :disabled="user.role === 'admin'" />
                     </el-form-item>
-                    <el-form-item label="День рождения">
-                      <el-date-picker
-                        v-model="user.birthday"
-                        type="date"
-                        format="dd.MM.yyyy"
-                        value-format="yyyy-MM-dd"
-                        placeholder="Дата дня рождения"
-                        :disabled="user.role === 'admin'"
-                      />
-                    </el-form-item>
+                    <el-row>
+                      <el-col :span="5" :xs="{span: 24}" :sm="{span: 16}" :md="{span: 12}" :lg="{span: 8}" :xl="{span: 4}">
+                        <div style="margin-right: 10px">
+                          <el-form-item label="Пол">
+                            <el-select v-model="user.gender" :disabled="user.role === 'admin'">
+                              <el-option v-for="item in genderVulue" :key="item" :label="item | uppercaseFirst" :value="item" />
+                            </el-select>
+                          </el-form-item>
+                        </div>
+                      </el-col>
+                      <el-col :span="5" :xs="{span: 24}" :sm="{span: 16}" :md="{span: 12}" :lg="{span: 8}" :xl="{span: 4}">
+                        <div style="margin-right: 10px">
+                          <el-form-item label="День рождения">
+                            <el-date-picker
+                              v-model="user.birthday"
+                              type="date"
+                              format="dd.MM.yyyy"
+                              value-format="yyyy-MM-dd"
+                              placeholder="Дата дня рождения"
+                              :disabled="user.role === 'admin'"
+                            />
+                          </el-form-item>
+                        </div>
+                      </el-col>
+                    </el-row>
                   </v-card-text>
                   <v-card-text>
                     <el-form-item>
@@ -145,9 +160,17 @@
               <v-tab-item :key="4">
                 <v-card>
                   <el-form-item>
-                    <p>Внимание!!! данный раздел в разработке</p>
                     <v-card-text>
-                      <p>тут будут поля для адресов</p>
+                      <el-form-item label="Адресс">
+                        <el-input v-model="user.address" :disabled="user.role === 'admin'" />
+                      </el-form-item>
+                    </v-card-text>
+                    <v-card-text>
+                      <el-form-item>
+                        <el-button type="primary" :disabled="user.role === 'admin'" @click="onSubmitAddress">
+                          Обновить профиль
+                        </el-button>
+                      </el-form-item>
                     </v-card-text>
                   </el-form-item>
                 </v-card>
@@ -379,6 +402,8 @@ export default {
           firstname: '',
           surname: '',
           patronymic: '',
+          address: '',
+          gender: '',
           birthday: '',
           email: '',
           password: '',
@@ -398,6 +423,7 @@ export default {
         'https://cdn.laravue.dev/photo4.jpg',
       ],
       updating: false,
+      genderVulue: ['male', 'female'],
       passwordType: 'password',
       tab: {
         tab: null,
@@ -428,11 +454,28 @@ export default {
     onSubmitProfile() {
       this.updating = true;
       userResource
-        .update(this.user.id, this.user, this.firstname, this.surname, this.patronymic, this.birthday)
+        .update(this.user.id, this.user, this.firstname, this.surname, this.patronymic, this.gender, this.birthday)
         .then(response => {
           this.updating = false;
           this.$message({
             message: 'Информация о пользователе успешно обновлена',
+            type: 'success',
+            duration: 5 * 1000,
+          });
+        })
+        .catch(error => {
+          console.log(error);
+          this.updating = false;
+        });
+    },
+    onSubmitAddress() {
+      this.updating = true;
+      userResource
+        .update(this.user.id, this.user, this.address)
+        .then(response => {
+          this.updating = false;
+          this.$message({
+            message: 'Информация о адресе успешно обновлена',
             type: 'success',
             duration: 5 * 1000,
           });
@@ -479,7 +522,7 @@ export default {
     onSubmit() {
       this.updating = true;
       userResource
-        .update(this.user.id, this.user, this.firstname, this.surname, this.patronymic, this.birthday, this.password)
+        .update(this.user.id, this.user, this.firstname, this.surname, this.patronymic, this.address, this.birthday, this.password)
         .then(response => {
           this.updating = false;
           this.$message({

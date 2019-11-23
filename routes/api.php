@@ -26,6 +26,9 @@ Route::group(['middleware' => 'api'], function () {
     });
 
     Route::apiResource('users', 'UserController')->middleware('permission:' . \App\Laravue\Acl::PERMISSION_USER_MANAGE);
+    Route::get('users/{id}/restore', 'UserController@restore');
+    Route::get('users/{id}/destroy', 'UserController@destroy');
+
     Route::get('users/{user}/permissions', 'UserController@permissions')->middleware('permission:' . \App\Laravue\Acl::PERMISSION_PERMISSION_MANAGE);
     Route::put('users/{user}/permissions', 'UserController@updatePermissions')->middleware('permission:' . \App\Laravue\Acl::PERMISSION_PERMISSION_MANAGE);
     Route::apiResource('roles', 'RoleController')->middleware('permission:' . \App\Laravue\Acl::PERMISSION_PERMISSION_MANAGE);
@@ -35,10 +38,14 @@ Route::group(['middleware' => 'api'], function () {
     Route::apiResource('orders', 'OrderController')->middleware('permission:' . \App\Laravue\Acl::PERMISSION_USER_MANAGE);
     Route::get('orders/{order}/permissions', 'OrderController@permissions')->middleware('permission:' . \App\Laravue\Acl::PERMISSION_PERMISSION_MANAGE);
     Route::put('orders/{order}/permissions', 'OrderController@updatePermissions')->middleware('permission:' . \App\Laravue\Acl::PERMISSION_PERMISSION_MANAGE);
+    Route::post('orders/{id}','OrderController@restore');
+    Route::get('orders/{id}','OrderController@destroy');
 
     Route::apiResource('reports', 'ReportController')->middleware('permission:' . \App\Laravue\Acl::PERMISSION_USER_MANAGE);
     Route::get('reports/{report}/permissions', 'ReportController@permissions')->middleware('permission:' . \App\Laravue\Acl::PERMISSION_PERMISSION_MANAGE);
     Route::put('reports/{report}/permissions', 'ReportController@updatePermissions')->middleware('permission:' . \App\Laravue\Acl::PERMISSION_PERMISSION_MANAGE);
+    Route::post('reports/{id}','ReportController@restore');
+    Route::get('reports/{id}','ReportController@destroy');
 
     // Fake APIs
     Route::get('/table/list', function () {

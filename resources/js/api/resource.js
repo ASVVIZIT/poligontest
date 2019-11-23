@@ -34,6 +34,14 @@ class Resource {
       data: resource,
     });
   }
+
+  restore(id) {
+    return request({
+      url: '/' + this.uri + '/' + id + '/restore',
+      method: 'get',
+    });
+  }
+
   destroy(id) {
     return request({
       url: '/' + this.uri + '/' + id,

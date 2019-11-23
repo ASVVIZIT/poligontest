@@ -198,6 +198,7 @@ export default {
     'password': 'Password',
     'confirmPassword': 'Confirm password',
     'name': 'Name',
+    'gender': 'Sex',
     'email': 'Email',
   },
   roles: {

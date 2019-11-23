@@ -32,12 +32,12 @@ export default {
     },
     limit: {
       type: Number,
-      default: 10,
+      default: 8,
     },
     pageSizes: {
       type: Array,
       default() {
-        return [1, 3, 5, 10, 15, 20, 30, 50, 100, 150, 200, 300, 500];
+        return [1, 3, 5, 8, 10, 15, 20, 30, 50, 100, 150, 200, 300, 500];
       },
     },
     layout: {

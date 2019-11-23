@@ -2,6 +2,7 @@
 
 namespace App\Laravue\Models;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
@@ -14,7 +15,13 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property string $surname
  * @property string $firstname
  * @property string $patronymic
+ * @property string $gender
+ * @property string $phone1
+ * @property string $phone2
+ * @property string $skype
+ * @property text $address
  * @property data $birthday
+ * @property data $deleted_at
  * @property string $email
  * @property string $password
  * @property Role[] $roles
@@ -24,7 +31,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  */
 class User extends Authenticatable implements JWTSubject
 {
-    use Notifiable, HasRoles;
+    use Notifiable, HasRoles, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -32,7 +39,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'name', 'surname', 'firstname', 'patronymic', 'birthday', 'email', 'password',
+        'name', 'surname', 'firstname', 'patronymic', 'gender', 'phone1', 'phone2', 'skype', 'address', 'birthday', 'deleted_at', 'email', 'password',
     ];
 
     /**
@@ -58,6 +65,13 @@ class User extends Authenticatable implements JWTSubject
      * @var string
      */
     protected $guard_name = 'api';
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['deleted_at'];
 
     /**
      * @inheritdoc
@@ -90,6 +104,6 @@ class User extends Authenticatable implements JWTSubject
     }
     public function order()
     {
-        return $this->hasMany('Order', 'user_id', 'id') ;
+        return $this->hasMany('Order', 'user_id', 'id');
     }
 }

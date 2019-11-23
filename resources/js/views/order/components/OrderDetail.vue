@@ -3,6 +3,13 @@
     <el-form ref="postForm" :model="postForm" :rules="rules" class="form-container" label-position="top">
       <sticky :class-name="'sub-navbar '+postForm.status">
         <el-row>
+          <el-col :span="5">
+            <div style="display: inline-block; margin-left: 30px;">
+              <label>Вы редактируете заказ id: {{ postForm.id }}</label>
+            </div>
+          </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="6">
             <label>Заказчик: </label>
             <SelectOrdererDropdown v-model="postForm.orderer_id" :options="orderersData" />
@@ -36,7 +43,7 @@
         <el-row>
           <el-col :span="24">
             <el-form-item style="margin-bottom: 40px;" prop="Заголовок">
-              <MDinput v-model="postForm.title" :maxlength="100" name="name" required>
+              <MDinput v-model="postForm.title" :maxlength="100" name="name">
                 Заголовок
               </MDinput>
             </el-form-item>
@@ -100,14 +107,14 @@
 
         <el-form-item style="margin-bottom: 40px;" label-width="190px" label="Краткое описание:">
           <el-input
-            v-model="postForm.note"
+            v-model="postForm.content_short"
             :rows="5"
             type="textarea"
             class="article-textarea"
             autosize
             placeholder="Пожайлуста введите содержание"
           />
-          <span v-show="contentShortLength" class="word-counter">{{ contentShortLength }} word</span>
+          <span v-show="contentShortLength" class="word-counter">{{ contentShortLength }} Введено символов</span>
         </el-form-item>
 
         <el-form-item prop="content" style="margin-bottom: 30px;" label-width="190px" label="Полное описание:">
@@ -141,6 +148,10 @@ import { mapState } from 'vuex';
 
 const defaultForm = {
   status: '0',
+  title: '',
+  orderer_id: 0,
+  executor_id: 1,
+  created_at: new Date(),
   content: '',
   content_short: '',
   source_uri: '',
@@ -229,6 +240,7 @@ export default {
     if (this.isEdit) {
       const id = this.$route.params && this.$route.params.id;
       this.fetchData(id);
+      this.fetchOrder(id);
     } else {
       this.postForm = Object.assign({}, defaultForm);
     }

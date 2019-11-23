@@ -19,10 +19,12 @@ use Illuminate\Support\Str;
 final class Acl
 {
     const ROLE_ADMIN = 'admin';
+    const ROLE_MODERATOR = 'moderator';
     const ROLE_MANAGER = 'manager';
     const ROLE_EDITOR = 'editor';
     const ROLE_USER = 'user';
     const ROLE_VISITOR = 'visitor';
+    const ROLE_GUEST = 'guest';
 
     const PERMISSION_VIEW_MENU_ELEMENT_UI = 'view menu element ui';
     const PERMISSION_VIEW_MENU_PERMISSION = 'view menu permission';
@@ -40,7 +42,9 @@ final class Acl
     const PERMISSION_VIEW_MENU_I18N = 'view menu i18n';
 
     const PERMISSION_USER_MANAGE = 'manage user';
+    const PERMISSION_USER_MODERATOR = 'manage moderator';
     const PERMISSION_ARTICLE_MANAGE = 'manage article';
+    const PERMISSION_PERMISSION_MODERATOR = 'moderator permission';
     const PERMISSION_PERMISSION_MANAGE = 'manage permission';
 
     /**

@@ -225,6 +225,7 @@ export default {
     'password': 'Пароль',
     'confirmPassword': 'Подтвердите пароль',
     'name': 'Имя',
+    'gender': 'Пол',
     'email': 'Email Адресс',
   },
   roles: {

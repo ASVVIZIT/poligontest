@@ -20,8 +20,16 @@ class UserResource extends JsonResource
             'surname' => $this->surname,
             'firstname' => $this->firstname,
             'patronymic' => $this->patronymic,
-            'birthday' => $this->birthday,
+            'gender' => $this->gender,
+            'phone1' => $this->phone1,
+            'phone2' => $this->phone2,
+            'skype' => $this->skype,
+            'address' => $this->address,
             'email' => $this->email,
+            'birthday' => $this->birthday,
+            'created_at' => $this->created_at ?? '',
+            'updated_at' => $this->updated_at ?? '',
+            'deleted_at' => $this->deleted_at ?? '',
             'roles' => array_map(
                 function ($role) {
                     return $role['name'];

@@ -1,127 +1,293 @@
 <template>
-  <div class="app-container">
-    <div class="filter-container">
-      <el-input v-model="query.keyword" :placeholder="$t('table.keyword')" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="query.role" :placeholder="$t('table.role')" clearable style="width: 110px" class="filter-item" @change="handleFilter">
-        <el-option v-for="item in roles" :key="item" :label="item | uppercaseFirst" :value="item" />
-      </el-select>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        {{ $t('table.search') }}
-      </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-plus" @click="handleCreate">
-        {{ $t('table.add') }}
-      </el-button>
-      <el-button v-waves :loading="downloading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
-        {{ $t('table.export') }}
-      </el-button>
+  <v-app id="inspire">
+    <div class="app-container">
+      <v-card
+        class="mx-auto"
+        max-width="100%"
+      >
+        <v-card-text>
+          <div class="filter-container">
+            <v-toolbar flat color="white" dark height="60px">
+              <el-select v-model="query.role" :placeholder="$t('table.role')" clearable style="width: 110px; margin-left: 80px; margin-right: 10px;" class="filter-item" @change="handleFilter">
+                <el-option v-for="item in roles" :key="item" :label="item | uppercaseFirst" :value="item" />
+              </el-select>
+              <el-input v-model="query.keyword" :placeholder="$t('table.keyword')" clearable style="width: 450px; margin-right: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
+              <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+                {{ $t('table.search') }}
+              </el-button>
+              <v-spacer />
+              <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-plus" @click="handleCreate">
+                {{ $t('table.add') }}
+              </el-button>
+              <el-button v-waves :loading="downloading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
+                {{ $t('table.export') }}
+              </el-button>
+              <v-spacer />
+            </v-toolbar>
+          </div>
+
+          <el-table
+            v-loading="loading"
+            :data="list"
+            :default-sort="{prop: 'value', order: 'descending'}"
+            :sortable="false"
+            border
+            fit
+            highlight-current-row
+            :sort-by.sync="sortBy"
+            :sort-desc.sync="descending"
+            :row-key="getRowKeys"
+            :min-height="300"
+            :max-height="700"
+            style="width: 100%"
+          >
+            <el-table-column fixed="left" prop="ID" type="selection" :reserve-selection="true" width="45" />
+            <el-table-column fixed="left" prop="value" :sortable="true" :sort-method="(a, b) => sortData(a, b, 'value')" :sort-orders="['descending']" align="center" label="ID" width="60">
+              <template slot-scope="scope">
+                <span>{{ scope.row.index }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column fixed="left" prop="roles" :sortable="true" column-key="roles" align="center" label="Роль" width="100">
+              <template slot-scope="scope">
+                <div v-show="scope.row.roles.join(', ') === ''">
+                  <span>Нет роли</span>
+                </div>
+                <div v-show="scope.row.roles.join(', ') !== null">
+                  <span>{{ scope.row.roles.join(', ') }}</span>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column fixed="left" align="center" label="Имя пользователя" width="280">
+              <template slot-scope="scope">
+                <span>{{ scope.row.name }}</span>
+              </template>
+            </el-table-column>
+
+            <el-table-column
+              align="center"
+              prop="gender"
+              :sortable="true"
+              column-key="gender"
+              label="Пол"
+              width="120"
+              :filters="[{text: 'Женщина', value: 'female'}, {text: 'Мужчина', value: 'male'}]"
+              :filter-method="filterHandler"
+            >
+              <template slot-scope="scope">
+                <div v-if="scope.row.gender === 'male'">
+                  <div class="size">
+                    <v-icon v-show="scope.row.gender !== null" color="blue">mdi-gender-male</v-icon>
+                    <span>Мужчина</span>
+                  </div>
+                </div>
+                <div v-else-if="scope.row.gender === 'female'">
+                  <div class="size">
+                    <v-icon v-show="scope.row.gender !== null" color="pink">mdi-gender-female</v-icon>
+                    <span>Женщина</span>
+                  </div>
+                </div>
+              </template>
+            </el-table-column>
+
+            <el-table-column align="left" label="E-mail" width="240">
+              <template slot-scope="scope">
+                <div class="size">
+                  <v-icon v-show="scope.row.email !== null" color="grey">mdi-email</v-icon>
+                  <span>{{ scope.row.email }}</span>
+                </div>
+              </template>
+            </el-table-column>
+
+            <el-table-column align="left" label="Телефоны все" width="180">
+              <template slot-scope="scope">
+                <div style="display: inline-grid; position: relative; grid-row-gap: 50px; grid-template-columns: auto auto auto;">
+                  <div style="display: inline-grid; padding-right: 4px">
+                    <v-icon v-show="scope.row.phone1 !== null || scope.row.phone2 !== null" color="red">mdi-phone-in-talk</v-icon>
+                  </div>
+                  <div style="display: inline-grid;">
+                    <div class="size">
+                      <span>{{ scope.row.phone1 }}</span>
+                    </div>
+                    <div class="size">
+                      <span>{{ scope.row.phone2 }}</span>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </el-table-column>
+
+            <el-table-column align="left" label="Skype" width="180">
+              <template slot-scope="scope">
+                <div class="size">
+                  <v-icon v-show="scope.row.skype !== null" color="green">mdi-skype</v-icon>
+                  <span>{{ scope.row.skype }}</span>
+                </div>
+              </template>
+            </el-table-column>
+
+            <el-table-column align="left" label="Адресс" width="320">
+              <template slot-scope="scope">
+                <div>
+                  <div class="container__text__cell">
+                    <div class="center__text__cell">
+                      <el-tooltip placement="right-start" style="right: 5px;" effect="light">
+                        <v-icon v-show="scope.row.address !== null" color="primary">mdi-tooltip-text</v-icon>
+                        <div slot="content" style="min-width: 10px; max-width: 600px;">
+                          <span> {{ scope.row && scope.row.address }} </span>
+                        </div>
+                      </el-tooltip>
+                    </div>
+                    <div class="size">
+                      {{ scope.row && scope.row.address }}
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="left"
+              label="Дата деактивации"
+              prop="deleted_at"
+              :sortable="true"
+              column-key="deleted_at"
+              width="220"
+            >
+              <template slot-scope="scope">
+                <div>
+                  <i v-if="scope.row.deleted_at !== ''" class="el-icon-date" />
+                  <span v-if="scope.row.deleted_at !== ''">
+                    {{ scope.row && scope.row.deleted_at | parseTime('{d}/{m}/{y}') }}
+                  </span>
+                  <span v-else>
+                    нет года деактивации
+                  </span>
+                </div>
+                <div>
+                  <i v-if="scope.row.deleted_at !== ''" class="el-icon-time" />
+                  <span v-if="scope.row.deleted_at !== ''">
+                    {{ scope.row && scope.row.deleted_at | parseTime('{h}:{i}:{s}') }}
+                  </span>
+                  <span v-else>
+                    нет времени деактивации
+                  </span>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column fixed="right" align="center" label="Действия" width="310">
+              <template slot-scope="scope">
+                <div v-if="scope.row.deleted_at === ''">
+                  <router-link v-if="!scope.row.roles.includes('admin')" :to="'/administrator/users/edit/'+scope.row.id">
+                    <el-button v-permission="['manage user']" type="primary" size="small" icon="el-icon-edit">
+                      Профиль
+                    </el-button>
+                  </router-link>
+                  <div v-else-if="scope.row.roles.includes('admin')">
+                    <div>
+                      <span> Для профиля Администратора </span>
+                    </div>
+                    <div>
+                      <span> Изменения запрещены </span>
+                    </div>
+                  </div>
+                  <el-button v-if="!scope.row.roles.includes('admin')" v-permission="['manage permission']" type="warning" size="small" icon="el-icon-edit" @click="handleEditPermissions(scope.row.id);">
+                    Разрешений
+                  </el-button>
+                  <el-button v-if="scope.row.roles.includes('moderator') || scope.row.roles.includes('menadger') || scope.row.roles.includes('manager') || scope.row.roles.includes('editor') || scope.row.roles.includes('visitor') || scope.row.roles.includes('user')" v-permission="['manage user']" type="danger" size="small" icon="el-icon-delete" @click="handleDelete(scope.row.id, scope.row.name);" />
+                </div>
+                <div v-else-if="scope.row.deleted_at !== ''">
+                  <div v-if="!scope.row.roles.includes('admin')" :to="'/administrator/users/edit/'+scope.row.id">
+                    <el-button v-if="scope.row.roles.includes('moderator') || scope.row.roles.includes('menadger') || scope.row.roles.includes('manager') || scope.row.roles.includes('editor') || scope.row.roles.includes('visitor') || scope.row.roles.includes('user')" v-permission="['manage user']" type="success" size="small" icon="el-icon-refresh" @click="handleRestore(scope.row.id, scope.row.name);">
+                      Актвировать
+                    </el-button>
+                    <el-button v-if="scope.row.roles.includes('moderator') || scope.row.roles.includes('menadger') || scope.row.roles.includes('manager') || scope.row.roles.includes('editor') || scope.row.roles.includes('visitor') || scope.row.roles.includes('user')" v-permission="['manage user']" type="danger" size="small" icon="el-icon-delete" @click="handleDeleteForever(scope.row.id, scope.row.name);">
+                      Удалить
+                    </el-button>
+                  </div>
+                  <div v-else-if="scope.row.roles.includes('admin')">
+                    <div>
+                      <span> Для профиля Администратора </span>
+                    </div>
+                    <div>
+                      <span> Изменения запрещены </span>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
+
+          <pagination v-show="total>0" :total="total" :page.sync="query.page" :limit.sync="query.limit" @pagination="getList" />
+
+          <el-dialog :visible.sync="dialogPermissionVisible" :title="'Edit Permissions - ' + currentUser.name">
+            <div v-if="currentUser.name" v-loading="dialogPermissionLoading" class="form-container">
+              <div class="permissions-container">
+                <div class="block">
+                  <el-form :model="currentUser" label-width="80px" label-position="top">
+                    <el-form-item label="Menus">
+                      <el-tree ref="menuPermissions" :data="normalizedMenuPermissions" :default-checked-keys="permissionKeys(userMenuPermissions)" :props="permissionProps" show-checkbox node-key="id" class="permission-tree" />
+                    </el-form-item>
+                  </el-form>
+                </div>
+                <div class="block">
+                  <el-form :model="currentUser" label-width="80px" label-position="top">
+                    <el-form-item label="Permissions">
+                      <el-tree ref="otherPermissions" :data="normalizedOtherPermissions" :default-checked-keys="permissionKeys(userOtherPermissions)" :props="permissionProps" show-checkbox node-key="id" class="permission-tree" />
+                    </el-form-item>
+                  </el-form>
+                </div>
+                <div class="clear-left" />
+              </div>
+              <div style="text-align:right;">
+                <el-button type="danger" @click="dialogPermissionVisible=false">
+                  {{ $t('permission.cancel') }}
+                </el-button>
+                <el-button type="primary" @click="confirmPermission">
+                  {{ $t('permission.confirm') }}
+                </el-button>
+              </div>
+            </div>
+          </el-dialog>
+
+          <el-dialog :title="'Создание нового пользователя'" :visible.sync="dialogFormVisible">
+            <div v-loading="userCreating" class="form-container">
+              <el-form ref="userForm" :rules="rules" :model="newUser" label-position="left" label-width="170px" style="max-width: 500px;">
+                <el-form-item :label="$t('user.role')" prop="role">
+                  <el-select v-model="newUser.role" class="filter-item" placeholder="Выберите роль">
+                    <el-option v-for="item in nonAdminRoles" :key="item" :label="item | uppercaseFirst" :value="item" />
+                  </el-select>
+                </el-form-item>
+                <el-form-item :label="$t('user.name')" prop="name">
+                  <el-input v-model="newUser.name" />
+                </el-form-item>
+                <el-form-item :label="$t('user.gender')" prop="gender">
+                  <el-select v-model="newUser.gender" class="filter-item" placeholder="Выберите пол">
+                    <el-option v-for="item in genderVulue" :key="item" :label="item | uppercaseFirst" :value="item" />
+                  </el-select>
+                </el-form-item>
+                <el-form-item :label="$t('user.email')" prop="email">
+                  <el-input v-model="newUser.email" show-email />
+                </el-form-item>
+                <el-form-item :label="$t('user.password')" prop="password">
+                  <el-input v-model="newUser.password" show-password />
+                </el-form-item>
+                <el-form-item :label="$t('user.confirmPassword')" prop="confirmPassword">
+                  <el-input v-model="newUser.confirmPassword" show-password />
+                </el-form-item>
+              </el-form>
+              <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogFormVisible = false">
+                  {{ $t('table.cancel') }}
+                </el-button>
+                <el-button type="primary" @click="createUser()">
+                  {{ $t('table.confirm') }}
+                </el-button>
+              </div>
+            </div>
+          </el-dialog>
+        </v-card-text>
+      </v-card>
     </div>
-
-    <el-table v-loading="loading" :data="list" border fit highlight-current-row style="width: 100%">
-      <el-table-column align="center" label="ID" width="60">
-        <template slot-scope="scope">
-          <span>{{ scope.row.index }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="Имя пользователя" width="280">
-        <template slot-scope="scope">
-          <span>{{ scope.row.name }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="E-mail" width="380">
-        <template slot-scope="scope">
-          <span>{{ scope.row.email }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="Роль" width="130">
-        <template slot-scope="scope">
-          <span>{{ scope.row.roles.join(', ') }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="Действия" width="540">
-        <template slot-scope="scope">
-          <router-link v-if="!scope.row.roles.includes('admin')" :to="'/administrator/users/edit/'+scope.row.id">
-            <el-button v-permission="['manage user']" type="primary" size="small" icon="el-icon-edit">
-              Профиль
-            </el-button>
-          </router-link>
-          <el-button v-if="!scope.row.roles.includes('admin')" v-permission="['manage permission']" type="warning" size="small" icon="el-icon-edit" @click="handleEditPermissions(scope.row.id);">
-            Разрешений
-          </el-button>
-          <el-button v-if="scope.row.roles.includes('visitor')" v-permission="['manage user']" type="danger" size="small" icon="el-icon-delete" @click="handleDelete(scope.row.id, scope.row.name);">
-            Удалить
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <pagination v-show="total>0" :total="total" :page.sync="query.page" :limit.sync="query.limit" @pagination="getList" />
-
-    <el-dialog :visible.sync="dialogPermissionVisible" :title="'Edit Permissions - ' + currentUser.name">
-      <div v-if="currentUser.name" v-loading="dialogPermissionLoading" class="form-container">
-        <div class="permissions-container">
-          <div class="block">
-            <el-form :model="currentUser" label-width="80px" label-position="top">
-              <el-form-item label="Menus">
-                <el-tree ref="menuPermissions" :data="normalizedMenuPermissions" :default-checked-keys="permissionKeys(userMenuPermissions)" :props="permissionProps" show-checkbox node-key="id" class="permission-tree" />
-              </el-form-item>
-            </el-form>
-          </div>
-          <div class="block">
-            <el-form :model="currentUser" label-width="80px" label-position="top">
-              <el-form-item label="Permissions">
-                <el-tree ref="otherPermissions" :data="normalizedOtherPermissions" :default-checked-keys="permissionKeys(userOtherPermissions)" :props="permissionProps" show-checkbox node-key="id" class="permission-tree" />
-              </el-form-item>
-            </el-form>
-          </div>
-          <div class="clear-left" />
-        </div>
-        <div style="text-align:right;">
-          <el-button type="danger" @click="dialogPermissionVisible=false">
-            {{ $t('permission.cancel') }}
-          </el-button>
-          <el-button type="primary" @click="confirmPermission">
-            {{ $t('permission.confirm') }}
-          </el-button>
-        </div>
-      </div>
-    </el-dialog>
-
-    <el-dialog :title="'Create new user'" :visible.sync="dialogFormVisible">
-      <div v-loading="userCreating" class="form-container">
-        <el-form ref="userForm" :rules="rules" :model="newUser" label-position="left" label-width="150px" style="max-width: 500px;">
-          <el-form-item :label="$t('user.role')" prop="role">
-            <el-select v-model="newUser.role" class="filter-item" placeholder="Please select role">
-              <el-option v-for="item in nonAdminRoles" :key="item" :label="item | uppercaseFirst" :value="item" />
-            </el-select>
-          </el-form-item>
-          <el-form-item :label="$t('user.name')" prop="name">
-            <el-input v-model="newUser.name" />
-          </el-form-item>
-          <el-form-item :label="$t('user.email')" prop="email">
-            <el-input v-model="newUser.email" />
-          </el-form-item>
-          <el-form-item :label="$t('user.password')" prop="password">
-            <el-input v-model="newUser.password" show-password />
-          </el-form-item>
-          <el-form-item :label="$t('user.confirmPassword')" prop="confirmPassword">
-            <el-input v-model="newUser.confirmPassword" show-password />
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogFormVisible = false">
-            {{ $t('table.cancel') }}
-          </el-button>
-          <el-button type="primary" @click="createUser()">
-            {{ $t('table.confirm') }}
-          </el-button>
-        </div>
-      </div>
-    </el-dialog>
-  </div>
+  </v-app>
 </template>
 
 <script>
@@ -140,28 +306,35 @@ export default {
   components: { Pagination },
   directives: { waves, permission },
   data() {
-    var validateConfirmPassword = (rule, value, callback) => {
+    const validateConfirmPassword = (rule, value, callback) => {
       if (value !== this.newUser.password) {
-        callback(new Error('Password is mismatched!'));
-      } else {
-        callback();
+        callback(new Error('Пароли не совпадают!'));
       }
     };
     return {
       list: null,
-      total: 0,
+      total: 1,
       loading: true,
+      sortBy: 'id',
+      getRowKeys(row) {
+        return row.id;
+      },
+      descending: true,
+      ascending: false,
       downloading: false,
       userCreating: false,
       query: {
         page: 1,
-        limit: 12,
+        limit: 8,
         keyword: '',
         status: '',
         role: '',
       },
-      roles: ['admin', 'manager', 'editor', 'user', 'visitor'],
-      nonAdminRoles: ['editor', 'user', 'visitor'],
+      roles: ['admin', 'moderator', 'manager', 'editor', 'user', 'visitor', 'guest'],
+      nonAdminRoles: ['moderator', 'manager', 'editor', 'user', 'visitor', 'guest'],
+      nonModeratorRoles: ['manager', 'editor', 'user', 'visitor', 'guest'],
+      nonManagerRoles: ['editor', 'user', 'visitor', 'guest'],
+      genderVulue: ['male', 'female'],
       newUser: {},
       dialogFormVisible: false,
       dialogPermissionVisible: false,
@@ -174,12 +347,13 @@ export default {
       },
       rules: {
         role: [{ required: true, message: 'Role is required', trigger: 'change' }],
-        name: [{ required: true, message: 'Name is required', trigger: 'blur' }],
+        name: [{ required: true, message: 'Поле Имя обязательно для заполнения', trigger: 'blur' }],
+        gender: [{ required: true, message: 'Поле пол обязательно для заполнения', trigger: 'blur' }],
         email: [
-          { required: true, message: 'Email is required', trigger: 'blur' },
-          { type: 'email', message: 'Please input correct email address', trigger: ['blur', 'change'] },
+          { required: true, message: 'Поле Email обязательно для заполнения', trigger: 'blur' },
+          { type: 'email', message: 'Пожалуйста, введите правильный адрес электронной почты', trigger: ['blur', 'change'] },
         ],
-        password: [{ required: true, message: 'Password is required', trigger: 'blur' }],
+        password: [{ required: true, message: 'Поле Пароль обязательно для заполнения', trigger: 'blur' }],
         confirmPassword: [{ validator: validateConfirmPassword, trigger: 'blur' }],
       },
       permissionProps: {
@@ -263,6 +437,16 @@ export default {
     }
   },
   methods: {
+    sortData(a, b, key) {
+      return a.value > b.value ? 1 : a.value < b.value ? 0 : -1;
+    },
+    filterHandler(value, row, column) {
+      const property = column['property'];
+      return row[property] === value;
+    },
+    toggleOrder() {
+      this.descending = !this.descending;
+    },
     checkPermission,
     async getPermissions() {
       const { data } = await permissionResource.list({});
@@ -295,6 +479,28 @@ export default {
       });
     },
     handleDelete(id, name) {
+      this.$confirm('Это деактивирует пользователя ' + name + '. Продолжить?', 'Внимание!!!', {
+        confirmButtonText: 'Да',
+        cancelButtonText: 'Отмена',
+        type: 'warning',
+      }).then(() => {
+        userResource.destroy(id).then(response => {
+          this.$message({
+            type: 'success',
+            message: 'Деактивация прошло успешно',
+          });
+          this.handleFilter();
+        }).catch(error => {
+          console.log(error);
+        });
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: 'Деактивация отменена',
+        });
+      });
+    },
+    handleDeleteForever(id, name) {
       this.$confirm('Это навсегда удалит пользователя ' + name + '. Продолжить?', 'Внимание!!!', {
         confirmButtonText: 'Да',
         cancelButtonText: 'Отмена',
@@ -313,6 +519,30 @@ export default {
         this.$message({
           type: 'info',
           message: 'Удаление отменено',
+        });
+      });
+    },
+    handleRestore(id, name) {
+      this.$confirm('Это восстановит пользователя ' + name + '. Продолжить?', 'Внимание!!!', {
+        confirmButtonText: 'Да',
+        cancelButtonText: 'Отмена',
+        type: 'warning',
+      }).then(() => {
+        console.log(id);
+        userResource.restore(id).then(response => {
+          this.$message({
+            type: 'success',
+            message: 'Восстановление прошло успешно',
+          });
+          this.handleFilter();
+        }).catch(error => {
+          console.log(error);
+        });
+      }).catch(() => {
+        console.log(id);
+        this.$message({
+          type: 'info',
+          message: 'Восстановление отменено',
         });
       });
     },
@@ -371,16 +601,17 @@ export default {
       this.newUser = {
         name: '',
         email: '',
+        gender: '',
         password: '',
         confirmPassword: '',
-        role: 'user',
+        role: 'guest',
       };
     },
     handleDownload() {
       this.downloading = true;
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['id', 'user_id', 'name', 'email', 'role'];
-        const filterVal = ['index', 'id', 'name', 'email', 'role'];
+        const tHeader = ['id', 'user_id', 'name', 'gender', 'email', 'role'];
+        const filterVal = ['index', 'id', 'name', 'gender', 'email', 'role'];
         const data = this.formatJson(filterVal, this.list);
         excel.export_json_to_excel({
           header: tHeader,
@@ -465,5 +696,32 @@ export default {
   .clear-left {
     clear: left;
   }
+}
+.size,
+.container__text__cell div .size{
+  white-space: nowrap; /* Отменяем перенос текста */
+  overflow: hidden; /* Обрезаем содержимое */
+  padding: 1px; /* Поля */
+  text-overflow: ellipsis; /* Многоточие */
+}
+.size::after,
+.container__text__cell div .size::after
+{
+  content: ''; /* Выводим элемент */
+  position: absolute; /* Абсолютное позиционирование */
+  right: 0; top: 0; /* Положение элемента */
+  width: 40px; /* Ширина градиента*/
+  height: 100%; /* Высота родителя */
+}
+.container__text__cell {
+  display: flex;
+}
+.container__text__cell div {
+  flex-grow: 1;
+  width: 100%;
+}
+.container__text__cell .center__text__cell {
+  flex-grow: 0;
+  width: 40px;
 }
 </style>

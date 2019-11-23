@@ -1,6 +1,8 @@
 <?php
 
+use App\Laravue\Acl;
 use Faker\Generator as Faker;
+use App\Laravue\Models\Role;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,21 +18,29 @@ use Faker\Generator as Faker;
 $factory->define(App\User::class, function (Faker $faker) {
 
     //Start point of our date range.
-    $start = strtotime("10 09 1971");
+    $start = strtotime("1961-09-10 12:10:10");
     //End point of our date range.
-    $end = strtotime("22 06 1990");
-    $timestamp = mt_rand($start, $end);
+    $end = strtotime("1990-06-22 24:00:00");
+    $gender = $faker->randomElement($array = array('male','female'));
 
-
-    return [
-        'name' => $faker->name,
-        'firstname' => $faker->firstName,
-        'surname' => $faker->name,
-        'patronymic' =>$faker->lastName,
-        'birthday' => $faker->date('Y-m-d', $timestamp),
-        'email' => $faker->unique()->safeEmail,
-        'email_verified_at' => now(),
-        'password' => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secretsecret
-        'remember_token' => str_random(10),
-    ];
+    for($i = 0; $i < 10; $i++) {
+        $timestamp = mt_rand($start, $end);
+        $arrayRundomTime = [null, date('Y-m-d h:m:s', $timestamp), date('Y-m-d h:m:s', $timestamp), date('Y-m-d h:m:s', $timestamp), date('Y-m-d h:m:s', $timestamp)];
+        return [
+            'name' => $faker->name,
+            'firstname' => $faker->firstName,
+            'surname' => $faker->name,
+            'patronymic' =>$faker->lastName,
+            'gender' => $gender,
+            'birthday' => $arrayRundomTime[rand(1, 4)],
+            'email' => $faker->unique()->safeEmail,
+            'email_verified_at' => now(),
+            'phone1' => $faker->phoneNumber,
+            'phone2' => $faker->phoneNumber,
+            'skype' => $faker->word,
+            'address' => $faker->address,
+            'password' => \Illuminate\Support\Facades\Hash::make('secretsecret'), // secretsecret
+            'remember_token' => str_random(20),
+        ];
+    }
 });

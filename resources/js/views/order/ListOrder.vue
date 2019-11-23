@@ -1,28 +1,32 @@
 <template>
   <div class="app-container">
     <v-app id="inspire">
-      <v-card>
+      <v-card
+        v-loading="loading"
+        min-width="300"
+        max-width="100%"
+      >
+        {{ list.silent }}
         <v-data-table
           v-loading="loading"
           color="primary"
           light
           dense
           fixed-header
-          height="700"
+          height="670"
           :headers="expand.TableHeader"
           :items="list"
           :single-expand="expand.singleExpand"
           :single-select="expand.singleSelect"
           :expanded.sync="expand.expanded"
-          :sort-by="[ 'user_id', 'created_at', 'id' ]"
+          :sort-by="[ 'id' ]"
           :sort-desc="[true, false]"
           item-key="id"
-          :group-desc="[false, true]"
-          show-group-by
           multi-sort
           show-expand
           show-select
-          class="elevation-1"
+          class="elevation-3"
+          :rows-per-page-items="[500, 300, 100, 50, 20, 15, 5, -1]"
           :footer-props="{
             showFirstLastPage: true,
             firstIcon: 'mdi-arrow-collapse-left',
@@ -32,32 +36,141 @@
           }"
           :search="expand.search"
           :custom-filter="filterSearch"
+          min-width="300"
+          max-width="100%"
           style="width: 100%;"
         >
-          {{ list.silent }}
+
           <template v-slot:top>
-            <v-toolbar flat color="primary" dark height="75px">
-              <v-toolbar-title background-color="blue darken-1">Список заказов</v-toolbar-title>
-              <v-spacer />
-              <div style="padding-left: 50px; padding-right: 50px">
-                <router-link :to="'/orders/order/create'">
-                  <el-button type="primary" size="medium" round icon="el-icon-edit">
-                    Создать заказ
-                  </el-button>
-                </router-link>
-              </div>
-              <v-text-field
-                v-model="expand.search"
-                label="Поиск по заказам"
-                append-icon="search"
-                style="margin-left: 10px;margin-right: 10px"
-                hide-details
-              />
-              <v-spacer />
-              <div style="padding-left: 50px; padding-right: 80px">
-                <v-switch v-model="expand.singleExpand" label="Одиночный режим" />
-              </div>
-            </v-toolbar>
+            <v-dialog v-model="expand.dialog" min-width="550px" max-width="1100px">
+              <template v-slot:activator="{ on }">
+                <v-toolbar flat color="primary" dark height="75px">
+                  <v-toolbar-title background-color="blue darken-1">Список заказов</v-toolbar-title>
+                  <v-divider
+                    class="mx-4"
+                    inset
+                    vertical
+                  />
+                  <v-spacer />
+                  <v-btn big flat color="primary" dark class="mb-2" v-on="on">Новый заказ</v-btn>
+                  <v-spacer />
+                  <v-text-field
+                    v-model="expand.search"
+                    label="Поиск по заказам"
+                    append-icon="search"
+                    style="margin-left: 10px;margin-right: 10px"
+                    hide-details
+                  />
+                  <v-spacer />
+                  <div style="padding-left: 50px; padding-right: 80px">
+                    <v-switch v-model="expand.singleExpand" label="Одиночный режим" />
+                  </div>
+                </v-toolbar>
+              </template>
+              <v-card>
+                <v-card-title>
+                  <span class="headline">{{ formTitle }}</span>
+                </v-card-title>
+                <v-card-text>
+                  <el-form ref="orderForm" :model="editedItemOrder" label-position="top">
+                    <v-container>
+                      <v-row>
+                        <v-col cols="12" sm="6" md="4">
+                          <v-text-field
+                            v-model="editedItemOrder.id"
+                            label="ID Заказа"
+                            min="1"
+                            step="1"
+                            type="number"
+                            :value="totalNew"
+                          />
+                        </v-col>
+                        <v-col cols="12" sm="6" md="4">
+                          <v-text-field
+                            v-model="editedItemOrder.user_id"
+                            label="ID Пользователя"
+                            clearable
+                            min="1"
+                            step="1"
+                            type="number"
+                          />
+                        </v-col>
+                        <v-col cols="12" sm="6" md="4">
+                          <v-text-field
+                            v-show="editedItemOrder.order_id !== ''"
+                            v-model="editedItemOrder.order_id"
+                            label="ID Заказа"
+                            clearable
+                            min="1"
+                            step="1"
+                            type="number"
+                          />
+                        </v-col>
+                        <v-col :span="10" cols="12" sm="12" md="12">
+                          <label>Заказчик: </label>
+                          <SelectOrdererDropdown v-model="orderersId" :options="orderersData" style="width: 80%" />
+                        </v-col>
+                        <v-col :span="10" cols="12" sm="12" md="12">
+                          <label>Исполнитель: </label>
+                          <SelectExecutorDropdown v-show="editedItemOrder.executor_id !== ''" v-model="editedItemOrder.executor_id" :options="executorsData" style="width: 80%" />
+                        </v-col>
+                        <v-col cols="12" sm="6" md="4">
+                          <label>Статус заказа: </label>
+                          <el-select v-model="editedItemOrder.status" :placeholder="$t('table.status')" clearable style="width: 110px" class="filter-item" @change="handleFilterReport">
+                            <el-option v-for="item in status" :key="item" :label="item | uppercaseFirst" :value="item">
+                              <span>
+                                <div v-if="item === '1'">
+                                  <svg-icon v-for="n in +item" :key="n" icon-class="star" class="meta-item__icon" />
+                                </div>
+                                <div v-else-if="item === '2'">
+                                  <svg-icon v-for="n in +item" :key="n" icon-class="star" class="meta-item__icon" />
+                                </div>
+                                <div v-else-if="item === '3'">
+                                  <svg-icon v-for="n in +item" :key="n" icon-class="star" class="meta-item__icon" />
+                                </div>
+                                <div v-else-if="item === '4'">
+                                  <svg-icon v-for="n in +item" :key="n" icon-class="star" class="meta-item__icon" />
+                                </div>
+                                <div v-else-if="item === '5'">
+                                  <svg-icon v-for="n in +item" :key="n" icon-class="star" class="meta-item__icon" />
+                                </div>
+                              </span>
+                            </el-option>
+                          </el-select>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="4">
+                          <v-text-field
+                            v-model="editedItemOrder.sum"
+                            label="Цена"
+                            clearable
+                            min="1"
+                            step="1"
+                            type="number"
+                          />
+                        </v-col>
+                        <v-col cols="12" sm="12" md="12">
+                          <v-text-field v-model="editedItemOrder.title" label="Заголовок" clearable />
+                        </v-col>
+                        <v-col cols="12" sm="12" md="12">
+                          <v-textarea v-model="editedItemOrder.note" placeholder="Комментарий" :persistent-hint="true" label="Комментарий" clearable outlined filled hint="Ввод комментария не должен превышать СИМВОЛОВ" />
+                        </v-col>
+                        <v-col cols="12" sm="6" md="6">
+                          <v-textarea v-model="editedItemOrder.content" label="Контент" :persistent-hint="true" clearable outlined filled hint="Ввод контента не должен превышать СИМВОЛОВ" />
+                        </v-col>
+                        <v-col cols="12" sm="6" md="6">
+                          <v-textarea v-model="editedItemOrder.content_short" label="Контент короткий" :persistent-hint="true" clearable outlined filled hint="Ввод контента короткий не должен превышать СИМВОЛОВ" />
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </el-form>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer />
+                  <v-btn color="blue darken-1" text @click="close">Отмена</v-btn>
+                  <v-btn color="green darken-2" text @click="save">Сохранить</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
           </template>
           <template v-slot:item.note="props">
             <v-edit-dialog
@@ -67,10 +180,10 @@
               persistent
               cancel-text="Отмена"
               save-text="Сохранить"
-              @save="save"
-              @cancel="cancel"
-              @open="open"
-              @close="close"
+              @save="saveProp"
+              @cancel="cancelProp"
+              @open="openProp"
+              @close="closeProp"
             >
               <div>
                 <v-icon small>edit</v-icon>
@@ -95,6 +208,82 @@
                 />
               </template>
             </v-edit-dialog>
+          </template>
+          <template v-slot:item.status="{ item }">
+            <v-chip style="color: white; background-color: royalblue;" dark>{{ item.status }}</v-chip>
+          </template>
+          <template v-slot:item.title="{ item }">
+            <div class="size">
+              <span>{{ item.title }}</span>
+            </div>
+          </template>
+          <template v-slot:item.created_at="{ item }">
+            <div>
+              <i v-if="item.created_at !== ''" class="el-icon-date" />
+              <span>{{ item.created_at | parseTime('{d}/{m}/{y}') }}</span>
+            </div>
+            <div>
+              <i v-if="item.created_at !== ''" class="el-icon-time" />
+              <span>{{ item.created_at | parseTime('{h}:{i}:{s}') }}</span>
+            </div>
+          </template>
+          <template v-slot:item.updated_at="{ item }">
+            <div>
+              <i v-if="item.updated_at !== ''" class="el-icon-date" />
+              <span v-if="item.updated_at !== ''">
+                {{ item.updated_at | parseTime('{d}/{m}/{y}') }}
+              </span>
+              <span v-else>
+                нет года обновления
+              </span>
+            </div>
+            <div>
+              <i v-if="item.updated_at !== ''" class="el-icon-time" />
+              <span v-if="item.updated_at !== ''">
+                {{ item.updated_at | parseTime('{h}:{i}:{s}') }}
+              </span>
+              <span v-else>
+                нет времени обновления
+              </span>
+            </div>
+          </template>
+          <template v-slot:item.deleted_at="{ item }">
+            <div>
+              <i v-if="item.deleted_at !== ''" class="el-icon-date" />
+              <span v-if="item.deleted_at !== ''">
+                {{ item.deleted_at | parseTime('{d}/{m}/{y}') }}
+              </span>
+              <span v-else>
+                нет года обновления
+              </span>
+            </div>
+            <div>
+              <i v-if="item.deleted_at !== ''" class="el-icon-time" />
+              <span v-if="item.deleted_at !== ''">
+                {{ item.deleted_at | parseTime('{h}:{i}:{s}') }}
+              </span>
+              <span v-else>
+                нет времени обновления
+              </span>
+            </div>
+          </template>
+          <template v-slot:item.action="{ item }">
+            <v-icon
+              small
+              class="mr-2"
+              @click="editItem(item)"
+            >
+              edit
+            </v-icon>
+            <v-icon
+              small
+              @click="deleteItem(item)"
+            >
+              delete
+            </v-icon>
+          </template>
+          <template v-slot:no-data>
+            <v-btn color="primary" @click="initialize">Reset</v-btn>
           </template>
           <template v-slot:expanded-item="{ headers }">
             <td :colspan="headers.length">
@@ -153,9 +342,10 @@
                         :row-class-name="tableRowClassName"
                         border
                         stripe
-                        max-height="330"
+                        min-height="300"
+                        max-height="1700"
                         highlight-current-row
-                        style="width: 85%; z-index: 1"
+                        style="width: 1700px; z-index: 1"
                         :row-key="getRowKeys"
                         @selection-change="handleSelectionChange"
                       >
@@ -165,12 +355,12 @@
                             <span>{{ scope.row.index }}</span>
                           </template>
                         </el-table-column>
-                        <el-table-column align="center" label="user_id" :sortable="true" width="100">
+                        <el-table-column align="center" label="ID Пользователя" :sortable="true" width="100">
                           <template slot-scope="scope">
                             <span>{{ scope.row.user_id }}</span>
                           </template>
                         </el-table-column>
-                        <el-table-column align="center" label="order_id" width="150">
+                        <el-table-column align="center" label="ID Заказов" width="150">
                           <template slot-scope="scope">
                             <span>{{ scope.row.order_id }}</span>
                           </template>
@@ -183,9 +373,25 @@
                             </span>
                           </template>
                         </el-table-column>
-                        <el-table-column align="center" label="title" width="280">
+                        <el-table-column align="center" label="Заголовок" width="280">
                           <template slot-scope="scope">
-                            <span>{{ scope.row.title }}</span>
+                            <div class="size">
+                              {{ scope.row.title }}
+                            </div>
+                          </template>
+                        </el-table-column>
+                        <el-table-column align="center" label="content_short" width="280">
+                          <template slot-scope="scope">
+                            <div class="size">
+                              <span>{{ scope.row.content_short }}</span>
+                            </div>
+                          </template>
+                        </el-table-column>
+                        <el-table-column align="center" label="content" width="280">
+                          <template slot-scope="scope">
+                            <div class="size">
+                              <span>{{ scope.row.content }}</span>
+                            </div>
                           </template>
                         </el-table-column>
                         <el-table-column label="Цена" :sortable="true" min-width="100" max-width="120" width="120" align="center">
@@ -198,60 +404,63 @@
                             </span>
                           </template>
                         </el-table-column>
-                        <el-table-column align="center" label="created_at_year" width="130">
+                        <el-table-column align="center" label="created_at_year" width="140">
                           <template slot-scope="scope">
-                            <i class="el-icon-date" />
-                            <span>{{ scope.row.created_at | parseTime('{d}/{m}/{y}') }}</span>
+                            <div>
+                              <i v-if="scope.row.created_at !== ''" class="el-icon-date" />
+                              <span>{{ scope.row.created_at | parseTime('{d}/{m}/{y}') }}</span>
+                            </div>
+                            <div>
+                              <i v-if="scope.row.created_at !== ''" class="el-icon-time" />
+                              <span>{{ scope.row.created_at | parseTime('{h}:{i}:{s}') }}</span>
+                            </div>
                           </template>
                         </el-table-column>
-                        <el-table-column align="center" label="created_at_time" width="130">
+                        <el-table-column align="center" label="updated_at_year" width="170">
                           <template slot-scope="scope">
-                            <i class="el-icon-time" />
-                            <span>{{ scope.row.created_at | parseTime('{h}:{i}:{s}') }}</span>
+                            <div>
+                              <i v-if="scope.row.updated_at !== ''" class="el-icon-date" />
+                              <span v-if="scope.row.updated_at !== ''">
+                                {{ scope.row.updated_at | parseTime('{d}/{m}/{y}') }}
+                              </span>
+                              <span v-else>
+                                нет года обновления
+                              </span>
+                            </div>
+                            <div>
+                              <i v-if="scope.row.updated_at !== ''" class="el-icon-time" />
+                              <span v-if="scope.row.updated_at !== ''">
+                                {{ scope.row.updated_at | parseTime('{h}:{i}:{s}') }}
+                              </span>
+                              <span v-else>
+                                нет времени обновления
+                              </span>
+                            </div>
                           </template>
                         </el-table-column>
-                        <el-table-column align="center" label="updated_at_year" width="190">
+                        <el-table-column align="center" label="deleted_at_year" width="170">
                           <template slot-scope="scope">
-                            <i v-if="scope.row.updated_at !== ''" class="el-icon-date" />
-                            <span v-if="scope.row.updated_at !== ''">
-                              {{ scope.row.updated_at | parseTime('{d}/{m}/{y}') }}
-                            </span>
-                            <span v-else>
-                              нет года обновления
-                            </span>
+                            <div>
+                              <i v-if="scope.row.deleted_at !== ''" class="el-icon-date" />
+                              <span v-if="scope.row.deleted_at !== ''">
+                                {{ scope.row.deleted_at | parseTime('{d}/{m}/{y}') }}
+                              </span>
+                              <span v-else>
+                                нет года удаления
+                              </span>
+                            </div>
+                            <div>
+                              <i v-if="scope.row.deleted_at !== ''" class="el-icon-time" />
+                              <span v-if="scope.row.deleted_at !== ''">
+                                {{ scope.row.deleted_at | parseTime('{h}:{i}:{s}') }}
+                              </span>
+                              <span v-else>
+                                нет времени удаления
+                              </span>
+                            </div>
                           </template>
                         </el-table-column>
-                        <el-table-column align="center" label="updated_at_time" width="190">
-                          <template slot-scope="scope">
-                            <span v-if="scope.row.updated_at !== ''">
-                              {{ scope.row.updated_at | parseTime('{h}:{i}:{s}') }}
-                            </span>
-                            <span v-else>
-                              нет времени обновления
-                            </span>
-                          </template>
-                        </el-table-column>
-                        <el-table-column align="center" label="deleted_at_year" width="190">
-                          <template slot-scope="scope">
-                            <span v-if="scope.row.deleted_at !== ''">
-                              {{ scope.row.deleted_at | parseTime('{h}:{i}:{s}') }}
-                            </span>
-                            <span v-else>
-                              нет года удаления
-                            </span>
-                          </template>
-                        </el-table-column>
-                        <el-table-column align="center" label="deleted_at_time" width="190">
-                          <template slot-scope="scope">
-                            <span v-if="scope.row.deleted_at !== ''">
-                              {{ scope.row.deleted_at | parseTime('{h}:{i}:{s}') }}
-                            </span>
-                            <span v-else>
-                              нет времени удаления
-                            </span>
-                          </template>
-                        </el-table-column>
-                        <el-table-column fixed="right" align="center" label="Действия" width="300">
+                        <el-table-column fixed="right" align="center" label="Действия" width="250">
                           <template slot-scope="scope">
                             <router-link :to="'/reports/report/edit/'+scope.row.id">
                               <el-button type="primary" size="small" icon="el-icon-edit">Изменить</el-button>
@@ -347,6 +556,11 @@ import ReportResource from '@/api/report';
 import waves from '@/directive/waves'; // Waves directive
 import permission from '@/directive/permission'; // Waves directive
 import checkPermission from '@/utils/permission'; // Permission checking
+import {
+  SelectOrdererDropdown,
+  SelectExecutorDropdown,
+} from './components/Dropdown';
+import { mapState } from 'vuex';
 
 const orderResource = new OrderResource();
 const reportResource = new ReportResource();
@@ -354,12 +568,17 @@ const permissionResource = new Resource('permissions');
 
 export default {
   name: 'OrderList',
-  components: { Pagination },
+  components: {
+    Pagination,
+    SelectOrdererDropdown,
+    SelectExecutorDropdown,
+  },
   directives: { waves, permission },
   data() {
     return {
       expand: {
         expanded: [],
+        rowsPerPageItems: [5, 10, 20, 50, 100, 250, 500, 750, 1000],
         singleExpand: true,
         singleSelect: false,
         accordion: false,
@@ -381,9 +600,12 @@ export default {
         snackText: '',
         max100chars: v => v.length <= 100 || 'Слишком длинное значение!',
         search: '',
+        dialog: false,
+        editedIndexOrder: -1,
         TableHeader: [
           {
-            text: 'Отчёты...',
+            text: 'Развернуть...',
+            width: '60',
             value: 'data-table-expand',
             filterable: false,
             sortable: false,
@@ -391,94 +613,29 @@ export default {
           {
             isEditorBottom: 'true',
             text: 'Действия',
-            value: 'data-btn',
+            width: '90',
+            value: 'action',
             filterable: false,
             sortable: false,
           },
           {
             text: 'ID',
+            width: '90',
             align: 'left',
             sortable: true,
             value: 'id',
           },
-          { text: 'ID Пользователя (Создатель заказа)', value: 'user_id' },
-          { text: 'ID Отчёта', value: 'order_id' },
-          { text: 'ID Исполниеля', value: 'orderer_id' },
-          { text: 'ID Всех отчётов в заказе', value: 'report_id' },
-          { text: 'ID Заказчика', value: 'executor_id' },
-          { text: 'Статус', value: 'status' },
-          { text: 'Дата создания', value: 'created_at' },
-          { text: 'Дата изменения', value: 'updated_at' },
-          { text: 'Дата удаления', value: 'deleted_at' },
-          { text: 'Комментарий', value: 'note' },
+          { text: 'ID (Создатель заказа)', width: 210, value: 'user_id' },
+          { text: 'ID Отчёта', width: 130, value: 'order_id' },
+          { text: 'ID Исполниеля', width: 170, value: 'orderer_id' },
+          { text: 'ID Заказчика', width: 160, value: 'executor_id' },
+          { text: 'Статус', width: 150, value: 'status' },
+          { text: 'Дата создания', width: 160, value: 'created_at' },
+          { text: 'Дата изменения', width: 260, value: 'updated_at' },
+          { text: 'Дата удаления', width: 260, value: 'deleted_at' },
+          { text: 'Заголовок', width: 220, value: 'title' },
+          { text: 'Комментарий', width: 120, value: 'note' },
           { text: 'Цена заказа', value: 'sum' },
-        ],
-        items: [
-          {
-            id: 1,
-            user_id: 15,
-            report_id: 7378678524234,
-            orderer_id: 734234224234,
-            executor_id: 23246234,
-            status: 3,
-            order_id: 15,
-            created_at: '2017-02-21 04:02:46',
-            updated_at: '',
-            deleted_at: '',
-            note: 'Пояснение к заказу 1',
-          },
-          {
-            id: 2,
-            user_id: 17,
-            report_id: 87567524234,
-            orderer_id: 345347524234,
-            executor_id: 7878247834,
-            status: 4,
-            order_id: 34,
-            created_at: '2018-02-18 11:02:31',
-            updated_at: '',
-            deleted_at: '',
-            note: 'Пояснение к заказу 2',
-          },
-          {
-            id: 3,
-            user_id: 5,
-            report_id: 867867524234,
-            orderer_id: 3453678524234,
-            executor_id: 787827834,
-            status: 5,
-            order_id: 15,
-            created_at: '2018-08-04 09:08:11',
-            updated_at: '',
-            deleted_at: '',
-            note: 'Пояснение к заказу 3',
-          },
-          {
-            id: 4,
-            user_id: 9,
-            report_id: 87457874234,
-            orderer_id: 345367524234,
-            executor_id: 764524234,
-            status: 5,
-            order_id: 334,
-            created_at: '2011-03-04 02:03:53',
-            updated_at: '2011-04-14 01:03:53',
-            deleted_at: '',
-            note: 'Пояснение к заказу 4',
-          },
-          {
-            id: 5,
-            user_id: 12,
-            report_id: 867868645678234,
-            orderer_id: 3453467824234,
-            executor_id: 7876782454,
-            status: 5,
-            order_id: 354,
-            created_at: '2015-03-17 11:03:05\n',
-            updated_at: '',
-            deleted_at: '',
-            note: 'Пояснение к заказу 5',
-          },
         ],
       },
       list: null,
@@ -494,7 +651,7 @@ export default {
       reportCreating: false,
       query: {
         page: 1,
-        limit: 50000,
+        limit: 10,
         keyword: '',
         role: '',
         status: '',
@@ -521,10 +678,8 @@ export default {
         report_id: '',
         orderer_id: '',
         executor_id: '',
-        status: '',
-        created_at: '',
-        updated_at: '',
-        deleted_at: '',
+        status: 0,
+        title: '',
         note: '',
         sum: '',
       },
@@ -533,12 +688,38 @@ export default {
         user_id: '',
         order_id: '',
         report_id: '',
-        status: '',
+        status: 0,
+        title: '',
+        content: '',
+        content_short: '',
+        price: '',
+      },
+      editedItemOrder: {
+        id: 0,
+        user_id: 0,
+        order_id: '',
+        report_id: '',
+        orderers_id: null,
+        executor_id: 1,
+        status: 0,
+        title: '',
+        content: '',
+        content_short: '',
+        sum: '',
+      },
+      defaultItemOrder: {
+        id: 0,
+        user_id: 0,
+        order_id: '',
+        report_id: '',
+        status: 0,
         created_at: '',
         updated_at: '',
         deleted_at: '',
         title: '',
-        price: '',
+        content: '',
+        content_short: '',
+        sum: 0,
       },
       rules: {
         role: [{ required: true, message: 'Role is required', trigger: 'change' }],
@@ -555,6 +736,39 @@ export default {
     };
   },
   computed: {
+    ...mapState(
+      {
+        orderersData: state => state.orderers.data,
+        executorsData: state => state.executors.data,
+      }
+    ),
+    orderersOptions() {
+      const result = [
+        {
+          orderer_id: '0',
+          value: 'null',
+          label: 'Выбирите заказчика',
+          photo: '',
+        },
+      ];
+      return result.concat(this.orderersData);
+    },
+    orderersId: {
+      get() {
+        if (!this.editedItemOrder.orderers_id) {
+          console.log(this.editedItemOrder.orderers_id, !this.editedItemOrder.orderers_id);
+          return 0;
+        }
+        return this.editedItemOrder.orderers_id;
+      },
+      set(value) {
+        console.log(value);
+        this.editedItemOrder.orderers_id = value;
+      },
+    },
+    formTitle() {
+      return this.editedIndexOrder === -1 ? 'Создание заказа' : 'Редактирование заказа';
+    },
     normalizedMenuPermissions() {
       let tmp = [];
       this.currentOrder.permissions.role.forEach(permission => {
@@ -617,6 +831,11 @@ export default {
       return this.currentOrder.permissions.role.concat(this.currentOrder.permissions.user);
     },
   },
+  watch: {
+    dialog(val) {
+      val || this.close();
+    },
+  },
   created() {
     this.getListOrder();
     this.getListReport();
@@ -624,6 +843,15 @@ export default {
       this.getPermissions();
     }
     this.resetNewOrder();
+  },
+  mounted(){
+    this.getListOrder();
+  },
+  activated(){
+    this.getListOrder();
+  },
+  deactivated(){
+    this.getListOrder();
   },
   methods: {
     created() {
@@ -735,17 +963,22 @@ export default {
         this.$refs['reportForm'].clearValidate();
       });
     },
-    handleDelete(id, report_id) {
-      this.$confirm('Это навсегда удалит заказ ' + id + ' ' + report_id + ' . Продолжить?', 'Внимание!!!', {
+    handleDelete(id) {
+      const index_id = id;
+      this.$confirm('Это навсегда удалит заказ ' + id + ' . Продолжить?', 'Внимание!!!', {
         confirmButtonText: 'Да',
         cancelButtonText: 'Отмена',
         type: 'warning',
       }).then(() => {
         orderResource.destroy(id).then(response => {
+          this.list.splice(index_id - 1, 1);
           this.$message({
             type: 'success',
             message: 'Удаление прошло успешно',
           });
+          this.expand.snack = true;
+          this.expand.snackColor = 'success';
+          this.expand.snackText = 'Заказ успешно удален' + ' ' + (id);
           this.handleFilter();
         }).catch(error => {
           console.log(error);
@@ -755,6 +988,9 @@ export default {
           type: 'info',
           message: 'Удаление отменено',
         });
+        this.expand.snack = true;
+        this.expand.snackColor = 'success';
+        this.expand.snackText = 'Удаление заказа' + ' ' + (id) + ' ' + 'отменено';
       });
     },
     async handleEditPermissions(id) {
@@ -786,6 +1022,10 @@ export default {
                 type: 'success',
                 duration: 5 * 1000,
               });
+              this.expand.snack = true;
+              this.expand.snackColor = 'success';
+              this.expand.snackText = 'Введенные данные подготовлены для сохранения';
+              console.log('Диалог введенния данных подготовлены для сохранения');
               this.resetNewOrder();
               this.dialogFormVisible = false;
               this.handleFilter();
@@ -796,6 +1036,10 @@ export default {
                 type: 'error',
                 duration: 5 * 1000,
               });
+              this.expand.snack = true;
+              this.expand.snackColor = 'error';
+              this.expand.snackText = 'Введенние подготовленых данных прервано';
+              console.log('Диалог введенния данных прерван');
               console.log(error);
             })
             .finally(() => {
@@ -819,6 +1063,10 @@ export default {
                 type: 'success',
                 duration: 5 * 1000,
               });
+              this.expand.snack = true;
+              this.expand.snackColor = 'success';
+              this.expand.snackText = 'Введенные данные подготовлены для сохранения';
+              console.log('Диалог введенния данных подготовлены для сохранения');
               this.resetNewReport();
               this.dialogFormVisible = false;
               this.handleFilterReport();
@@ -829,6 +1077,10 @@ export default {
                 type: 'error',
                 duration: 5 * 1000,
               });
+              this.expand.snack = true;
+              this.expand.snackColor = 'error';
+              this.expand.snackText = 'Введенние подготовленых данных прервано';
+              console.log('Диалог введенния данных прерван');
               console.log(error);
             })
             .finally(() => {
@@ -852,6 +1104,7 @@ export default {
         created_at: '',
         updated_at: '',
         deleted_at: '',
+        title: '',
         note: '',
         sum: '',
       };
@@ -867,6 +1120,8 @@ export default {
         updated_at: '',
         deleted_at: '',
         title: '',
+        content: '',
+        content_short: '',
         price: '',
       };
     },
@@ -884,6 +1139,7 @@ export default {
           'created_at',
           'updated_at',
           'deleted_at',
+          'title',
           'note',
           'sum',
         ];
@@ -898,6 +1154,7 @@ export default {
           'created_at',
           'updated_at',
           'deleted_at',
+          'title',
           'note',
           'sum',
         ];
@@ -955,23 +1212,64 @@ export default {
         this.dialogPermissionVisible = false;
       });
     },
-    save() {
+    saveProp() {
       this.expand.snack = true;
       this.expand.snackColor = 'success';
-      this.expand.snackText = 'Введенны данные подготовлены для сохранения';
+      this.expand.snackText = 'Введенные данные подготовлены для сохранения';
+      console.log('Диалог введенния данных подготовлены для сохранения');
     },
-    cancel() {
+    cancelProp() {
       this.expand.snack = true;
       this.expand.snackColor = 'error';
-      this.expand.snackText = 'Ввод отмененн';
+      this.expand.snackText = 'Ввод отменен';
+      console.log('Диалог вводa отменен');
     },
-    open() {
+    openProp() {
       this.expand.snack = true;
       this.expand.snackColor = 'info';
       this.expand.snackText = 'Диалог ввода открыт';
+      console.log('Диалог ввода открыт');
+    },
+    closeProp() {
+      this.expand.snack = true;
+      this.expand.snackColor = 'warning';
+      this.expand.snackText = 'Диалог ввода закрыт';
+      console.log('Диалог ввода закрыт');
+    },
+    editItem(item) {
+      const index = this.list.indexOf(item);
+      this.editedIndexOrder = this.list.indexOf(item);
+      this.editedItemOrder = Object.assign({}, item);
+      this.expand.dialog = true;
+      this.expand.snack = true;
+      this.expand.snackColor = 'success';
+      this.expand.snackText = 'Заказ изменен' + ' ' + (index + 1);
+      console.log('Диалог изменения завершен');
+    },
+    deleteItem(item) {
+      const index = this.list.indexOf(item);
+      this.handleDelete(index + 1);
+      console.log('Диалог удаления завершен');
     },
     close() {
-      console.log('Диалог ввода закрыт');
+      this.expand.dialog = false;
+      setTimeout(() => {
+        this.editedItemOrder = Object.assign({}, this.defaultItemOrder);
+        this.editedIndexOrder = -1;
+      }, 300);
+    },
+    save() {
+      if (this.editedIndexOrder > -1) {
+        Object.assign(this.list[this.editedIndexOrder], this.editedItemOrder);
+      } else {
+        this.list.push(this.editedItemOrder);
+      }
+      this.createOrder();
+      this.close();
+      this.expand.snack = true;
+      this.expand.snackColor = 'success';
+      this.expand.snackText = 'Введенные данные подготовлены для сохранения';
+      console.log('Диалог введенния данных подготовлены для сохранения');
     },
   },
 };
@@ -1004,4 +1302,51 @@ export default {
     clear: left;
   }
 }
+.size,
+.size span,
+.container__text__cell div .size{
+  white-space: nowrap; /* Отменяем перенос текста */
+  overflow: hidden; /* Обрезаем содержимое */
+  padding: 1px; /* Поля */
+  text-overflow: ellipsis; /* Многоточие */
+  max-width: 150px;
+}
+.size::after,
+.size::after span,
+.container__text__cell div .size::after
+{
+  content: ''; /* Выводим элемент */
+  position: absolute; /* Абсолютное позиционирование */
+  right: 0; top: 0; /* Положение элемента */
+  width: 40px; /* Ширина градиента*/
+  height: 100%; /* Высота родителя */
+}
+</style>
+<style rel="stylesheet/scss" lang="scss" scoped>
+  @import "~@/styles/mixin.scss";
+  .createPost-container {
+    position: relative;
+    .createPost-main-container {
+      padding: 0 45px 20px 50px;
+      .postInfo-container {
+        position: relative;
+        @include clearfix;
+        margin-bottom: 10px;
+        .postInfo-container-item {
+          float: left;
+        }
+      }
+    }
+    .word-counter {
+      width: 40px;
+      position: absolute;
+      right: -10px;
+      top: 0px;
+    }
+  }
+</style>
+<style>
+  .createPost-container label.el-form-item__label {
+    text-align: left;
+  }
 </style>

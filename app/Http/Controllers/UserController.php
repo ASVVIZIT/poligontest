@@ -18,11 +18,12 @@ use App\Laravue\Models\Role;
 use App\Laravue\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use Validator;
 
 /**
  * Class UserController
@@ -43,21 +44,26 @@ class UserController extends Controller
     {
         $searchParams = $request->all();
         $userQuery = User::query();
-        $userQuery_role = User::query();
+        $userQuery->withTrashed();
 
         $limit = Arr::get($searchParams, 'limit', static::ITEM_PER_PAGE);
         $role = Arr::get($searchParams, 'role', '');
         $keyword = Arr::get($searchParams, 'keyword', '');
 
         if (!empty($role)) {
-            $userQuery_role->whereHas('roles', function($q) use ($role) { $q->where('name', $role); });
-            return UserResource::collection($userQuery_role->paginate($limit));
-        }
-        if (!empty($keyword)) {
-            $userQuery->where('name', 'LIKE', '%' . $keyword . '%');
-            $userQuery->where('email', 'LIKE', '%' . $keyword . '%');
+            $userQuery->whereHas('roles', function($q) use ($role) { $q->where('name', $role); });
             return UserResource::collection($userQuery->paginate($limit));
         }
+
+        if (!empty($keyword)) {
+            $userQuery->where('address', 'LIKE', '%' . $keyword . '%');
+            $userQuery->orWhere('name', 'LIKE', '%' . $keyword . '%');
+           // $userQuery->orWhere('gender', 'LIKE', '%' . $keyword . '%');
+            $userQuery->orWhere('email', 'LIKE', '%' . $keyword . '%');
+            $userQuery->orWhere('skype', 'LIKE', '%' . $keyword . '%');
+            return UserResource::collection($userQuery->paginate($limit));
+        }
+
         return UserResource::collection($userQuery->paginate($limit));
     }
 
@@ -79,6 +85,12 @@ class UserController extends Controller
                     'surname' => 'nullable',
                     'patronymic' => 'nullable',
                     'birthday' => 'nullable',
+                    'gender' => 'nullable',
+                    'phone1' => 'nullable',
+                    'phone2' => 'nullable',
+                    'skype' => 'nullable',
+                    'address' => 'nullable',
+                    'email' => 'nullable',
                     'password' => ['required', 'min:8'],
                     'confirmPassword' => 'same:password',
                 ]
@@ -96,7 +108,6 @@ class UserController extends Controller
             ]);
             $role = Role::findByName($params['role']);
             $user->syncRoles($role);
-
             return new UserResource($user);
         }
     }
@@ -124,6 +135,7 @@ class UserController extends Controller
         if ($user === null) {
             return response()->json(['error' => 'User not found'], 404);
         }
+
         if ($user->isAdmin()) {
             return response()->json(['error' => 'Admin can not be modified'], 403);
         }
@@ -169,6 +181,11 @@ class UserController extends Controller
             $user->firstname = $request->get('firstname');
             $user->surname = $request->get('surname');
             $user->patronymic = $request->get('patronymic');
+            $user->gender = $request->get('gender');
+            $user->phone1 = $request->get('phone1');
+            $user->phone2 = $request->get('phone2');
+            $user->skype = $request->get('skype');
+            $user->address = $request->get('address');
             $user->birthday = $request->get('birthday');
             $user->email = $email;
             $user->password = \Illuminate\Support\Facades\Hash::make($password);
@@ -213,21 +230,63 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  User $user
-     * @return \Illuminate\Http\Response
+     * @param  int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(User $user)
+    public function restore($id)
+    {
+        try {
+            User::onlyTrashed()->find($id)->restore();
+        } catch (\Exception $ex) {
+            return response()->json(['error' => $ex->getMessage()], 403);
+        }
+        return response()->json(null, 204);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function destroy($id)
+    {
+       // dd(__METHOD__, request()->all());
+
+        $user = User::withTrashed()->find($id);
+        if ($user->trashed()) {
+            try {
+                $user->forceDelete();
+            } catch (\Exception $ex) {
+                return response()->json(['error' => $ex->getMessage()], 403);
+            }
+        } else {
+            try {
+                $user->delete();
+            } catch (\Exception $ex) {
+                return response()->json(['error' => $ex->getMessage()], 403);
+            }
+        }
+        return response()->json(null, 204);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  User $user
+     * @param  int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function delete_user_forever(User $user, $id)
     {
         if ($user->isAdmin()) {
-            response()->json(['error' => 'Ehhh! Can not delete admin user'], 403);
+            return response()->json(['error' => 'Ehhh! Can not delete admin user'], 403);
         }
-
         try {
-            $user->delete();
+            User::onlyTrashed()->find($id)->forceDelete();
         } catch (\Exception $ex) {
-            response()->json(['error' => $ex->getMessage()], 403);
+            return response()->json(['error' => $ex->getMessage()], 403);
         }
-
         return response()->json(null, 204);
     }
 
@@ -261,6 +320,11 @@ class UserController extends Controller
             'surname' => 'nullable',
             'patronymic' => 'nullable',
             'birthday' => 'nullable',
+            'gender' => 'nullable',
+            'phone1' => 'nullable',
+            'phone2' => 'nullable',
+            'skype' => 'nullable',
+            'address' => 'nullable',
             'email' => $isNew ? 'required|email|unique:users' : 'required|email',
             'roles' => [
                 'required',

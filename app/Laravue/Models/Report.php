@@ -15,9 +15,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property date $updated_at
  * @property date $deleted_at
  * @property string $title
+ * @property string $content
+ * @property string $content_short
  * @property float $price
  *
- * @method static Order create(array $report)
+ * @method static Report create(array $report)
  * @package App
  */
 
@@ -39,7 +41,8 @@ class Report extends Model
         'updated_at',
         'deleted_at',
         'title',
-        'note',
+        'content',
+        'content_short',
         'price',
     ];
 

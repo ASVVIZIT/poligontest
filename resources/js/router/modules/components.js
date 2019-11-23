@@ -48,7 +48,7 @@ const componentRoutes = {
           path: 'index',
           component: () => import('@/views/clipboard/index'),
           name: 'ClipboardDemo',
-          meta: { title: 'clipboardDemo', icon: 'clipboard', roles: ['admin', 'manager', 'editor', 'user'] },
+          meta: { title: 'clipboardDemo', icon: 'clipboard', roles: ['admin', 'moderator', 'manager', 'editor', 'user'] },
         },
       ],
     },

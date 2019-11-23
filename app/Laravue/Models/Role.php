@@ -28,4 +28,13 @@ class Role extends \Spatie\Permission\Models\Role
     {
         return $this->name === Acl::ROLE_ADMIN;
     }
+
+    /**
+     * Check whether current role is admin
+     * @return bool
+     */
+    public function isModerator(): bool
+    {
+        return $this->name === Acl::ROLE_MODERATOR;
+    }
 }

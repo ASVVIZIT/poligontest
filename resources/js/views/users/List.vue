@@ -76,23 +76,22 @@
               <template slot-scope="scope">
                 <div v-if="scope.row.gender === 'male'">
                   <div class="size">
-                    <v-icon v-show="scope.row.gender !== null" color="blue">mdi-gender-male</v-icon>
+                    <v-icon v-show="scope.row.gender !== null" color="blue">mdi mdi-gender-male</v-icon>
                     <span>Мужчина</span>
                   </div>
                 </div>
                 <div v-else-if="scope.row.gender === 'female'">
                   <div class="size">
-                    <v-icon v-show="scope.row.gender !== null" color="pink">mdi-gender-female</v-icon>
+                    <v-icon v-show="scope.row.gender !== null" color="pink">mdi mdi-gender-female</v-icon>
                     <span>Женщина</span>
                   </div>
                 </div>
               </template>
             </el-table-column>
 
-            <el-table-column align="left" label="E-mail" width="240">
+            <el-table-column align="center" label="E-mail" width="320">
               <template slot-scope="scope">
                 <div class="size">
-                  <v-icon v-show="scope.row.email !== null" color="grey">mdi-email</v-icon>
                   <span>{{ scope.row.email }}</span>
                 </div>
               </template>
@@ -102,7 +101,7 @@
               <template slot-scope="scope">
                 <div style="display: inline-grid; position: relative; grid-row-gap: 50px; grid-template-columns: auto auto auto;">
                   <div style="display: inline-grid; padding-right: 4px">
-                    <v-icon v-show="scope.row.phone1 !== null || scope.row.phone2 !== null" color="red">mdi-phone-in-talk</v-icon>
+                    <v-icon v-show="scope.row.phone1 !== null || scope.row.phone2 !== null" color="red">mdi mdi-phone-in-talk</v-icon>
                   </div>
                   <div style="display: inline-grid;">
                     <div class="size">
@@ -119,7 +118,7 @@
             <el-table-column align="left" label="Skype" width="180">
               <template slot-scope="scope">
                 <div class="size">
-                  <v-icon v-show="scope.row.skype !== null" color="green">mdi-skype</v-icon>
+                  <v-icon v-show="scope.row.skype !== null" color="green">mdi mdi-skype</v-icon>
                   <span>{{ scope.row.skype }}</span>
                 </div>
               </template>
@@ -248,7 +247,7 @@
             </div>
           </el-dialog>
 
-          <el-dialog :title="'Создание нового пользователя'" :visible.sync="dialogFormVisible">
+          <el-dialog :title="'Create new user'" :visible.sync="dialogFormVisible">
             <div v-loading="userCreating" class="form-container">
               <el-form ref="userForm" :rules="rules" :model="newUser" label-position="left" label-width="170px" style="max-width: 500px;">
                 <el-form-item :label="$t('user.role')" prop="role">
@@ -265,7 +264,7 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item :label="$t('user.email')" prop="email">
-                  <el-input v-model="newUser.email" show-email />
+                  <el-input v-model="newUser.email" />
                 </el-form-item>
                 <el-form-item :label="$t('user.password')" prop="password">
                   <el-input v-model="newUser.password" show-password />
@@ -309,6 +308,8 @@ export default {
     const validateConfirmPassword = (rule, value, callback) => {
       if (value !== this.newUser.password) {
         callback(new Error('Пароли не совпадают!'));
+      } else {
+        callback();
       }
     };
     return {
@@ -604,7 +605,7 @@ export default {
         gender: '',
         password: '',
         confirmPassword: '',
-        role: 'guest',
+        role: 'user',
       };
     },
     handleDownload() {

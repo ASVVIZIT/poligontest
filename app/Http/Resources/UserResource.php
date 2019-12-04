@@ -14,6 +14,17 @@ class UserResource extends JsonResource
      */
     public function toArray($request)
     {
+        // Подготовка путей для аватарок
+        if ($this->avatar === 'default.png'){
+            // Если пользователь не выбрал аватарку то подгрузиться аватарка согласно стандартным значениям
+            $avatar_path = 'http://poligontest.loc/uploads/avatars/default/'. 'v0/';
+        } elseif ($this->avatar === 'default_male.png') {
+            $avatar_path = 'http://poligontest.loc/uploads/avatars/default/'. 'v0/';
+        } elseif ($this->avatar === 'default_female.png') {
+            $avatar_path = 'http://poligontest.loc/uploads/avatars/default/'. 'v0/';
+        } else {
+            $avatar_path = 'http://poligontest.loc/uploads/avatars/' . $this->id . '/';
+        }
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -23,6 +34,8 @@ class UserResource extends JsonResource
             'gender' => $this->gender,
             'phone1' => $this->phone1,
             'phone2' => $this->phone2,
+            'phone3' => $this->phone3,
+            'phone4' => $this->phone4,
             'skype' => $this->skype,
             'address' => $this->address,
             'email' => $this->email,
@@ -42,7 +55,9 @@ class UserResource extends JsonResource
                 },
                 $this->getAllPermissions()->toArray()
             ),
-            'avatar' => 'http://i.pravatar.cc',
+            'avatar' => $avatar_path . $this->avatar,
         ];
+
+        //'avatar' => 'http://i.pravatar.cc',
     }
 }

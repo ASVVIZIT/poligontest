@@ -48,6 +48,34 @@
               <v-tab-item :key="1">
                 <v-card>
                   <v-card-text>
+                    <div class="user-profile">
+                      <div class="user-avatar box-center">
+                        <pan-thumb :image="user.avatar" :height="'100px'" :width="'100px'" :hoverable="false" />
+                      </div>
+                      <div>
+                        <el-button type="primary" icon="upload" style="bottom: 15px;margin-left: 40px;" @click="imagecropperShow=true">
+                          Выбирите свой аватар
+                        </el-button>
+                        <image-cropper
+                          v-show="imagecropperShow"
+                          :key="imagecropperKey"
+                          :width="300"
+                          :height="300"
+                          url="https://poligontest.loc/post"
+                          lang-type="ru"
+                          @close="close"
+                          @crop-upload-success="cropSuccess"
+                        />
+                      </div>
+                      <div class="box-center">
+                        <div class="user-name text-center">
+                          Имя: {{ user.name }}
+                        </div>
+                        <div class="user-role text-center text-muted">
+                          Ваши текушие роли: {{ getRole() }}
+                        </div>
+                      </div>
+                    </div>
                     <el-form-item label="Имя">
                       <el-input v-model="user.firstname" :disabled="user.role === 'admin'" />
                     </el-form-item>
@@ -177,10 +205,35 @@
               </v-tab-item>
               <v-tab-item :key="5">
                 <v-card>
-                  <p>Внимание!!! данный раздел в разработке</p>
-                  <v-card-text>
-                    <p>тут будут поля для телефонов</p>
-                  </v-card-text>
+                  <el-form-item>
+                    <v-card-text>
+                      <el-form-item label="Телефон 1">
+                        <el-input v-model="user.phone1" :disabled="user.role === 'admin'" />
+                      </el-form-item>
+                    </v-card-text>
+                    <v-card-text>
+                      <el-form-item label="Телефон 2">
+                        <el-input v-model="user.phone2" :disabled="user.role === 'admin'" />
+                      </el-form-item>
+                    </v-card-text>
+                    <v-card-text>
+                      <el-form-item label="Телефон 3">
+                        <el-input v-model="user.phone3" :disabled="user.role === 'admin'" />
+                      </el-form-item>
+                    </v-card-text>
+                    <v-card-text>
+                      <el-form-item label="Телефон 4">
+                        <el-input v-model="user.phone4" :disabled="user.role === 'admin'" />
+                      </el-form-item>
+                    </v-card-text>
+                    <v-card-text>
+                      <el-form-item>
+                        <el-button type="primary" :disabled="user.role === 'admin'" @click="onSubmitPhone">
+                          Обновить телефоны
+                        </el-button>
+                      </el-form-item>
+                    </v-card-text>
+                  </el-form-item>
                 </v-card>
               </v-tab-item>
               <v-tab-item :key="6">
@@ -388,9 +441,12 @@
 
 <script>
 import Resource from '@/api/resource';
+import ImageCropper from '@/components/ImageCropper';
+import PanThumb from '@/components/PanThumb';
 const userResource = new Resource('users');
 
 export default {
+  components: { ImageCropper, PanThumb },
   props: {
     user: {
       passwordType: '',
@@ -402,6 +458,10 @@ export default {
           firstname: '',
           surname: '',
           patronymic: '',
+          phone1: '',
+          phone2: '',
+          phone3: '',
+          phone4: '',
           address: '',
           gender: '',
           birthday: '',
@@ -422,6 +482,9 @@ export default {
         'https://cdn.laravue.dev/photo3.jpg',
         'https://cdn.laravue.dev/photo4.jpg',
       ],
+      imagecropperShow: false,
+      imagecropperKey: 0,
+      image: 'https://eclectickoifish.files.wordpress.com/2015/01/7826_one_piece.jpg',
       updating: false,
       genderVulue: ['male', 'female'],
       passwordType: 'password',
@@ -451,6 +514,18 @@ export default {
     handleClick(tab, event) {
       console.log('Switching tab ', tab, event);
     },
+    getRole() {
+      const roles = this.user.roles.map(value => this.$options.filters.uppercaseFirst(value));
+      return roles.join(' | ');
+    },
+    cropSuccess(resData) {
+      this.imagecropperShow = false;
+      this.imagecropperKey = this.imagecropperKey + 1;
+      this.image = resData.files.avatar;
+    },
+    close() {
+      this.imagecropperShow = false;
+    },
     onSubmitProfile() {
       this.updating = true;
       userResource
@@ -476,6 +551,23 @@ export default {
           this.updating = false;
           this.$message({
             message: 'Информация о адресе успешно обновлена',
+            type: 'success',
+            duration: 5 * 1000,
+          });
+        })
+        .catch(error => {
+          console.log(error);
+          this.updating = false;
+        });
+    },
+    onSubmitPhone() {
+      this.updating = true;
+      userResource
+        .update(this.user.id, this.user, this.phone1, this.phone2)
+        .then(response => {
+          this.updating = false;
+          this.$message({
+            message: 'Информация о телефонах успешно обновлена',
             type: 'success',
             duration: 5 * 1000,
           });

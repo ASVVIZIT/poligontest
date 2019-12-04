@@ -78,7 +78,6 @@ class UsersTableSeeder extends Seeder
         $faker = Faker::create('Ru_RU');
         foreach ($userList as $fullName) {
             // Returns always random genders according to the name, inclusive mixed !!
-            $gender = ['male', 'female'];
             $timestamp = mt_rand($start, $end);
             $arrayRundomTime = [null, date('Y-m-d h:m:s', $timestamp), date('Y-m-d h:m:s', $timestamp), date('Y-m-d h:m:s', $timestamp), date('Y-m-d h:m:s', $timestamp)];
             $name = str_replace(' ', '.', $fullName);
@@ -110,6 +109,13 @@ class UsersTableSeeder extends Seeder
                     $surname = '';
                     $patronymic = '';
                 }
+            $gender = ['male', 'female'];
+            $gender = $gender[rand(0, 1)];
+            if ($gender == 'male') {
+                $avatar_default = 'default_male.png';
+            } else {
+                $avatar_default = 'default_female.png';
+            }
 
             $fullName = str_replace('._', '. ', $fullName);
             $user = User::create([
@@ -117,11 +123,14 @@ class UsersTableSeeder extends Seeder
                 'firstname' => $firstname,
                 'surname' => $surname,
                 'patronymic' => $patronymic,
-                'gender' => $gender[rand(0, 1)],
+                'gender' => $gender,
+                'avatar' => $avatar_default,
                 'birthday' => $arrayRundomTime[rand(1, 4)],
                 'email' => strtolower($firstname_email . str_replace('.', '_', str_replace(' ', '', $surname))) . '@laravue.dev',
                 'phone1' => $faker->phoneNumber,
                 'phone2' => $faker->phoneNumber,
+                'phone3' => $faker->phoneNumber,
+                'phone4' => $faker->phoneNumber,
                 'skype' => $faker->userName,
                 'address' => $faker->address,
                 'password' => Hash::make('randomrandom'),

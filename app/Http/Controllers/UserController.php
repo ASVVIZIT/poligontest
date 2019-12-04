@@ -86,8 +86,11 @@ class UserController extends Controller
                     'patronymic' => 'nullable',
                     'birthday' => 'nullable',
                     'gender' => 'nullable',
+                    'avatar' => 'nullable',
                     'phone1' => 'nullable',
                     'phone2' => 'nullable',
+                    'phone3' => 'nullable',
+                    'phone4' => 'nullable',
                     'skype' => 'nullable',
                     'address' => 'nullable',
                     'email' => 'nullable',
@@ -184,6 +187,8 @@ class UserController extends Controller
             $user->gender = $request->get('gender');
             $user->phone1 = $request->get('phone1');
             $user->phone2 = $request->get('phone2');
+            $user->phone3 = $request->get('phone3');
+            $user->phone4 = $request->get('phone4');
             $user->skype = $request->get('skype');
             $user->address = $request->get('address');
             $user->birthday = $request->get('birthday');
@@ -321,8 +326,11 @@ class UserController extends Controller
             'patronymic' => 'nullable',
             'birthday' => 'nullable',
             'gender' => 'nullable',
+            'avatar' => 'nullable',
             'phone1' => 'nullable',
             'phone2' => 'nullable',
+            'phone3' => 'nullable',
+            'phone4' => 'nullable',
             'skype' => 'nullable',
             'address' => 'nullable',
             'email' => $isNew ? 'required|email|unique:users' : 'required|email',

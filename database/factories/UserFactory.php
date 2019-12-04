@@ -24,6 +24,13 @@ $factory->define(App\User::class, function (Faker $faker) {
     $gender = $faker->randomElement($array = array('male','female'));
 
     for($i = 0; $i < 10; $i++) {
+
+        if ($gender == 'male') {
+            $avatar_default = 'default_male.png';
+        } else {
+            $avatar_default = 'default_female.png';
+        }
+
         $timestamp = mt_rand($start, $end);
         $arrayRundomTime = [null, date('Y-m-d h:m:s', $timestamp), date('Y-m-d h:m:s', $timestamp), date('Y-m-d h:m:s', $timestamp), date('Y-m-d h:m:s', $timestamp)];
         return [
@@ -32,11 +39,14 @@ $factory->define(App\User::class, function (Faker $faker) {
             'surname' => $faker->name,
             'patronymic' =>$faker->lastName,
             'gender' => $gender,
+            'avatar' => $avatar_default,
             'birthday' => $arrayRundomTime[rand(1, 4)],
             'email' => $faker->unique()->safeEmail,
             'email_verified_at' => now(),
             'phone1' => $faker->phoneNumber,
             'phone2' => $faker->phoneNumber,
+            'phone3' => $faker->phoneNumber,
+            'phone4' => $faker->phoneNumber,
             'skype' => $faker->word,
             'address' => $faker->address,
             'password' => \Illuminate\Support\Facades\Hash::make('secretsecret'), // secretsecret

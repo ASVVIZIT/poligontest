@@ -1,7 +1,7 @@
 <template>
   <div class="components-container">
     <aside>
-      This is based on
+      Это основано на
       <a class="link-type" href="//github.com/dai-siki/vue-image-crop-upload"> vue-image-crop-upload</a>.
       {{ $t('components.imageUploadTips') }}
     </aside>
@@ -9,17 +9,15 @@
     <pan-thumb :image="image" />
 
     <el-button type="primary" icon="upload" style="position: absolute;bottom: 15px;margin-left: 40px;" @click="imagecropperShow=true">
-      Вибирите свой аватар
+      Выбирите свой аватар
     </el-button>
 
     <image-cropper
       v-show="imagecropperShow"
       :key="imagecropperKey"
-      field="/upload/avatar/"
       :width="300"
       :height="300"
-      method="POST"
-      url="https://poligontest.loc/avatarpost"
+      url="https://httpbin.org/post"
       lang-type="ru"
       @close="close"
       @crop-upload-success="cropSuccess"
@@ -32,7 +30,7 @@ import ImageCropper from '@/components/ImageCropper';
 import PanThumb from '@/components/PanThumb';
 
 export default {
-  name: 'AvatarUploadDemo',
+  name: 'AvatarUploadProfile',
   components: { ImageCropper, PanThumb },
   data() {
     return {

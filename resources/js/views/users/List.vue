@@ -47,7 +47,7 @@
                 <span>{{ scope.row.index }}</span>
               </template>
             </el-table-column>
-            <el-table-column fixed="left" prop="roles" :sortable="true" column-key="roles" align="center" label="Роль" width="100">
+            <el-table-column prop="roles" :sortable="true" column-key="roles" align="center" label="Роль" width="100">
               <template slot-scope="scope">
                 <div v-show="scope.row.roles.join(', ') === ''">
                   <span>Нет роли</span>
@@ -57,7 +57,24 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column fixed="left" align="center" label="Имя пользователя" width="280">
+            <el-table-column align="center" label="Аватар" width="90">
+              <template slot-scope="scope">
+                <v-avatar
+                  class="profile"
+                  color="grey"
+                  size="60"
+                >
+                  <v-img
+                    :src="scope.row.avatar"
+                    :lazy-src="scope.row.avatar"
+                    alt="Аватарка"
+                    aspect-ratio="1"
+                  />
+                </v-avatar>
+              </template>
+            </el-table-column>
+
+            <el-table-column align="center" label="Имя пользователя" width="280">
               <template slot-scope="scope">
                 <span>{{ scope.row.name }}</span>
               </template>
@@ -89,7 +106,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center" label="E-mail" width="320">
+            <el-table-column align="center" label="E-mail" width="210">
               <template slot-scope="scope">
                 <div class="size">
                   <span>{{ scope.row.email }}</span>
@@ -100,15 +117,41 @@
             <el-table-column align="left" label="Телефоны все" width="180">
               <template slot-scope="scope">
                 <div style="display: inline-grid; position: relative; grid-row-gap: 50px; grid-template-columns: auto auto auto;">
-                  <div style="display: inline-grid; padding-right: 4px">
-                    <v-icon v-show="scope.row.phone1 !== null || scope.row.phone2 !== null" color="red">mdi mdi-phone-in-talk</v-icon>
-                  </div>
-                  <div style="display: inline-grid;">
-                    <div class="size">
-                      <span>{{ scope.row.phone1 }}</span>
+                  <div class="container__text__cell">
+                    <div class="center__text__cell">
+                      <div style="display: inline-grid; padding-right: 4px">
+                        <el-tooltip placement="left-start" style="right: 2px; top: 12px;" effect="light">
+                          <div style="position: absolute; display: inline-flex">
+                            <v-icon v-show="scope.row.phone1 !== null || scope.row.phone2 !== null || scope.row.phone3 !== null || scope.row.phone4 !== null" color="red">mdi-phone-in-talk</v-icon>
+                          </div>
+                          <div slot="content" style="min-width: 10px; max-width: 600px;">
+                            <tr>
+                              <td v-show="scope.row.phone1 !== null" style="margin-right: 5px;">  Телефон №1: <span> {{ scope.row && scope.row.phone1 }}; </span></td>
+                              <td v-show="scope.row.phone2 !== null" style="margin-right: 5px;">  Телефон №2: <span> {{ scope.row && scope.row.phone2 }}; </span></td>
+                            </tr>
+                            <tr>
+                              <td v-show="scope.row.phone3 !== null" style="margin-right: 5px;">  Телефон №3: <span> {{ scope.row && scope.row.phone3 }}; </span></td>
+                              <td v-show="scope.row.phone4 !== null" style="margin-right: 5px;">  Телефон №4: <span> {{ scope.row && scope.row.phone4 }}; </span></td>
+                            </tr>
+                          </div>
+                        </el-tooltip>
+                      </div>
                     </div>
-                    <div class="size">
-                      <span>{{ scope.row.phone2 }}</span>
+                    <div style="display: inline-grid;">
+                      <div v-show="scope.row.phone1 !== null" class="size">
+                        <span>{{ scope.row.phone1 }}</span>
+                      </div>
+                      <div v-show="scope.row.phone2 !== null" class="size">
+                        <span>{{ scope.row.phone2 }}</span>
+                      </div>
+                    </div>
+                    <div v-show="scope.row.phone3 !== null || scope.row.phone4 !== null" style="display: inline-grid; margin-left: 1px">
+                      <div v-show="scope.row.phone3 !== null" class="size">
+                        <span>{{ scope.row.phone3 }}</span>
+                      </div>
+                      <div v-show="scope.row.phone4 !== null" class="size">
+                        <span>{{ scope.row.phone4 }}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -247,7 +290,7 @@
             </div>
           </el-dialog>
 
-          <el-dialog :title="'Create new user'" :visible.sync="dialogFormVisible">
+          <el-dialog :title="'Создать нового пользователя'" :visible.sync="dialogFormVisible">
             <div v-loading="userCreating" class="form-container">
               <el-form ref="userForm" :rules="rules" :model="newUser" label-position="left" label-width="170px" style="max-width: 500px;">
                 <el-form-item :label="$t('user.role')" prop="role">
@@ -438,6 +481,9 @@ export default {
     }
   },
   methods: {
+    getAvatar(value){
+      return this.avatar;
+    },
     sortData(a, b, key) {
       return a.value > b.value ? 1 : a.value < b.value ? 0 : -1;
     },

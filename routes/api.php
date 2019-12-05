@@ -26,6 +26,7 @@ Route::group(['middleware' => 'api'], function () {
     });
 
     Route::apiResource('users', 'UserController')->middleware('permission:' . \App\Laravue\Acl::PERMISSION_USER_MANAGE);
+    Route::post('users/{id}/avatarupload', 'UserController@avatarupload');
     Route::get('users/{id}/restore', 'UserController@restore');
     Route::get('users/{id}/destroy', 'UserController@destroy');
 

@@ -21,6 +21,8 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -65,6 +67,52 @@ class UserController extends Controller
         }
 
         return UserResource::collection($userQuery->paginate($limit));
+    }
+
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param Request $request
+     * @param User    $user
+     * @param int    $id
+     *
+     * @return UserResource|\Illuminate\Http\JsonResponse
+     */
+    public function avatarupload(Request $request, User $user, int $id)
+    {
+        if ($user === null) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        if ($user->isAdmin()) {
+            return response()->json(['error' => 'Admin can not be modified'], 403);
+        }
+
+        //Авторизованный пользователь
+        //$currentuserid = auth()->user()->id;
+        //$id = $request->user()->id; // returns authenticated user id.
+
+        if ($request->hasFile('avatar')) {
+
+            $destinationPath = public_path('uploads/avatars/' . $id . '/');
+
+            if (File::exists($destinationPath)) {
+                File::cleanDirectory($destinationPath);
+            } else {
+                File::makeDirectory($destinationPath);
+            }
+
+            $fileName = $id . '.jpg';
+
+            $request->file('avatar')->move($destinationPath, $fileName);
+
+            //$user = auth()->user();
+            $user = User::where('id', '=', $id)->first();
+            $user->avatar = $fileName;
+            $user->save();
+            return new UserResource($user);
+        }
     }
 
     /**
@@ -113,6 +161,7 @@ class UserController extends Controller
             $user->syncRoles($role);
             return new UserResource($user);
         }
+
     }
 
     /**
@@ -256,8 +305,6 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-       // dd(__METHOD__, request()->all());
-
         $user = User::withTrashed()->find($id);
         if ($user->trashed()) {
             try {

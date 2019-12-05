@@ -50,29 +50,43 @@
                   <v-card-text>
                     <div class="user-profile">
                       <div class="user-avatar box-center">
-                        <pan-thumb :image="user.avatar" :height="'100px'" :width="'100px'" :hoverable="false" />
+                        <div v-show="user.avatar !== null" style="position: absolute; top: 10px; left: 240px">
+                          <pan-thumb :image="user.avatar" :height="'130px'" :width="'130px'" :hoverable="false" />
+                        </div>
+                        <div v-show="user.avatar === null">
+                          <pan-thumb :image="'http://poligontest.loc/uploads/avatars/default/v0/default.png'" :height="'130px'" :width="'130px'" :hoverable="false" />
+                        </div>
+                        <img v-show="true" v-if="avatarUrl" :src="avatarUrl" class="avatar">
                       </div>
                       <div>
-                        <el-button type="primary" icon="upload" style="bottom: 15px;margin-left: 40px;" @click="imagecropperShow=true">
-                          Выбирите свой аватар
-                        </el-button>
+                        <div class="box-center">
+                          <el-button type="primary" icon="upload" style="bottom: 15px;" @click="imagecropperShow=true">
+                            Выбирите свой аватар
+                          </el-button>
+                        </div>
                         <image-cropper
                           v-show="imagecropperShow"
                           :key="imagecropperKey"
-                          :width="300"
-                          :height="300"
-                          url="https://poligontest.loc/post"
+                          :headers="headers"
+                          :params="otherParams"
+                          :width="150"
+                          :height="150"
+                          ki="1"
+                          :url="'http://poligontest.loc/api/users/' + user.id + '/avatarupload'"
                           lang-type="ru"
+                          :no-circle="false"
                           @close="close"
-                          @crop-upload-success="cropSuccess"
+                          @crop-success="cropSuccess"
+                          @crop-upload-success="cropUploadSuccess"
+                          @crop-upload-fail="cropUploadFail"
                         />
                       </div>
                       <div class="box-center">
-                        <div class="user-name text-center">
-                          Имя: {{ user.name }}
+                        <div class="user-name text-center text-muted">
+                          <i>Имя:</i><b> {{ user.name }} </b>
                         </div>
                         <div class="user-role text-center text-muted">
-                          Ваши текушие роли: {{ getRole() }}
+                          <i>Ваши текушие роли:</i><b> {{ getRole() }} </b>
                         </div>
                       </div>
                     </div>
@@ -86,17 +100,15 @@
                       <el-input v-model="user.patronymic" :disabled="user.role === 'admin'" />
                     </el-form-item>
                     <el-row>
-                      <el-col :span="5" :xs="{span: 24}" :sm="{span: 16}" :md="{span: 12}" :lg="{span: 8}" :xl="{span: 4}">
-                        <div style="margin-right: 10px">
+                      <el-col :span="5" :xs="{span: 22}" :sm="{span: 16}" :md="{span: 12}" :lg="{span: 8}" :xl="{span: 4}">
+                        <div style="margin-right: 5px">
                           <el-form-item label="Пол">
                             <el-select v-model="user.gender" :disabled="user.role === 'admin'">
                               <el-option v-for="item in genderVulue" :key="item" :label="item | uppercaseFirst" :value="item" />
                             </el-select>
                           </el-form-item>
                         </div>
-                      </el-col>
-                      <el-col :span="5" :xs="{span: 24}" :sm="{span: 16}" :md="{span: 12}" :lg="{span: 8}" :xl="{span: 4}">
-                        <div style="margin-right: 10px">
+                        <div style="margin-right: 5px">
                           <el-form-item label="День рождения">
                             <el-date-picker
                               v-model="user.birthday"
@@ -484,7 +496,15 @@ export default {
       ],
       imagecropperShow: false,
       imagecropperKey: 0,
-      image: 'https://eclectickoifish.files.wordpress.com/2015/01/7826_one_piece.jpg',
+      Url: null,
+      avatarUrl: null,
+      otherParams: {
+        token: '1234567980',
+        name: 'avatar_',
+      },
+      headers: {
+        smail: '*_~',
+      },
       updating: false,
       genderVulue: ['male', 'female'],
       passwordType: 'password',
@@ -518,10 +538,26 @@ export default {
       const roles = this.user.roles.map(value => this.$options.filters.uppercaseFirst(value));
       return roles.join(' | ');
     },
-    cropSuccess(resData) {
-      this.imagecropperShow = false;
-      this.imagecropperKey = this.imagecropperKey + 1;
-      this.image = resData.files.avatar;
+    cropSuccess(data, field, key) {
+      if (field === 'avatar') {
+        this.imagecropperShow = false;
+        this.imagecropperKey = this.imagecropperKey + 1;
+        this.avatar = data.files.avatar;
+      }
+      console.log('-------- cropSuccess --------');
+      console.log('key: ' + key);
+    },
+    cropUploadSuccess(data, field, key) {
+      console.log('-------- cropUploadSuccess --------');
+      console.log(data);
+      console.log('field: ' + field);
+      console.log('key: ' + key);
+    },
+    cropUploadFail(status, field, key) {
+      console.log('-------- cropUploadFail --------');
+      console.log(status);
+      console.log('field: ' + field);
+      console.log('key: ' + key);
     },
     close() {
       this.imagecropperShow = false;
@@ -701,6 +737,28 @@ export default {
 
   .el-carousel__item:nth-child(2n+1) {
     background-color: #d3dce6;
+  }
+}
+.user-profile {
+  .user-name {
+    font-weight: bold;
+  }
+  .box-center {
+    padding-top: 10px;
+  }
+  .user-role {
+    padding-top: 10px;
+    font-weight: 400;
+    font-size: 14px;
+  }
+  .box-social {
+    padding-top: 30px;
+    .el-table {
+      border-top: 1px solid #dfe6ec;
+    }
+  }
+  .user-follow {
+    padding-top: 20px;
   }
 }
 </style>

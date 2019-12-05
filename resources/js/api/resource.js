@@ -35,6 +35,14 @@ class Resource {
     });
   }
 
+  avatarupload(id, resource) {
+    return request({
+      url: '/' + this.uri + '/' + id + '/avatarupload',
+      method: 'put',
+      data: resource,
+    });
+  }
+
   restore(id) {
     return request({
       url: '/' + this.uri + '/' + id + '/restore',

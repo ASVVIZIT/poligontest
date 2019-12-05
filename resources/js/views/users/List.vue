@@ -7,16 +7,15 @@
       >
         <v-card-text>
           <div class="filter-container">
-            <v-toolbar flat color="white" dark height="60px">
+            <v-toolbar flat color="white" dark height="30px">
               <el-select v-model="query.role" :placeholder="$t('table.role')" clearable style="width: 110px; margin-left: 80px; margin-right: 10px;" class="filter-item" @change="handleFilter">
                 <el-option v-for="item in roles" :key="item" :label="item | uppercaseFirst" :value="item" />
               </el-select>
-              <el-input v-model="query.keyword" :placeholder="$t('table.keyword')" clearable style="width: 450px; margin-right: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
+              <el-input v-model="query.keyword" :placeholder="$t('table.keyword')" clearable style="width: 950px; margin-right: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
               <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
                 {{ $t('table.search') }}
               </el-button>
-              <v-spacer />
-              <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-plus" @click="handleCreate">
+              <el-button class="filter-item" style="margin-left: 2px;" type="primary" icon="el-icon-plus" @click="handleCreate">
                 {{ $t('table.add') }}
               </el-button>
               <el-button v-waves :loading="downloading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
@@ -59,24 +58,28 @@
             </el-table-column>
             <el-table-column align="center" label="Аватар" width="90">
               <template slot-scope="scope">
-                <v-avatar
-                  class="profile"
-                  color="grey"
-                  size="60"
-                >
-                  <v-img
-                    :src="scope.row.avatar"
-                    :lazy-src="scope.row.avatar"
-                    alt="Аватарка"
-                    aspect-ratio="1"
-                  />
-                </v-avatar>
+                <router-link :to="'/administrator/users/edit/'+scope.row.id">
+                  <v-avatar
+                    class="profile"
+                    color="grey"
+                    size="60"
+                  >
+                    <v-img
+                      :src="scope.row.avatar"
+                      :lazy-src="scope.row.avatar"
+                      alt="Аватарка"
+                      aspect-ratio="1"
+                    />
+                  </v-avatar>
+                </router-link>
               </template>
             </el-table-column>
-
-            <el-table-column align="center" label="Имя пользователя" width="280">
+            d
+            <el-table-column align="center" label="Имя пользователя" width="160">
               <template slot-scope="scope">
-                <span>{{ scope.row.name }}</span>
+                <div class="size_all">
+                  <span>{{ scope.row.name }}</span>
+                </div>
               </template>
             </el-table-column>
 
@@ -106,10 +109,22 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center" label="E-mail" width="210">
+            <el-table-column align="left" label="E-mail" width="220">
               <template slot-scope="scope">
-                <div class="size">
-                  <span>{{ scope.row.email }}</span>
+                <div>
+                  <div class="container__text__cell">
+                    <div class="center__text__cell">
+                      <el-tooltip placement="right-start" style="right: 5px;" effect="light">
+                        <v-icon v-show="scope.row.email !== null" color="primary">mdi mdi-email-outline</v-icon>
+                        <div slot="content" style="min-width: 10px; max-width: 200px;">
+                          <span> {{ scope.row && scope.row.email }} </span>
+                        </div>
+                      </el-tooltip>
+                    </div>
+                    <div class="size">
+                      {{ scope.row && scope.row.email }}
+                    </div>
+                  </div>
                 </div>
               </template>
             </el-table-column>
@@ -215,13 +230,11 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column fixed="right" align="center" label="Действия" width="310">
+            <el-table-column fixed="right" align="center" label="Действия" width="260">
               <template slot-scope="scope">
                 <div v-if="scope.row.deleted_at === ''">
                   <router-link v-if="!scope.row.roles.includes('admin')" :to="'/administrator/users/edit/'+scope.row.id">
-                    <el-button v-permission="['manage user']" type="primary" size="small" icon="el-icon-edit">
-                      Профиль
-                    </el-button>
+                    <el-button v-permission="['manage user']" type="primary" size="small" icon="el-icon-edit" />
                   </router-link>
                   <div v-else-if="scope.row.roles.includes('admin')">
                     <div>
@@ -369,7 +382,7 @@ export default {
       userCreating: false,
       query: {
         page: 1,
-        limit: 8,
+        limit: 16,
         keyword: '',
         status: '',
         role: '',
@@ -760,6 +773,24 @@ export default {
   width: 40px; /* Ширина градиента*/
   height: 100%; /* Высота родителя */
 }
+
+.size_all,
+.container__text__cell div .size_all {
+  white-space: pre-line !important;
+  overflow: hidden; /* Обрезаем содержимое */
+  padding: 1px; /* Поля */
+  text-overflow: ellipsis; /* Многоточие */
+}
+.size_all::after,
+.container__text__cell div .size_all::after
+{
+  content: ''; /* Выводим элемент */
+  position: absolute; /* Абсолютное позиционирование */
+  right: 0; top: 0; /* Положение элемента */
+  width: 40px; /* Ширина градиента*/
+  height: 100%; /* Высота родителя */
+}
+
 .container__text__cell {
   display: flex;
 }

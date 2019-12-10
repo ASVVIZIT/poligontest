@@ -38,7 +38,7 @@ class Resource {
   avatarupload(id, resource) {
     return request({
       url: '/' + this.uri + '/' + id + '/avatarupload',
-      method: 'put',
+      method: 'post',
       data: resource,
     });
   }

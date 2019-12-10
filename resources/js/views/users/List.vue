@@ -56,25 +56,64 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column align="center" label="Аватар" width="90">
+            <el-table-column align="center" label="Аватар" width="120">
               <template slot-scope="scope">
-                <router-link :to="'/administrator/users/edit/'+scope.row.id">
+                <div v-if="scope.row.deleted_at !== '' || scope.row.roles.includes('admin')">
+                  <div v-if="scope.row.onlineStatus">
+                    <v-icon color="green">mdi mdi-account-check-outline</v-icon>
+                    <b style="color: #01c003">Онлайн</b>
+                  </div>
+                  <div v-else-if="!scope.row.onlineStatus">
+                    <v-icon color="red">mdi mdi-account-off-outline</v-icon>
+                    <b style="color: #cc0027">Оффлайн</b>
+                  </div>
                   <v-avatar
                     class="profile"
                     color="grey"
-                    size="60"
+                    size="80"
                   >
                     <v-img
                       :src="scope.row.avatar"
                       :lazy-src="scope.row.avatar"
-                      alt="Аватарка"
+                      :alt="'Аватарка id ' + scope.row.id"
+                      :title="'Аватарка: ' + scope.row.name"
                       aspect-ratio="1"
                     />
                   </v-avatar>
-                </router-link>
+                  <div :title="'Ваш индификатор пользователя: ' + scope.row.id" style="pointer-events: stroke">
+                    Ваш user ID: {{ scope.row.id }}
+                  </div>
+                </div>
+                <div v-else-if="scope.row.deleted_at === '' || !scope.row.roles.includes('admin') ">
+                  <div v-if="scope.row.onlineStatus">
+                    <v-icon color="green">mdi mdi-account-check-outline</v-icon>
+                    <b style="color: #01c003">Онлайн</b>
+                  </div>
+                  <div v-else-if="!scope.row.onlineStatus">
+                    <v-icon color="red">mdi mdi-account-off-outline</v-icon>
+                    <b style="color: #cc0027">Оффлайн</b>
+                  </div>
+                  <router-link :to="'/administrator/users/edit/'+scope.row.id">
+                    <v-avatar
+                      class="profile"
+                      color="grey"
+                      size="80"
+                    >
+                      <v-img
+                        :src="scope.row.avatar"
+                        :lazy-src="scope.row.avatar"
+                        :alt="'Аватарка id ' + scope.row.id"
+                        :title="'Аватарка: ' + scope.row.name"
+                        aspect-ratio="1"
+                      />
+                    </v-avatar>
+                  </router-link>
+                  <div :title="'Ваш индификатор пользователя: ' + scope.row.id" style="pointer-events: stroke">
+                    Ваш user ID: {{ scope.row.id }}
+                  </div>
+                </div>
               </template>
             </el-table-column>
-            d
             <el-table-column align="center" label="Имя пользователя" width="160">
               <template slot-scope="scope">
                 <div class="size_all">
@@ -182,25 +221,46 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="left" label="Адресс" width="320">
+            <el-table-column align="left" label="Адрес работа" width="320">
               <template slot-scope="scope">
                 <div>
                   <div class="container__text__cell">
                     <div class="center__text__cell">
                       <el-tooltip placement="right-start" style="right: 5px;" effect="light">
-                        <v-icon v-show="scope.row.address !== null" color="primary">mdi-tooltip-text</v-icon>
+                        <v-icon v-show="scope.row.address1 !== null" color="primary">mdi-tooltip-text</v-icon>
                         <div slot="content" style="min-width: 10px; max-width: 600px;">
-                          <span> {{ scope.row && scope.row.address }} </span>
+                          <span> {{ scope.row && scope.row.address1 }} </span>
                         </div>
                       </el-tooltip>
                     </div>
                     <div class="size">
-                      {{ scope.row && scope.row.address }}
+                      {{ scope.row && scope.row.address1 }}
                     </div>
                   </div>
                 </div>
               </template>
             </el-table-column>
+
+            <el-table-column align="left" label="Адрес личный" width="320">
+              <template slot-scope="scope">
+                <div>
+                  <div class="container__text__cell">
+                    <div class="center__text__cell">
+                      <el-tooltip placement="right-start" style="right: 5px;" effect="light">
+                        <v-icon v-show="scope.row.address2 !== null" color="primary">mdi-tooltip-text</v-icon>
+                        <div slot="content" style="min-width: 10px; max-width: 600px;">
+                          <span> {{ scope.row && scope.row.address2 }} </span>
+                        </div>
+                      </el-tooltip>
+                    </div>
+                    <div class="size">
+                      {{ scope.row && scope.row.address2 }}
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </el-table-column>
+
             <el-table-column
               align="left"
               label="Дата деактивации"
@@ -247,14 +307,14 @@
                   <el-button v-if="!scope.row.roles.includes('admin')" v-permission="['manage permission']" type="warning" size="small" icon="el-icon-edit" @click="handleEditPermissions(scope.row.id);">
                     Разрешений
                   </el-button>
-                  <el-button v-if="scope.row.roles.includes('moderator') || scope.row.roles.includes('menadger') || scope.row.roles.includes('manager') || scope.row.roles.includes('editor') || scope.row.roles.includes('visitor') || scope.row.roles.includes('user')" v-permission="['manage user']" type="danger" size="small" icon="el-icon-delete" @click="handleDelete(scope.row.id, scope.row.name);" />
+                  <el-button v-if="!scope.row.roles.includes('admin') || scope.row.roles.includes('moderator') || scope.row.roles.includes('manager') || scope.row.roles.includes('editor') || scope.row.roles.includes('visitor') || scope.row.roles.includes('user') || scope.row.roles.includes('guest')" v-permission="['manage user']" type="danger" size="small" icon="el-icon-delete" @click="handleDelete(scope.row.id, scope.row.name);" />
                 </div>
                 <div v-else-if="scope.row.deleted_at !== ''">
                   <div v-if="!scope.row.roles.includes('admin')" :to="'/administrator/users/edit/'+scope.row.id">
-                    <el-button v-if="scope.row.roles.includes('moderator') || scope.row.roles.includes('menadger') || scope.row.roles.includes('manager') || scope.row.roles.includes('editor') || scope.row.roles.includes('visitor') || scope.row.roles.includes('user')" v-permission="['manage user']" type="success" size="small" icon="el-icon-refresh" @click="handleRestore(scope.row.id, scope.row.name);">
+                    <el-button v-if="!scope.row.roles.includes('admin') || scope.row.roles.includes('moderator') || scope.row.roles.includes('manager') || scope.row.roles.includes('editor') || scope.row.roles.includes('visitor') || scope.row.roles.includes('user') || scope.row.roles.includes('guest')" v-permission="['manage user']" type="success" size="small" icon="el-icon-refresh" @click="handleRestore(scope.row.id, scope.row.name);">
                       Актвировать
                     </el-button>
-                    <el-button v-if="scope.row.roles.includes('moderator') || scope.row.roles.includes('menadger') || scope.row.roles.includes('manager') || scope.row.roles.includes('editor') || scope.row.roles.includes('visitor') || scope.row.roles.includes('user')" v-permission="['manage user']" type="danger" size="small" icon="el-icon-delete" @click="handleDeleteForever(scope.row.id, scope.row.name);">
+                    <el-button v-if="!scope.row.roles.includes('admin') || scope.row.roles.includes('moderator') || scope.row.roles.includes('manager') || scope.row.roles.includes('editor') || scope.row.roles.includes('visitor') || scope.row.roles.includes('user') || scope.row.roles.includes('guest')" v-permission="['manage user']" type="danger" size="small" icon="el-icon-delete" @click="handleDeleteForever(scope.row.id, scope.row.name);">
                       Удалить
                     </el-button>
                   </div>
@@ -351,7 +411,7 @@ import UserResource from '@/api/user';
 import Resource from '@/api/resource';
 import waves from '@/directive/waves'; // Waves directive
 import permission from '@/directive/permission'; // Waves directive
-import checkPermission from '@/utils/permission'; // Permission checking
+import checkPermission from '@/utils/permission';
 
 const userResource = new UserResource();
 const permissionResource = new Resource('permissions');
@@ -370,6 +430,7 @@ export default {
     };
     return {
       list: null,
+      onlineStatus: '',
       total: 1,
       loading: true,
       sortBy: 'id',
@@ -382,9 +443,8 @@ export default {
       userCreating: false,
       query: {
         page: 1,
-        limit: 16,
+        limit: 8,
         keyword: '',
-        status: '',
         role: '',
       },
       roles: ['admin', 'moderator', 'manager', 'editor', 'user', 'visitor', 'guest'],
@@ -392,6 +452,7 @@ export default {
       nonModeratorRoles: ['manager', 'editor', 'user', 'visitor', 'guest'],
       nonManagerRoles: ['editor', 'user', 'visitor', 'guest'],
       genderVulue: ['male', 'female'],
+      familyStatusVulue: ['unmarried', 'married', 'divorced'],
       newUser: {},
       dialogFormVisible: false,
       dialogPermissionVisible: false,
@@ -406,6 +467,7 @@ export default {
         role: [{ required: true, message: 'Role is required', trigger: 'change' }],
         name: [{ required: true, message: 'Поле Имя обязательно для заполнения', trigger: 'blur' }],
         gender: [{ required: true, message: 'Поле пол обязательно для заполнения', trigger: 'blur' }],
+        family_status: [{ required: true, message: 'Поле семейное положение обязательно для заполнения', trigger: 'blur' }],
         email: [
           { required: true, message: 'Поле Email обязательно для заполнения', trigger: 'blur' },
           { type: 'email', message: 'Пожалуйста, введите правильный адрес электронной почты', trigger: ['blur', 'change'] },
@@ -494,9 +556,6 @@ export default {
     }
   },
   methods: {
-    getAvatar(value){
-      return this.avatar;
-    },
     sortData(a, b, key) {
       return a.value > b.value ? 1 : a.value < b.value ? 0 : -1;
     },
@@ -525,6 +584,7 @@ export default {
         element['index'] = (page - 1) * limit + index + 1;
       });
       this.total = meta.total;
+      this.list.onlineStatus = data.onlineStatus;
       this.loading = false;
     },
     handleFilter() {
@@ -662,21 +722,23 @@ export default {
         name: '',
         email: '',
         gender: '',
+        family_status: '',
         password: '',
         confirmPassword: '',
         role: 'user',
       };
     },
     handleDownload() {
+      const fileNameDateTime = 'Data: ' + new Date().getFullYear() + '_' + new Date().getDate() + '_' + new Date().getMonth() + ' ' + new Date().getHours() + '-' + new Date().getMinutes() + '-' + new Date().getSeconds();
       this.downloading = true;
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['id', 'user_id', 'name', 'gender', 'email', 'role'];
-        const filterVal = ['index', 'id', 'name', 'gender', 'email', 'role'];
+        const tHeader = ['id', 'user_id', 'name', 'gender', 'family_status', 'email', 'roles'];
+        const filterVal = ['index', 'id', 'name', 'gender', 'family_status', 'email', 'roles'];
         const data = this.formatJson(filterVal, this.list);
         excel.export_json_to_excel({
           header: tHeader,
           data,
-          filename: 'user-list',
+          filename: 'user-list_' + fileNameDateTime,
         });
         this.downloading = false;
       });

@@ -30,7 +30,7 @@ class Role extends \Spatie\Permission\Models\Role
     }
 
     /**
-     * Check whether current role is admin
+     * Check whether current role is Moderator
      * @return bool
      */
     public function isModerator(): bool

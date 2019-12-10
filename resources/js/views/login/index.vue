@@ -140,7 +140,7 @@ export default {
             });
         } else {
           this.$message({
-            message: ''.concat(this.$t('i18nViewLogin.title'),
+            message: ''.concat(this.$t('i18nViewLogin.warning'),
               ' ',
               this.$t('i18nViewLogin.password_error'),
             ),

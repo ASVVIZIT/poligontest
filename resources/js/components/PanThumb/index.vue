@@ -5,7 +5,9 @@
         <slot />
       </div>
     </div>
-    <img :src="image" class="pan-thumb">
+    <a>
+      <img :src="image" class="pan-thumb">
+    </a>
   </div>
 </template>
 
@@ -23,11 +25,11 @@ export default {
     },
     width: {
       type: String,
-      default: '150px',
+      default: '250px',
     },
     height: {
       type: String,
-      default: '150px',
+      default: '250px',
     },
     hoverable: {
       type: Boolean,

@@ -19,8 +19,10 @@
         <div v-show="hasError" class="vicp-error">
           <i class="vicp-icon2" /> {{ errorMsg }}
         </div>
-        <div class="vicp-operate">
-          <a @click="off" @mousedown="ripple">{{ lang.btn.off }}</a>
+        <div class="vicp-operate-main">
+          <div class="vicp-operate">
+            <a class="vicp-operate-grid-area2" @click="off" @mousedown="ripple">{{ lang.btn.off }}</a>
+          </div>
         </div>
       </div>
 
@@ -69,18 +71,20 @@
             <div class="vicp-preview">
               <div v-if="!stepSquare" class="vicp-preview-item">
                 <img :src="createImgUrl" :style="previewStyle">
-                <span>{{ lang.preview }}</span>
+                <span>{{ lang.preview1 }}</span>
               </div>
               <div v-if="!stepCircle" class="vicp-preview-item vicp-preview-item-circle">
                 <img :src="createImgUrl" :style="previewStyle">
-                <span>{{ lang.preview }}</span>
+                <span>{{ lang.preview2 }}</span>
               </div>
             </div>
           </div>
         </div>
-        <div class="vicp-operate">
-          <a @click="setStep(1)" @mousedown="ripple">{{ lang.btn.back }}</a>
-          <a class="vicp-operate-btn" @click="prepareUpload" @mousedown="ripple">{{ lang.btn.save }}</a>
+        <div class="vicp-operate-main">
+          <div class="vicp-operate">
+            <a class="vicp-operate-grid-area2" @click="setStep(1)" @mousedown="ripple">{{ lang.btn.back }}</a>
+            <a class="vicp-operate-grid-area3 vicp-operate-btn" @click="prepareUpload" @mousedown="ripple">{{ lang.btn.save }}</a>
+          </div>
         </div>
       </div>
 
@@ -97,9 +101,11 @@
             <i class="vicp-icon3" /> {{ lang.success }}
           </div>
         </div>
-        <div class="vicp-operate">
-          <a @click="setStep(2)" @mousedown="ripple">{{ lang.btn.back }}</a>
-          <a @click="off" @mousedown="ripple">{{ lang.btn.close }}</a>
+        <div class="vicp-operate-main">
+          <div class="vicp-operate">
+            <a class="vicp-operate-grid-area2" @click="setStep(2)" @mousedown="ripple">{{ lang.btn.back }}</a>
+            <a class="vicp-operate-grid-area3" @click="off" @mousedown="ripple">{{ lang.btn.close }}</a>
+          </div>
         </div>
       </div>
       <canvas v-show="false" ref="canvas" :width="width" :height="height" />
@@ -1235,26 +1241,28 @@ export default {
       .vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-right {
         float: right; }
         .vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-right .vicp-preview {
-          height: 150px;
+          height: 180px;
           overflow: hidden; }
           .vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-right .vicp-preview .vicp-preview-item {
             position: relative;
-            padding: 5px;
-            width: 100px;
-            height: 100px;
+            padding: 10px;
+            width: 140px;
+            height: 140px;
             float: left;
-            margin-right: 16px; }
+            margin-right: 5px; }
             .vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-right .vicp-preview .vicp-preview-item span {
               position: absolute;
-              bottom: -30px;
+              bottom: -15px;
               width: 100%;
-              font-size: 14px;
+              font-size: 15px;
               color: #bbb;
               display: block;
               text-align: center; }
             .vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-right .vicp-preview .vicp-preview-item img {
               position: absolute;
               display: block;
+              width: 140px;
+              height: 140px;
               top: 0;
               bottom: 0;
               left: 0;
@@ -1323,30 +1331,45 @@ export default {
       .vue-image-crop-upload .vicp-wrap .vicp-step3 .vicp-upload .vicp-success {
         height: 100px;
         line-height: 100px; }
-    .vue-image-crop-upload .vicp-wrap .vicp-operate {
-      position: absolute;
-      right: 20px;
-      bottom: 20px; }
-      .vue-image-crop-upload .vicp-wrap .vicp-operate a {
-        position: relative;
-        float: left;
-        display: block;
-        margin-left: 10px;
-        width: 100px;
-        height: 36px;
-        line-height: 36px;
-        text-align: center;
-        cursor: pointer;
-        font-size: 14px;
-        color: #4a7;
-        border-radius: 2px;
-        overflow: hidden;
-        -webkit-user-select: stepne;
-           -moz-user-select: stepne;
+      .vue-image-crop-upload .vicp-wrap .vicp-operate-main .vicp-operate {
+        display: grid;
+        grid-gap: 10px;
+        grid-template-columns: 180px 180px 180px;
+        grid-template-areas:  "vicp-operate1 vicp-operate2 vicp-operate3";
+      }
+        .vue-image-crop-upload .vicp-wrap .vicp-operate-grid-area1 {
+          grid-area: vicp-operate1;
+        }
+        .vue-image-crop-upload .vicp-wrap .vicp-operate-grid-area2 {
+          grid-area: vicp-operate2;
+        }
+        .vue-image-crop-upload .vicp-wrap .vicp-operate-grid-area3 {
+          grid-area: vicp-operate3;
+        }
+        .vue-image-crop-upload .vicp-wrap .vicp-operate {
+          position: absolute;
+          bottom: 20px;}
+          .vue-image-crop-upload .vicp-wrap .vicp-operate a {
+            float: left;
+            align-content: center;
+            display: block;
+            margin-left: 40px;
+            width: 100px;
+            height: 36px;
+            line-height: 40px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 16px;
+            color: #4a7;
+            border-radius: 2px;
+            overflow: hidden;
+            -webkit-user-select: stepne;
+            -moz-user-select: stepne;
             -ms-user-select: stepne;
-                user-select: stepne; }
-        .vue-image-crop-upload .vicp-wrap .vicp-operate a:hover {
-          background-color: rgba(0, 0, 0, 0.03); }
+            user-select: stepne;
+          }
+          .vue-image-crop-upload .vicp-wrap .vicp-operate a:hover {
+            background-color: rgba(0, 0, 0, 0.03);}
     .vue-image-crop-upload .vicp-wrap .vicp-error,
     .vue-image-crop-upload .vicp-wrap .vicp-success {
       display: block;

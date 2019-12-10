@@ -3,6 +3,8 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Cache;
+
 class User extends Authenticatable
 {
     use Notifiable;
@@ -17,13 +19,15 @@ class User extends Authenticatable
         'firstname',
         'patronymic',
         'gender',
+        'family_status',
         'avatar',
         'phone1',
         'phone2',
         'phone3',
         'phone4',
         'skype',
-        'address',
+        'address1',
+        'address2',
         'birthday',
         'deleted_at',
         'email',
@@ -45,4 +49,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    /**
+     * Check is user online.
+     * @return bool
+     */
+    public function isOnline()
+    {
+        return Cache::has('user-is-online-' . $this->id);
+    }
 }

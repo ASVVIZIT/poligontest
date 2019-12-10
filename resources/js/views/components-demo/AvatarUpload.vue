@@ -15,11 +15,11 @@
     <image-cropper
       v-show="imagecropperShow"
       :key="imagecropperKey"
-      field="/upload/avatar/"
+      field="avatar.jpg"
       :width="300"
       :height="300"
       method="POST"
-      url="https://poligontest.loc/avatarpost"
+      url="http://poligontest.loc/"
       lang-type="ru"
       @close="close"
       @crop-upload-success="cropSuccess"

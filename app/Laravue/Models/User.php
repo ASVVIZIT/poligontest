@@ -5,24 +5,28 @@ namespace App\Laravue\Models;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Cache;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
  * Class User
  *
+ * @property string $onlineStatus
  * @property string $name
  * @property string $surname
  * @property string $firstname
  * @property string $patronymic
  * @property string $gender
+ * @property string $family_status
  * @property string $avatar
  * @property string $phone1
  * @property string $phone2
  * @property string $phone3
  * @property string $phone4
  * @property string $skype
- * @property text $address
+ * @property text $address1
+ * @property text $address2
  * @property data $birthday
  * @property data $deleted_at
  * @property string $email
@@ -42,18 +46,21 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
+        'onlineStatus',
         'name',
         'surname',
         'firstname',
         'patronymic',
         'gender',
+        'family_status',
         'avatar',
         'phone1',
         'phone2',
         'phone3',
         'phone4',
         'skype',
-        'address',
+        'address1',
+        'address2',
         'birthday',
         'deleted_at',
         'email',
@@ -117,8 +124,28 @@ class User extends Authenticatable implements JWTSubject
                 return true;
             }
         }
-
         return false;
+    }
+    /**
+     * @return bool
+     */
+    public function isModerator(): bool
+    {
+        foreach ($this->roles  as $role) {
+            if ($role->isModerator()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check is user online.
+     * @return bool
+     */
+    public function isOnline()
+    {
+        return Cache::has('user-is-online-' . $this->id);
     }
 
     public function order()

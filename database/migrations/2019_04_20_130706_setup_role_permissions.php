@@ -25,26 +25,46 @@ class SetupRolePermissions extends Migration
         $editorRole = Role::findByName(Acl::ROLE_EDITOR);
         $userRole = Role::findByName(Acl::ROLE_USER);
         $visitorRole = Role::findByName(Acl::ROLE_VISITOR);
+        $guestRole = Role::findByName(Acl::ROLE_GUEST);
 
         foreach (Acl::permissions() as $permission) {
             Permission::findOrCreate($permission, 'api');
         }
 
         // Setup basic permission
+        $adminRole->givePermissionTo(Acl::menuPermissions());
         $adminRole->givePermissionTo(Acl::permissions());
+
         $moderatorRole->givePermissionTo(Acl::menuPermissions());
-        $moderatorRole->givePermissionTo(Acl::permissions([Acl::PERMISSION_PERMISSION_MODERATOR]));
-        $managerRole->givePermissionTo(Acl::permissions([Acl::PERMISSION_PERMISSION_MANAGE]));
+        $moderatorRole->givePermissionTo(Acl::permissions([
+            Acl::PERMISSION_PERMISSION_MODERATOR,
+            Acl::PERMISSION_USER_MODERATOR,
+        ]));
+
+        $managerRole->givePermissionTo(Acl::menuPermissions());
+        $managerRole->givePermissionTo(Acl::permissions([
+            Acl::PERMISSION_PERMISSION_MANAGE,
+            Acl::PERMISSION_USER_MANAGE,
+        ]));
+
+
         $editorRole->givePermissionTo(Acl::menuPermissions());
-        $editorRole->givePermissionTo(Acl::PERMISSION_ARTICLE_MANAGE);
+        $editorRole->givePermissionTo(Acl::permissions([
+            Acl::PERMISSION_PERMISSION_EDITOR,
+            Acl::PERMISSION_USER_EDITOR,
+        ]));
+
         $userRole->givePermissionTo([
             Acl::PERMISSION_VIEW_MENU_ELEMENT_UI,
-            Acl::PERMISSION_VIEW_MENU_PERMISSION,
             Acl::PERMISSION_VIEW_MENU_ORDER,
         ]);
+
         $visitorRole->givePermissionTo([
             Acl::PERMISSION_VIEW_MENU_ELEMENT_UI,
-            Acl::PERMISSION_VIEW_MENU_PERMISSION,
+        ]);
+
+        $guestRole->givePermissionTo([
+            Acl::PERMISSION_VIEW_MENU_ELEMENT_UI,
         ]);
 
         foreach (Acl::roles() as $role) {

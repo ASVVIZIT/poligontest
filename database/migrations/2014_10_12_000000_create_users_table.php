@@ -20,13 +20,15 @@ class CreateUsersTable extends Migration
             $table->string('surname')->nullable();
             $table->string('patronymic')->nullable();
             $table->enum('gender',['male', 'female'])->default('male');
+            $table->enum('family_status',['unmarried', 'married', 'divorced'])->default('unmarried');
             $table->string('avatar')->default('default.png');
             $table->string('phone1')->nullable();
             $table->string('phone2')->nullable();
             $table->string('phone3')->nullable();
             $table->string('phone4')->nullable();
             $table->string('skype')->nullable();
-            $table->text('address')->nullable();
+            $table->text('address1')->nullable();
+            $table->text('address2')->nullable();
             $table->date('birthday')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();

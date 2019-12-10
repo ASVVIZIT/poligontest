@@ -34,6 +34,7 @@ final class Acl
     const PERMISSION_VIEW_MENU_NESTED_ROUTES = 'view menu nested routes';
     const PERMISSION_VIEW_MENU_TABLE = 'view menu table';
     const PERMISSION_VIEW_MENU_ADMINISTRATOR = 'view menu administrator';
+    const PERMISSION_VIEW_MENU_EDITOR = 'view menu editor';
     const PERMISSION_VIEW_MENU_THEME = 'view menu theme';
     const PERMISSION_VIEW_MENU_CLIPBOARD = 'view menu clipboard';
     const PERMISSION_VIEW_MENU_EXCEL = 'view menu excel';
@@ -41,11 +42,19 @@ final class Acl
     const PERMISSION_VIEW_MENU_PDF = 'view menu pdf';
     const PERMISSION_VIEW_MENU_I18N = 'view menu i18n';
 
-    const PERMISSION_USER_MANAGE = 'manage user';
-    const PERMISSION_USER_MODERATOR = 'manage moderator';
+
     const PERMISSION_ARTICLE_MANAGE = 'manage article';
+
+    const PERMISSION_USER_ADMIN = 'manage admin';
+    const PERMISSION_USER_MODERATOR = 'manage moderator';
+    const PERMISSION_USER_MANAGE = 'manage user';
+    const PERMISSION_USER_EDITOR = 'manage editor';
+    const PERMISSION_USER_GUEST = 'manage guest';
+
+    const PERMISSION_PERMISSION_ADMIN = 'admin permission';
     const PERMISSION_PERMISSION_MODERATOR = 'moderator permission';
     const PERMISSION_PERMISSION_MANAGE = 'manage permission';
+    const PERMISSION_PERMISSION_EDITOR = 'editor permission';
 
     /**
      * @param array $exclusives Exclude some permissions from the list

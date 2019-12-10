@@ -44,6 +44,7 @@ class DatabaseSeeder extends Seeder
                 'surname' => $surname[1],
                 'patronymic' => $patronymic[2],
                 'gender' => 'male',
+                'family_status' => 'unmarried',
                 'birthday' => '1986-02-17',
                 'email' => 'DillerASV@yandex.ru',
                 'password' => \Illuminate\Support\Facades\Hash::make('Fgjrfkbgcbc001001'),
@@ -58,11 +59,13 @@ class DatabaseSeeder extends Seeder
             'surname' => 'Adminov',
             'patronymic' => 'Adminovisch',
             'gender' => 'male',
+            'family_status' => 'unmarried',
             'birthday' => '2019-10-05',
             'phone1' => $faker->phoneNumber,
             'phone2' => $faker->phoneNumber,
             'skype' => $faker->userName,
-            'address' => $faker->address,
+            'address1' => $faker->address,
+            'address2' => $faker->address,
             'email' => 'admin@laravue.dev',
             'password' => Hash::make('laravuelaravue'),
             'remember_token' => str::random(20),
@@ -74,11 +77,13 @@ class DatabaseSeeder extends Seeder
             'surname' => 'Moderatorov',
             'patronymic' => 'Moderatorovisch',
             'gender' => 'male',
+            'family_status' => 'unmarried',
             'birthday' => $arrayRundomTime[rand(1, 4)],
             'phone1' => $faker->phoneNumber,
             'phone2' => $faker->phoneNumber,
             'skype' => $faker->userName,
-            'address' => $faker->address,
+            'address1' => $faker->address,
+            'address2' => $faker->address,
             'email' => 'moderator@laravue.dev',
             'password' => Hash::make('moderator'),
             'remember_token' => str::random(20),
@@ -90,11 +95,13 @@ class DatabaseSeeder extends Seeder
             'surname' => 'Managerov',
             'patronymic' => 'Managerovisch',
             'gender' => 'male',
+            'family_status' => 'unmarried',
             'birthday' => $arrayRundomTime[rand(1, 4)],
             'phone1' => $faker->phoneNumber,
             'phone2' => $faker->phoneNumber,
             'skype' => $faker->userName,
-            'address' => $faker->address,
+            'address1' => $faker->address,
+            'address2' => $faker->address,
             'email' => 'manager@laravue.dev',
             'password' => Hash::make('secretsecret'),
             'remember_token' => str::random(20),
@@ -105,11 +112,13 @@ class DatabaseSeeder extends Seeder
             'surname' => 'Editorov',
             'patronymic' => 'Editorovisch',
             'gender' => 'male',
+            'family_status' => 'unmarried',
             'birthday' => $arrayRundomTime[rand(1, 4)],
             'phone1' => $faker->phoneNumber,
             'phone2' => $faker->phoneNumber,
             'skype' => $faker->userName,
-            'address' => $faker->address,
+            'address1' => $faker->address,
+            'address2' => $faker->address,
             'email' => 'editor@laravue.dev',
             'password' => Hash::make('secretsecret'),
             'remember_token' => str::random(20),
@@ -120,11 +129,13 @@ class DatabaseSeeder extends Seeder
             'surname' => 'Userov',
             'patronymic' => 'Userovisch',
             'gender' => 'male',
+            'family_status' => 'unmarried',
             'birthday' => $arrayRundomTime[rand(1, 4)],
             'phone1' => $faker->phoneNumber,
             'phone2' => $faker->phoneNumber,
             'skype' => $faker->userName,
-            'address' => $faker->address,
+            'address1' => $faker->address,
+            'address2' => $faker->address,
             'email' => 'user@laravue.dev',
             'password' => Hash::make('secretsecret'),
             'remember_token' => str::random(20),
@@ -135,22 +146,41 @@ class DatabaseSeeder extends Seeder
             'surname' => 'Visitorov',
             'patronymic' => 'Visitorovisch',
             'gender' => 'male',
+            'family_status' => 'unmarried',
             'birthday' => $arrayRundomTime[rand(1, 4)],
             'phone1' => $faker->phoneNumber,
             'phone2' => $faker->phoneNumber,
             'skype' => $faker->userName,
-            'address' => $faker->address,
+            'address1' => $faker->address,
+            'address2' => $faker->address,
             'email' => 'visitor@laravue.dev',
             'password' => Hash::make('secretsecret'),
             'remember_token' => str::random(20),
         ]);
-
+        $guest = User::create([
+            'name' => 'Guest',
+            'firstname' => 'Guestor',
+            'surname' => 'Guestorov',
+            'patronymic' => 'Guestorovisch',
+            'gender' => 'male',
+            'family_status' => 'unmarried',
+            'birthday' => $arrayRundomTime[rand(1, 4)],
+            'phone1' => $faker->phoneNumber,
+            'phone2' => $faker->phoneNumber,
+            'skype' => $faker->userName,
+            'address1' => $faker->address,
+            'address2' => $faker->address,
+            'email' => 'guest@laravue.dev',
+            'password' => Hash::make('guestguest'),
+            'remember_token' => str::random(20),
+        ]);
         $adminRole = Role::findByName(\App\Laravue\Acl::ROLE_ADMIN);
         $moderatorRole = Role::findByName(\App\Laravue\Acl::ROLE_MODERATOR);
         $managerRole = Role::findByName(\App\Laravue\Acl::ROLE_MANAGER);
         $editorRole = Role::findByName(\App\Laravue\Acl::ROLE_EDITOR);
         $userRole = Role::findByName(\App\Laravue\Acl::ROLE_USER);
         $visitorRole = Role::findByName(\App\Laravue\Acl::ROLE_VISITOR);
+        $guestRole = Role::findByName(\App\Laravue\Acl::ROLE_GUEST);
 
         $admin->syncRoles($adminRole);
         $moderator->syncRoles($moderatorRole);
@@ -158,6 +188,7 @@ class DatabaseSeeder extends Seeder
         $editor->syncRoles($editorRole);
         $user->syncRoles($userRole);
         $visitor->syncRoles($visitorRole);
+        $guest->syncRoles($guestRole);
 
         $this->call(UsersTableSeeder::class);
         $this->call(OrdersTableSeeder::class);
@@ -165,7 +196,7 @@ class DatabaseSeeder extends Seeder
         $this->call(OrderersTableSeeder::class);
 
         for($i = 0; $i < 2; $i++) {
-            factory(App\User::class, 20)->create();
+            factory(App\User::class, 10)->create();
         }
 
         //factory(App\Laravue\Models\Order::class)->create();

@@ -1,5 +1,5 @@
 <template>
-  <el-card v-if="user.name">
+  <el-card v-if="user.id">
     <el-tabs v-model="activeActivity" @tab-click="handleClick">
       <el-tab-pane v-loading="updating" label="Профиль" name="first">
         <v-app id="inspire">
@@ -12,6 +12,7 @@
               background-color="blue darken-1"
               class="elevation-1"
               dark
+              center-active
               :centered="tab.centered"
               :grow="tab.grow"
               :vertical="tab.vertical"
@@ -19,6 +20,7 @@
               :prev-icon="tab.prevIcon ? 'mdi-arrow-left-bold-box-outline' : undefined"
               :next-icon="tab.nextIcon ? 'mdi-arrow-right-bold-box-outline' : undefined"
               :icons-and-text="tab.icons"
+              @click="handleClick"
             >
               <v-tabs-slider />
               <v-tab :key="1">
@@ -38,50 +40,62 @@
                 Адрес
               </v-tab>
               <v-tab :key="5">
+                <v-icon>mdi-skype</v-icon>
+                Скайп
+              </v-tab>
+              <v-tab :key="6">
                 <v-icon>mdi-phone-classic</v-icon>
                 Телефон
               </v-tab>
-              <v-tab :key="6">
+              <v-tab :key="7">
                 <v-icon>mdi-settings-outline</v-icon>
                 Настройки
               </v-tab>
               <v-tab-item :key="1">
                 <v-card>
-                  <v-card-text>
-                    <div class="user-profile">
-                      <div class="user-avatar box-center">
-                        <div v-show="user.avatar !== null" style="position: absolute; top: 10px; left: 240px">
-                          <pan-thumb :image="user.avatar" :height="'130px'" :width="'130px'" :hoverable="false" />
+                  <v-card-text class="user-profile-grid-main">
+                    <div class="user-profile user-profile-grid-main-area1 user-profile-grid-avatar">
+                      <div class="user-avatar box-center user-profile-grid-main-avatar-area1">
+                        <div style="display: flex;justify-content: space-between;">
+                          <div v-if="user.onlineStatus">
+                            <v-icon v-show="user.onlineStatus !== null" color="green">mdi mdi-account-check-outline</v-icon>
+                            <b style="color: #01c003">Онлайн</b>
+                          </div>
+                          <div v-else-if="!user.onlineStatus">
+                            <v-icon v-show="user.onlineStatus !== null" color="red">mdi mdi-account-off-outline</v-icon>
+                            <b style="color: #cc0027">Оффлайн</b>
+                          </div>
+                          <div>
+                            Ваш ID: {{ user.id }}
+                          </div>
                         </div>
-                        <div v-show="user.avatar === null">
-                          <pan-thumb :image="'http://poligontest.loc/uploads/avatars/default/v0/default.png'" :height="'130px'" :width="'130px'" :hoverable="false" />
-                        </div>
-                        <img v-show="true" v-if="avatarUrl" :src="avatarUrl" class="avatar">
-                      </div>
-                      <div>
-                        <div class="box-center">
-                          <el-button type="primary" icon="upload" style="bottom: 15px;" @click="imagecropperShow=true">
-                            Выбирите свой аватар
-                          </el-button>
-                        </div>
+                        <a @click="imagecropperShow=true">
+                          <div v-show="user.avatar !== null" v-if="user.avatar" v-loading="avatarupdating">
+                            <pan-thumb v-if="user.avatar" v-loading="avatarupdating" :image="user.avatar" :src="user.avatar" :height="'250px'" :width="'250px'" :hoverable="false" />
+                          </div>
+                          <div v-show="user.avatar === null" v-loading="avatarupdating">
+                            <pan-thumb v-loading="avatarupdating" :image="'/uploads/avatars/default/v0/default.png'" :height="'250px'" :width="'250px'" :hoverable="false" />
+                          </div>
+                        </a>
                         <image-cropper
                           v-show="imagecropperShow"
                           :key="imagecropperKey"
+                          :value.sync="imagecropperShow"
+                          :params="params"
                           :headers="headers"
-                          :params="otherParams"
-                          :width="150"
-                          :height="150"
-                          ki="1"
-                          :url="'http://poligontest.loc/api/users/' + user.id + '/avatarupload'"
+                          :width="250"
+                          :height="250"
+                          field="avatar"
+                          ki="0"
+                          :url="'/users/' + user.id + '/avatarupload'"
                           lang-type="ru"
                           :no-circle="false"
                           @close="close"
-                          @crop-success="cropSuccess"
                           @crop-upload-success="cropUploadSuccess"
                           @crop-upload-fail="cropUploadFail"
                         />
                       </div>
-                      <div class="box-center">
+                      <div class="box-center user-profile-grid-main-avatar-area2">
                         <div class="user-name text-center text-muted">
                           <i>Имя:</i><b> {{ user.name }} </b>
                         </div>
@@ -89,18 +103,31 @@
                           <i>Ваши текушие роли:</i><b> {{ getRole() }} </b>
                         </div>
                       </div>
+                      <div class="box-center user-profile-grid-main-avatar-area3">
+                        <el-button type="primary" icon="upload" style="bottom: 15px;" @click="imagecropperShow=true">
+                          Выбирите свой аватар
+                        </el-button>
+                      </div>
                     </div>
-                    <el-form-item label="Имя">
-                      <el-input v-model="user.firstname" :disabled="user.role === 'admin'" />
-                    </el-form-item>
-                    <el-form-item label="Фамилия">
-                      <el-input v-model="user.surname" :disabled="user.role === 'admin'" />
-                    </el-form-item>
-                    <el-form-item label="Отчество">
-                      <el-input v-model="user.patronymic" :disabled="user.role === 'admin'" />
-                    </el-form-item>
-                    <el-row>
-                      <el-col :span="5" :xs="{span: 22}" :sm="{span: 16}" :md="{span: 12}" :lg="{span: 8}" :xl="{span: 4}">
+                    <div class="user-profile-grid-main-area2 user-profile-grid-parametrs">
+                      <div class="user-profile-grid-main-parametrs-area1">
+                        <el-form-item label="Имя">
+                          <el-input v-model="user.firstname" :disabled="user.role === 'admin'" />
+                        </el-form-item>
+                      </div>
+                      <div class="user-profile-grid-main-parametrs-area2">
+                        <el-form-item label="Фамилия">
+                          <el-input v-model="user.surname" :disabled="user.role === 'admin'" />
+                        </el-form-item>
+                      </div>
+                      <div class="user-profile-grid-main-parametrs-area3">
+                        <el-form-item label="Отчество">
+                          <el-input v-model="user.patronymic" :disabled="user.role === 'admin'" />
+                        </el-form-item>
+                      </div>
+                    </div>
+                    <div class="user-profile-grid-main-area3 user-profile-grid-parametrs">
+                      <div class="user-profile-grid-main-parametrs-area1">
                         <div style="margin-right: 5px">
                           <el-form-item label="Пол">
                             <el-select v-model="user.gender" :disabled="user.role === 'admin'">
@@ -108,6 +135,8 @@
                             </el-select>
                           </el-form-item>
                         </div>
+                      </div>
+                      <div class="user-profile-grid-main-parametrs-area2">
                         <div style="margin-right: 5px">
                           <el-form-item label="День рождения">
                             <el-date-picker
@@ -120,8 +149,17 @@
                             />
                           </el-form-item>
                         </div>
-                      </el-col>
-                    </el-row>
+                      </div>
+                      <div class="user-profile-grid-main-parametrs-area3">
+                        <div style="margin-right: 5px">
+                          <el-form-item label="Семейное положение">
+                            <el-select v-model="user.family_status" :disabled="user.role === 'admin'">
+                              <el-option v-for="item in familyStatusVulue" :key="item" :label="item | uppercaseFirst" :value="item" />
+                            </el-select>
+                          </el-form-item>
+                        </div>
+                      </div>
+                    </div>
                   </v-card-text>
                   <v-card-text>
                     <el-form-item>
@@ -201,14 +239,19 @@
                 <v-card>
                   <el-form-item>
                     <v-card-text>
-                      <el-form-item label="Адресс">
-                        <el-input v-model="user.address" :disabled="user.role === 'admin'" />
+                      <el-form-item label="Адрес работа">
+                        <el-input v-model="user.address1" :disabled="user.role === 'admin'" />
+                      </el-form-item>
+                    </v-card-text>
+                    <v-card-text>
+                      <el-form-item label="Адрес личный">
+                        <el-input v-model="user.address2" :disabled="user.role === 'admin'" />
                       </el-form-item>
                     </v-card-text>
                     <v-card-text>
                       <el-form-item>
                         <el-button type="primary" :disabled="user.role === 'admin'" @click="onSubmitAddress">
-                          Обновить профиль
+                          Обновить адресса
                         </el-button>
                       </el-form-item>
                     </v-card-text>
@@ -219,22 +262,40 @@
                 <v-card>
                   <el-form-item>
                     <v-card-text>
-                      <el-form-item label="Телефон 1">
+                      <el-form-item label="Скайп">
+                        <el-input v-model="user.skype" :disabled="user.role === 'admin'" />
+                      </el-form-item>
+                    </v-card-text>
+                    <v-card-text>
+                      <el-form-item>
+                        <el-button type="primary" :disabled="user.role === 'admin'" @click="onSubmitSkype">
+                          Обновить данные о скайпе
+                        </el-button>
+                      </el-form-item>
+                    </v-card-text>
+                  </el-form-item>
+                </v-card>
+              </v-tab-item>
+              <v-tab-item :key="6">
+                <v-card>
+                  <el-form-item>
+                    <v-card-text>
+                      <el-form-item label="Телефон мобильный">
                         <el-input v-model="user.phone1" :disabled="user.role === 'admin'" />
                       </el-form-item>
                     </v-card-text>
                     <v-card-text>
-                      <el-form-item label="Телефон 2">
+                      <el-form-item label="Телефон рабочий">
                         <el-input v-model="user.phone2" :disabled="user.role === 'admin'" />
                       </el-form-item>
                     </v-card-text>
                     <v-card-text>
-                      <el-form-item label="Телефон 3">
+                      <el-form-item label="Телефон домашний">
                         <el-input v-model="user.phone3" :disabled="user.role === 'admin'" />
                       </el-form-item>
                     </v-card-text>
                     <v-card-text>
-                      <el-form-item label="Телефон 4">
+                      <el-form-item label="Телефон запасной">
                         <el-input v-model="user.phone4" :disabled="user.role === 'admin'" />
                       </el-form-item>
                     </v-card-text>
@@ -248,11 +309,18 @@
                   </el-form-item>
                 </v-card>
               </v-tab-item>
-              <v-tab-item :key="6">
+              <v-tab-item :key="7">
                 <v-card>
-                  <p>Внимание!!! данный раздел в разработке</p>
                   <v-card-text>
-                    <p>тут будут поля для других настроек пользователя</p>
+                    <v-row
+
+                      justify="space-around"
+                    >
+                      <div>
+                        <h2><p>Внимание!!! данный раздел в разработке он временный для примера</p></h2>
+                        <h3><p>Тут будут поля для других настроек пользователя</p></h3>
+                      </div>
+                    </v-row>
                     <v-row
 
                       justify="space-around"
@@ -260,39 +328,38 @@
                       <v-switch
                         v-model="tab.icons"
                         class="mx-2"
-                        label="Text + icons"
+                        label="Текст & Иконки снизу "
                       />
                       <v-switch
                         v-model="tab.centered"
                         class="mx-2"
-                        label="Centered"
+                        label="Отцентровать табы"
                         :disabled="tab.vertical"
                       />
                       <v-switch
                         v-model="tab.grow"
                         class="mx-2"
-                        label="Grow"
+                        label="Режим 'Grow' растянуть в ширину"
                       />
                       <v-switch
                         v-model="tab.vertical"
                         class="mx-2"
-                        label="Vertical"
+                        label="Табы вертикально или горизонтально"
                       />
                       <v-switch
                         v-model="tab.true"
                         class="mx-2"
-                        label="Right"
+                        label="Табы прижать направо"
                       />
                       <v-col cols="12">
                         <v-slider
                           v-model="tab.tabs"
                           min="0"
                           max="10"
-                          label="Tabs number"
+                          label="Вариант выбора числа при помощи ползунка"
                         />
                       </v-col>
                     </v-row>
-
                   </v-card-text>
                 </v-card>
               </v-tab-item>
@@ -461,25 +528,31 @@ export default {
   components: { ImageCropper, PanThumb },
   props: {
     user: {
+      onlineStatus: '',
       passwordType: '',
       updating: false,
       type: Object,
       default: () => {
         return {
+          onlineStatus: '',
           name: '',
           firstname: '',
           surname: '',
           patronymic: '',
+          skype: '',
           phone1: '',
           phone2: '',
           phone3: '',
           phone4: '',
-          address: '',
+          address1: '',
+          address2: '',
           gender: '',
+          family_status: '',
           birthday: '',
           email: '',
-          password: '',
+          password: this.password,
           avatar: '',
+          avatarUrl: '',
           roles: [],
         };
       },
@@ -487,6 +560,7 @@ export default {
   },
   data() {
     return {
+      onlineStatus: '',
       activeActivity: 'first',
       carouselImages: [
         'https://cdn.laravue.dev/photo1.png',
@@ -497,16 +571,18 @@ export default {
       imagecropperShow: false,
       imagecropperKey: 0,
       Url: null,
-      avatarUrl: null,
-      otherParams: {
-        token: '1234567980',
-        name: 'avatar_',
+      avatar: '',
+      params: {
+        token: '3453gdSDFSDFWR4r34535323GHKKLSGD5q35234YUIYUTHDGSE',
+        name: 'avatar',
       },
       headers: {
         smail: '*_~',
       },
       updating: false,
+      avatarupdating: false,
       genderVulue: ['male', 'female'],
+      familyStatusVulue: ['unmarried', 'married', 'divorced'],
       passwordType: 'password',
       tab: {
         tab: null,
@@ -520,6 +596,13 @@ export default {
       },
     };
   },
+  watch: {
+    value(data) {
+      if (data && this.avatarupdating !== 1) {
+        this.reset();
+      }
+    },
+  },
   methods: {
     showPwd() {
       if (this.passwordType === 'password') {
@@ -528,7 +611,7 @@ export default {
         this.passwordType = 'password';
       }
       this.$nextTick(() => {
-        this.$refs.password.focus();
+        this.$refs.password;
       });
     },
     handleClick(tab, event) {
@@ -538,34 +621,54 @@ export default {
       const roles = this.user.roles.map(value => this.$options.filters.uppercaseFirst(value));
       return roles.join(' | ');
     },
-    cropSuccess(data, field, key) {
-      if (field === 'avatar') {
-        this.imagecropperShow = false;
-        this.imagecropperKey = this.imagecropperKey + 1;
-        this.avatar = data.files.avatar;
-      }
-      console.log('-------- cropSuccess --------');
-      console.log('key: ' + key);
+    reset() {
+      this.avatarupdating = false;
     },
     cropUploadSuccess(data, field, key) {
-      console.log('-------- cropUploadSuccess --------');
-      console.log(data);
-      console.log('field: ' + field);
-      console.log('key: ' + key);
+      const selfuser = this.user;
+      this.imagecropperKey = this.imagecropperKey + 1;
+      this.avatarupdating = true;
+      selfuser.avatar = data.avatar;
+      selfuser.avatar = data.avatar + '?' + new Date().getTime();
+      userResource
+        .avatarupload(selfuser.id, selfuser.avatar)
+        .then(response => {
+          this.$message({
+            message: 'Аватарка пользователя: ' + selfuser.firstname + ' ' + selfuser.surname + ' ' + selfuser.patronymic + ' ' + 'id: ' + selfuser.id + ' успешно обновлена',
+            type: 'success',
+            duration: 5 * 2000,
+          });
+          console.log('-------- cropUploadSuccess --------');
+          console.log(data);
+          selfuser.avatar = '';
+          selfuser.avatar = data.avatar + '?' + new Date().getTime();
+          console.log('field: ' + field);
+          console.log('key: ' + key);
+          this.close();
+        })
+        .catch(error => {
+          this.imagecropperShow = true;
+          console.log(error);
+        });
+      selfuser.avatar = '';
+      selfuser.avatar = data.avatar + '?' + new Date().getTime();
+      this.avatarupdating = false;
     },
     cropUploadFail(status, field, key) {
       console.log('-------- cropUploadFail --------');
       console.log(status);
       console.log('field: ' + field);
       console.log('key: ' + key);
+      this.imagecropperShow = true;
     },
     close() {
       this.imagecropperShow = false;
     },
     onSubmitProfile() {
+      const selfuser = this.user;
       this.updating = true;
       userResource
-        .update(this.user.id, this.user, this.firstname, this.surname, this.patronymic, this.gender, this.birthday)
+        .update(selfuser.id, selfuser, selfuser.firstname, selfuser.surname, selfuser.patronymic, selfuser.gender, selfuser.familyStatusVulue, selfuser.birthday)
         .then(response => {
           this.updating = false;
           this.$message({
@@ -578,11 +681,12 @@ export default {
           console.log(error);
           this.updating = false;
         });
+      selfuser.avatar = selfuser.avatar + '?' + new Date().getTime();
     },
     onSubmitAddress() {
       this.updating = true;
       userResource
-        .update(this.user.id, this.user, this.address)
+        .update(this.user.id, this.user, this.address1, this.address2)
         .then(response => {
           this.updating = false;
           this.$message({
@@ -596,10 +700,27 @@ export default {
           this.updating = false;
         });
     },
+    onSubmitSkype() {
+      this.updating = true;
+      userResource
+        .update(this.user.id, this.user, this.skype)
+        .then(response => {
+          this.updating = false;
+          this.$message({
+            message: 'Информация о скайпе успешно обновлена',
+            type: 'success',
+            duration: 5 * 1000,
+          });
+        })
+        .catch(error => {
+          console.log(error);
+          this.updating = false;
+        });
+    },
     onSubmitPhone() {
       this.updating = true;
       userResource
-        .update(this.user.id, this.user, this.phone1, this.phone2)
+        .update(this.user.id, this.user, this.phone1, this.phone2, this.phone3, this.phone4)
         .then(response => {
           this.updating = false;
           this.$message({
@@ -616,7 +737,7 @@ export default {
     onSubmitAuthenticator() {
       this.updating = true;
       userResource
-        .update(this.user.id, this.user, this.password)
+        .update(this.user.id, this.user, this.name, this.password)
         .then(response => {
           this.updating = false;
           this.$message({
@@ -633,7 +754,7 @@ export default {
     onSubmitPassword() {
       this.updating = true;
       userResource
-        .update(this.user.id, this.user, this.password)
+        .update(this.user.id, this.user, this.name, this.email, this.roles, this.password)
         .then(response => {
           this.updating = false;
           this.$message({
@@ -650,7 +771,7 @@ export default {
     onSubmit() {
       this.updating = true;
       userResource
-        .update(this.user.id, this.user, this.firstname, this.surname, this.patronymic, this.address, this.birthday, this.password)
+        .update(this.user.id, this.user, this.name, this.firstname, this.surname, this.patronymic, this.address1, this.address2, this.birthday, this.password)
         .then(response => {
           this.updating = false;
           this.$message({
@@ -740,6 +861,7 @@ export default {
   }
 }
 .user-profile {
+  height: 200px;
   .user-name {
     font-weight: bold;
   }
@@ -761,4 +883,99 @@ export default {
     padding-top: 20px;
   }
 }
+
+// Делим страницу основного профиля на две части левую и правую
+.user-profile-grid-main {
+  display: grid;
+  grid-gap: 15px;
+  grid-template-columns: minmax(320px, 24%) 1fr minmax(250px, 0.3fr);
+  grid-template-areas: "user-profile-main-left user-profile-main-middle user-profile-main-right";
+}
+
+// Левая часть
+.user-profile-grid-main-area1 {
+  grid-area: user-profile-main-left;
+  //background: #72aedd;
+  border: 1px solid rgba(16, 8, 188, 0.3);
+  border-radius: 5px 5px 5px 5px;
+  //background: #1e88e5; /* Цвет фона */
+  box-shadow: 2px 10px 12px rgba(0,0,0,0.3); /* Параметры тени */
+  padding: 15px;
+  height: 100%;
+}
+
+// Середина часть
+.user-profile-grid-main-area2 {
+  grid-area: user-profile-main-middle;
+  //background: #ddd249;
+  border: 1px solid rgba(188, 19, 30, 0.3);
+  border-radius: 5px 5px 5px 5px;
+  //background: #1e88e5; /* Цвет фона */
+  box-shadow: 2px 10px 12px rgba(0,0,0,0.3); /* Параметры тени */
+  padding: 15px;
+  height: 100%;}
+
+// Правая часть
+.user-profile-grid-main-area3 {
+  grid-area: user-profile-main-right;
+  //background: #ddd249;
+  border: 1px solid rgba(0, 188, 12, 0.3);
+  border-radius: 5px 5px 5px 5px;
+  //background: #1e88e5; /* Цвет фона */
+  box-shadow: 2px 10px 12px rgba(0,0,0,0.3); /* Параметры тени */
+  padding: 15px;
+  height: 100%;}
+
+.user-profile-grid-avatar {
+  display: grid;
+  grid-gap: 5px;
+  grid-template-columns: 1fr;
+  grid-template-areas: "user-profile-grid-avatar-top"
+                       "user-profile-grid-avatar-middle"
+                       "user-profile-grid-avatar-bottom";
+}
+
+// Верхння часть блока автараки
+.user-profile-grid-main-avatar-area1 {
+  grid-area: user-profile-grid-avatar-top;
+  //background: #9d0;
+}
+
+// Средняя часть блока автараки
+.user-profile-grid-main-avatar-area2 {
+  grid-area: user-profile-grid-avatar-middle;
+  //background: #d90;
+}
+
+// Нижнняя часть блока автараки
+.user-profile-grid-main-avatar-area3 {
+  grid-area: user-profile-grid-avatar-bottom;
+  //background: #dd3e56;
+}
+
+.user-profile-grid-parametrs {
+  display: grid;
+  grid-gap: 5px;
+  grid-template-columns: 1fr;
+  grid-template-areas: "user-profile-grid-parametrs-top"
+                       "user-profile-grid-parametrs-middle"
+                       "user-profile-grid-parametrs-bottom";
+}
+
+// Верхння часть блока данных
+.user-profile-grid-main-parametrs-area1 {
+  grid-area: user-profile-grid-parametrs-top;
+  //background: #40c1dd;
+}
+// Средняя часть блока данных
+.user-profile-grid-main-parametrs-area2 {
+  grid-area: user-profile-grid-parametrs-middle;
+  //background: #989edd;
+}
+// Нижнняя часть блока данных
+.user-profile-grid-main-parametrs-area3 {
+  grid-area: user-profile-grid-parametrs-bottom;
+  //background: #989edd;
+}
+
 </style>

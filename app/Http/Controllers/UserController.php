@@ -24,6 +24,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -58,11 +59,17 @@ class UserController extends Controller
         }
 
         if (!empty($keyword)) {
-            $userQuery->where('address', 'LIKE', '%' . $keyword . '%');
+            $userQuery->where('address1', 'LIKE', '%' . $keyword . '%');
+            $userQuery->orWhere('address2', 'LIKE', '%' . $keyword . '%');
             $userQuery->orWhere('name', 'LIKE', '%' . $keyword . '%');
+            $userQuery->orWhere('family_status', 'LIKE', '%' . $keyword . '%');
            // $userQuery->orWhere('gender', 'LIKE', '%' . $keyword . '%');
             $userQuery->orWhere('email', 'LIKE', '%' . $keyword . '%');
             $userQuery->orWhere('skype', 'LIKE', '%' . $keyword . '%');
+            $userQuery->orWhere('phone1', 'LIKE', '%' . $keyword . '%');
+            $userQuery->orWhere('phone2', 'LIKE', '%' . $keyword . '%');
+            $userQuery->orWhere('phone3', 'LIKE', '%' . $keyword . '%');
+            $userQuery->orWhere('phone4', 'LIKE', '%' . $keyword . '%');
             return UserResource::collection($userQuery->paginate($limit));
         }
 
@@ -81,37 +88,39 @@ class UserController extends Controller
      */
     public function avatarupload(Request $request, User $user, int $id)
     {
-        if ($user === null) {
-            return response()->json(['error' => 'User not found'], 404);
-        }
-
-        if ($user->isAdmin()) {
-            return response()->json(['error' => 'Admin can not be modified'], 403);
-        }
-
         //Авторизованный пользователь
-        //$currentuserid = auth()->user()->id;
-        //$id = $request->user()->id; // returns authenticated user id.
+        $user_auth = auth()->user();
+        $user_auth_id = $user_auth->id;
+        $user_id = $user->id;
 
-        if ($request->hasFile('avatar')) {
+        if ($user === null) {
+            return response()->json(['error' => 'Пользователь не найден'], 404);
+        } elseif ($user->isAdmin()) {
+            return response()->json(['error' => 'Админ ' . $user_auth_id . ' ' . $user_id . ' не может быть изменен'], 403);
+        } elseif ($user->isModerator()) {
+            return response()->json(['error' => 'Модератор ' . $user_auth_id . ' ' . $user_id . ' не может быть изменен'], 403);
+        } else {
 
-            $destinationPath = public_path('uploads/avatars/' . $id . '/');
+            if ($request->hasFile('avatar')) {
 
-            if (File::exists($destinationPath)) {
-                File::cleanDirectory($destinationPath);
-            } else {
-                File::makeDirectory($destinationPath);
+                $destinationPath = public_path('uploads/avatars/' . $id . '/');
+
+                if (File::exists($destinationPath)) {
+                    File::cleanDirectory($destinationPath);
+                } else {
+                    File::makeDirectory($destinationPath);
+                }
+
+                $fileName = $id . '.jpg';
+
+                $request->file('avatar')->move($destinationPath, $fileName);
+
+                $user = User::where('id', '=', $id)->first();
+                $user->avatar = $fileName;
+                $user->save();
+
+                return new UserResource($user);
             }
-
-            $fileName = $id . '.jpg';
-
-            $request->file('avatar')->move($destinationPath, $fileName);
-
-            //$user = auth()->user();
-            $user = User::where('id', '=', $id)->first();
-            $user->avatar = $fileName;
-            $user->save();
-            return new UserResource($user);
         }
     }
 
@@ -134,13 +143,15 @@ class UserController extends Controller
                     'patronymic' => 'nullable',
                     'birthday' => 'nullable',
                     'gender' => 'nullable',
+                    'family_status' => 'nullable',
                     'avatar' => 'nullable',
                     'phone1' => 'nullable',
                     'phone2' => 'nullable',
                     'phone3' => 'nullable',
                     'phone4' => 'nullable',
                     'skype' => 'nullable',
-                    'address' => 'nullable',
+                    'address1' => 'nullable',
+                    'address2' => 'nullable',
                     'email' => 'nullable',
                     'password' => ['required', 'min:8'],
                     'confirmPassword' => 'same:password',
@@ -172,6 +183,9 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
+        $online = $user->isOnline();
+
+        $user->onlineStatus = $online;
         return new UserResource($user);
     }
 
@@ -180,75 +194,87 @@ class UserController extends Controller
      *
      * @param Request $request
      * @param User    $user
+     *
      * @return UserResource|\Illuminate\Http\JsonResponse
      */
     public function update(Request $request, User $user)
     {
-        if ($user === null) {
-            return response()->json(['error' => 'User not found'], 404);
-        }
+        //$user_auth = auth()->user();
+        // $user_find = User::where('id', '=', 3)->first();
 
-        if ($user->isAdmin()) {
-            return response()->json(['error' => 'Admin can not be modified'], 403);
-        }
+        //printf($user_find);
+        $user_auth = auth()->user();
+        $user_auth_id = $user_auth->id;
+        $user_id = $user->id;
 
-        $validator = Validator::make($request->all(), $this->getValidationRules(false));
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 403);
-        } else {
-            $firstname = $request->get('firstname');
-            $found = User::where('firstname', $firstname)->first();
-            if ($found && $found->id !== $user->id) {
-                return response()->json(['error' => 'firstname has been taken'], 403);
-            }
-            $surname = $request->get('surname');
-            $found = User::where('surname', $surname)->first();
-            if ($found && $found->id !== $user->id) {
-                return response()->json(['error' => 'surname has been taken'], 403);
-            }
-            $patronymic = $request->get('patronymic');
-            $found = User::where('patronymic', $patronymic)->first();
-            if ($found && $found->id !== $user->id) {
-                return response()->json(['error' => 'patronymic has been taken'], 403);
-            }
-            $birthday = $request->get('birthday');
-            $found = User::where('birthday', $birthday)->first();
-       //   if ($found && $found->id !== $user->id) {
-       //       return response()->json(['error' => 'birthday has been taken'], 403);
-       //   }
-            $email = $request->get('email');
-            $found = User::where('email', $email)->first();
-            if ($found && $found->id !== $user->id) {
-                return response()->json(['error' => 'Email has been taken'], 403);
-            }
-            $password = $request->get('password');
-            $found = User::where('password', $password)->first();
-            if ($found && $found->id !== $user->id) {
-                return response()->json(['error' => 'password has been taken'], 403);
-            }
+    if (($user_auth_id = $user_id) or ($user_auth_id->isAdmin())) {
 
-          //  $dt = Carbon::createFromFormat('Y-m-d', $birthday);
+       /* if ($user === null) {
+            return response()->json(['error' => 'Пользователь не найден'], 404);
+        } elseif (!$user_auth->isAdmin()) {
+            return response()->json(['error' => 'Админ '  . $user_auth_id . ' ' . $user_id . ' не может быть изменен'], 403);
+        } elseif (!$user_auth->isModerator()) {
+            return response()->json(['error' => 'Модератор ' . $user_auth_id . ' ' . $user_id . ' не может быть изменен'], 403);
+        }*/
+            $validator = Validator::make($request->all(), $this->getValidationRules(false));
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 403);
+            } else {
+                $firstname = $request->get('firstname');
+                $found = User::where('firstname', $firstname)->first();
+                if ($found && $found->id !== $user->id) {
+                    return response()->json(['error' => 'firstname has been taken'], 403);
+                }
+                $surname = $request->get('surname');
+                $found = User::where('surname', $surname)->first();
+                if ($found && $found->id !== $user->id) {
+                    return response()->json(['error' => 'surname has been taken'], 403);
+                }
+                $patronymic = $request->get('patronymic');
+                $found = User::where('patronymic', $patronymic)->first();
+                if ($found && $found->id !== $user->id) {
+                    return response()->json(['error' => 'patronymic has been taken'], 403);
+                }
+                $birthday = $request->get('birthday');
+                $found = User::where('birthday', $birthday)->first();
+                //   if ($found && $found->id !== $user->id) {
+                //       return response()->json(['error' => 'birthday has been taken'], 403);
+                //   }
+                $email = $request->get('email');
+                $found = User::where('email', $email)->first();
+                if ($found && $found->id !== $user->id) {
+                    return response()->json(['error' => 'Email has been taken'], 403);
+                }
+                $password = $request->get('password');
+                $found = User::where('password', $password)->first();
+                if ($found && $found->id !== $user->id) {
+                    return response()->json(['error' => 'password has been taken'], 403);
+                }
 
-            $user->name = $request->get('name');
-            $user->firstname = $request->get('firstname');
-            $user->surname = $request->get('surname');
-            $user->patronymic = $request->get('patronymic');
-            $user->gender = $request->get('gender');
-            $user->phone1 = $request->get('phone1');
-            $user->phone2 = $request->get('phone2');
-            $user->phone3 = $request->get('phone3');
-            $user->phone4 = $request->get('phone4');
-            $user->skype = $request->get('skype');
-            $user->address = $request->get('address');
-            $user->birthday = $request->get('birthday');
-            $user->email = $email;
-            $user->password = \Illuminate\Support\Facades\Hash::make($password);
-            //$user->created_at = Carbon::now()->setTime(0,0)->format('Y-m-d H:i:s');
-            $user->save();
-            return new UserResource($user);
+                //  $dt = Carbon::createFromFormat('Y-m-d', $birthday);
+
+                $user->name = $request->get('name');
+                $user->firstname = $request->get('firstname');
+                $user->surname = $request->get('surname');
+                $user->patronymic = $request->get('patronymic');
+                $user->gender = $request->get('gender');
+                $user->family_status = $request->get('family_status');
+                $user->phone1 = $request->get('phone1');
+                $user->phone2 = $request->get('phone2');
+                $user->phone3 = $request->get('phone3');
+                $user->phone4 = $request->get('phone4');
+                $user->skype = $request->get('skype');
+                $user->address1 = $request->get('address1');
+                $user->address2 = $request->get('address2');
+                $user->birthday = $request->get('birthday');
+                $user->email = $email;
+                $user->password = \Illuminate\Support\Facades\Hash::make($password);
+                //$user->created_at = Carbon::now()->setTime(0,0)->format('Y-m-d H:i:s');
+                $user->save();
+                return new UserResource($user);
+            }
         }
     }
-
     /**
      * Update the specified resource in storage.
      *
@@ -260,9 +286,7 @@ class UserController extends Controller
     {
         if ($user === null) {
             return response()->json(['error' => 'User not found'], 404);
-        }
-
-        if ($user->isAdmin()) {
+        } elseif ($user->isAdmin()) {
             return response()->json(['error' => 'Admin can not be modified'], 403);
         }
 
@@ -364,25 +388,27 @@ class UserController extends Controller
      * @param bool $isNew
      * @return array
      */
-    private function getValidationRules($isNew = true)
+    private function getValidationRules($isNew = false)
     {
         return [
-            'name' => 'required',
+            'name' => 'nullable',
             'firstname' => 'nullable',
             'surname' => 'nullable',
             'patronymic' => 'nullable',
             'birthday' => 'nullable',
             'gender' => 'nullable',
+            'family_status' => 'nullable',
             'avatar' => 'nullable',
             'phone1' => 'nullable',
             'phone2' => 'nullable',
             'phone3' => 'nullable',
             'phone4' => 'nullable',
             'skype' => 'nullable',
-            'address' => 'nullable',
-            'email' => $isNew ? 'required|email|unique:users' : 'required|email',
+            'address1' => 'nullable',
+            'address2' => 'nullable',
+            'email' => $isNew ? 'nullable|email|unique:users' : 'nullable|email',
             'roles' => [
-                'required',
+                'nullable',
                 'array'
             ],
         ];

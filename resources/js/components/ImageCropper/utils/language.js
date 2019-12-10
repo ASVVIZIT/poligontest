@@ -24,7 +24,8 @@ export default {
     noSupported: '瀏覽器不支持該功能，請使用IE10以上或其他現代瀏覽器！',
     success: '上傳成功',
     fail: '圖片上傳失敗',
-    preview: '頭像預覽',
+    preview1: '頭像預覽',
+    preview2: '頭像預覽',
     btn: {
       off: '取消',
       close: '關閉',
@@ -43,7 +44,8 @@ export default {
     noSupported: 'Browser is not supported, please use IE10+ or other browsers',
     success: 'Upload success',
     fail: 'Upload failed',
-    preview: 'Preview',
+    preview1: 'Preview',
+    preview2: 'Preview',
     btn: {
       off: 'Cancel',
       close: 'Close',
@@ -62,7 +64,8 @@ export default {
     noSupported: 'Trình duyệt không hỗ trợ, Xin vui lòng dùng IE10+ hoặc trình duyệt khác',
     success: 'Tải lên thành công',
     fail: 'Tải lên thất bại',
-    preview: 'Xem trước',
+    preview1: 'Xem trước',
+    preview2: 'Xem trước',
     btn: {
       off: 'Hủy',
       close: 'Đóng',
@@ -81,7 +84,8 @@ export default {
     noSupported: 'Browser-ul tău nu suportă acest feature. Te rugăm încearcă cu alt browser.',
     success: 'S-a încărcat cu succes',
     fail: 'A apărut o problemă la încărcare',
-    preview: 'Previzualizează',
+    preview1: 'Previzualizează',
+    preview2: 'Previzualizează',
 
     btn: {
       off: 'Anulează',
@@ -102,7 +106,8 @@ export default {
     noSupported: 'Ваш браузер не поддерживается, пожалуйста, используйте IE10 + или другие браузеры',
     success: 'Загрузка выполнена успешно',
     fail: 'Ошибка загрузки',
-    preview: 'Предпросмотр',
+    preview1: 'Вариант стандарт',
+    preview2: 'Вариант сфера',
     btn: {
       off: 'Отменить',
       close: 'Закрыть',
@@ -121,7 +126,8 @@ export default {
     noSupported: 'Browser não suportado, use o IE10+ ou outro browser',
     success: 'Sucesso ao carregar imagem',
     fail: 'Falha ao carregar imagem',
-    preview: 'Pré-visualizar',
+    preview1: 'Pré-visualizar',
+    preview2: 'Pré-visualizar',
     btn: {
       off: 'Cancelar',
       close: 'Fechar',
@@ -140,7 +146,8 @@ export default {
     noSupported: 'Votre navigateur n\'est pas supporté. Utilisez IE10 + ou un autre navigateur s\'il vous plaît.',
     success: 'Téléchargement réussit',
     fail: 'Téléchargement echoué',
-    preview: 'Aperçu',
+    preview1: 'Aperçu',
+    preview2: 'Aperçu',
     btn: {
       off: 'Annuler',
       close: 'Fermer',
@@ -159,7 +166,8 @@ export default {
     noSupported: 'Je browser wordt helaas niet ondersteund. Gebruik IE10+ of een andere browser.',
     success: 'Upload succesvol',
     fail: 'Upload mislukt',
-    preview: 'Voorbeeld',
+    preview1: 'Voorbeeld',
+    preview2: 'Voorbeeld',
     btn: {
       off: 'Annuleren',
       close: 'Sluiten',
@@ -178,7 +186,8 @@ export default {
     noSupported: 'Tarayıcı desteklenmiyor, lütfen IE10+ veya farklı tarayıcı kullanın',
     success: 'Yükleme başarılı',
     fail: 'Yüklemede hata oluştu',
-    preview: 'Önizle',
+    preview1: 'Önizle',
+    preview2: 'Önizle',
     btn: {
       off: 'İptal',
       close: 'Kapat',
@@ -197,7 +206,8 @@ export default {
     noSupported: 'Tu navegador no es soportado, porfavor usa IE10+ u otros navegadores mas recientes',
     success: 'Subido exitosamente',
     fail: 'Sucedió un error',
-    preview: 'Vista previa',
+    preview1: 'Vista previa',
+    preview2: 'Vista previa',
     btn: {
       off: 'Cancelar',
       close: 'Cerrar',
@@ -216,7 +226,8 @@ export default {
     noSupported: 'Browser wird nicht unterstützt, bitte verwende IE10+ oder andere Browser',
     success: 'Upload erfolgreich',
     fail: 'Upload fehlgeschlagen',
-    preview: 'Vorschau',
+    preview1: 'Vorschau',
+    preview2: 'Vorschau',
     btn: {
       off: 'Abbrechen',
       close: 'Schließen',
@@ -235,7 +246,8 @@ export default {
     noSupported: 'このブラウザは対応されていません。IE10+かその他の主要ブラウザをお使いください。',
     success: 'アップロード成功',
     fail: 'アップロード失敗',
-    preview: 'プレビュー',
+    preview1: 'プレビュー',
+    preview2: 'プレビュー',
     btn: {
       off: 'キャンセル',
       close: '閉じる',

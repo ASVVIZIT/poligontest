@@ -8,7 +8,7 @@
       filterable
       default-first-option
       remote
-      placeholder="Search"
+      placeholder="Поиск"
       class="header-search-select"
       @change="change"
     >
@@ -168,7 +168,7 @@ export default {
     display: inline-block;
     vertical-align: middle;
 
-    /deep/ .el-input__inner {
+    >>> .el-input__inner {
       border-radius: 0;
       border: 0;
       padding-left: 0;
@@ -181,7 +181,7 @@ export default {
 
   &.show {
     .header-search-select {
-      width: 210px;
+      width: 450px;
       margin-left: 10px;
     }
   }

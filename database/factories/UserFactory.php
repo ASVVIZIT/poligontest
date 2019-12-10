@@ -21,9 +21,10 @@ $factory->define(App\User::class, function (Faker $faker) {
     $start = strtotime("1961-09-10 12:10:10");
     //End point of our date range.
     $end = strtotime("1990-06-22 24:00:00");
-    $gender = $faker->randomElement($array = array('male','female'));
+    $gender = $faker->randomElement($array = array('male', 'female'));
+    $family_status = $faker->randomElement($array = array('unmarried', 'married', 'divorced'));
 
-    for($i = 0; $i < 10; $i++) {
+    for($i = 0; $i < 20; $i++) {
 
         if ($gender == 'male') {
             $avatar_default = 'default_male.png';
@@ -39,6 +40,7 @@ $factory->define(App\User::class, function (Faker $faker) {
             'surname' => $faker->name,
             'patronymic' =>$faker->lastName,
             'gender' => $gender,
+            'family_status' => $family_status,
             'avatar' => $avatar_default,
             'birthday' => $arrayRundomTime[rand(1, 4)],
             'email' => $faker->unique()->safeEmail,
@@ -48,7 +50,8 @@ $factory->define(App\User::class, function (Faker $faker) {
             'phone3' => $faker->phoneNumber,
             'phone4' => $faker->phoneNumber,
             'skype' => $faker->word,
-            'address' => $faker->address,
+            'address1' => $faker->address,
+            'address2' => $faker->address,
             'password' => \Illuminate\Support\Facades\Hash::make('secretsecret'), // secretsecret
             'remember_token' => str_random(20),
         ];

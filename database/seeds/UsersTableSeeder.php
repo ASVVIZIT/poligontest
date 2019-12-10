@@ -86,6 +86,7 @@ class UsersTableSeeder extends Seeder
                 Acl::ROLE_EDITOR,
                 Acl::ROLE_USER,
                 Acl::ROLE_VISITOR,
+                Acl::ROLE_GUEST,
             ]);
 
             $fullName = str_replace('. ', '._', $fullName);
@@ -117,6 +118,9 @@ class UsersTableSeeder extends Seeder
                 $avatar_default = 'default_female.png';
             }
 
+            $family_status = ['unmarried', 'married', 'divorced'];
+            $family_status = $family_status[rand(0, 2)];
+
             $fullName = str_replace('._', '. ', $fullName);
             $user = User::create([
                 'name' => $fullName,
@@ -124,6 +128,7 @@ class UsersTableSeeder extends Seeder
                 'surname' => $surname,
                 'patronymic' => $patronymic,
                 'gender' => $gender,
+                'family_status' => $family_status,
                 'avatar' => $avatar_default,
                 'birthday' => $arrayRundomTime[rand(1, 4)],
                 'email' => strtolower($firstname_email . str_replace('.', '_', str_replace(' ', '', $surname))) . '@laravue.dev',
@@ -132,7 +137,8 @@ class UsersTableSeeder extends Seeder
                 'phone3' => $faker->phoneNumber,
                 'phone4' => $faker->phoneNumber,
                 'skype' => $faker->userName,
-                'address' => $faker->address,
+                'address1' => $faker->address,
+                'address2' => $faker->address,
                 'password' => Hash::make('randomrandom'),
                 'remember_token' => str::random(20),
             ]);

@@ -46,7 +46,6 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'onlineStatus',
         'name',
         'surname',
         'firstname',
@@ -145,7 +144,7 @@ class User extends Authenticatable implements JWTSubject
      */
     public function isOnline()
     {
-        return Cache::has('user-is-online-' . $this->id);
+        return Cache::has('user-is-online-' . $this->id, false);
     }
 
     public function order()

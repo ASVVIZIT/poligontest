@@ -1,6 +1,6 @@
 <template>
   <el-card v-if="user.id">
-    <el-tabs v-model="activeActivity" @tab-click="handleClick">
+    <el-tabs v-model="activeProfile" @tab-click="handleClick">
       <el-tab-pane v-loading="updating" label="Профиль" name="first">
         <v-app id="inspire">
           <div>
@@ -528,13 +528,11 @@ export default {
   components: { ImageCropper, PanThumb },
   props: {
     user: {
-      onlineStatus: '',
       passwordType: '',
       updating: false,
       type: Object,
       default: () => {
         return {
-          onlineStatus: '',
           name: '',
           firstname: '',
           surname: '',
@@ -550,9 +548,9 @@ export default {
           family_status: '',
           birthday: '',
           email: '',
-          password: this.password,
+          password: '',
           avatar: '',
-          avatarUrl: '',
+          onlineStatus: '',
           roles: [],
         };
       },
@@ -560,8 +558,7 @@ export default {
   },
   data() {
     return {
-      onlineStatus: '',
-      activeActivity: 'first',
+      activeProfile: 'first',
       carouselImages: [
         'https://cdn.laravue.dev/photo1.png',
         'https://cdn.laravue.dev/photo2.png',
@@ -572,6 +569,7 @@ export default {
       imagecropperKey: 0,
       Url: null,
       avatar: '',
+      onlineStatus: '',
       params: {
         token: '3453gdSDFSDFWR4r34535323GHKKLSGD5q35234YUIYUTHDGSE',
         name: 'avatar',
@@ -624,7 +622,7 @@ export default {
     reset() {
       this.avatarupdating = false;
     },
-    cropUploadSuccess(data, field, key) {
+    cropUploadSuccess(data) {
       const selfuser = this.user;
       this.imagecropperKey = this.imagecropperKey + 1;
       this.avatarupdating = true;
@@ -639,18 +637,15 @@ export default {
             duration: 5 * 2000,
           });
           console.log('-------- cropUploadSuccess --------');
+          data.onlineStatus = this.user.onlineStatus;
           console.log(data);
-          selfuser.avatar = '';
           selfuser.avatar = data.avatar + '?' + new Date().getTime();
-          console.log('field: ' + field);
-          console.log('key: ' + key);
           this.close();
         })
         .catch(error => {
           this.imagecropperShow = true;
           console.log(error);
         });
-      selfuser.avatar = '';
       selfuser.avatar = data.avatar + '?' + new Date().getTime();
       this.avatarupdating = false;
     },

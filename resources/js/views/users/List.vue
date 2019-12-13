@@ -59,11 +59,11 @@
             <el-table-column align="center" label="Аватар" width="120">
               <template slot-scope="scope">
                 <div v-if="scope.row.deleted_at !== '' || scope.row.roles.includes('admin')">
-                  <div v-if="scope.row.onlineStatus">
+                  <div v-if="scope.row.onlineStatus === true">
                     <v-icon color="green">mdi mdi-account-check-outline</v-icon>
                     <b style="color: #01c003">Онлайн</b>
                   </div>
-                  <div v-else-if="!scope.row.onlineStatus">
+                  <div v-else-if="scope.row.onlineStatus === false">
                     <v-icon color="red">mdi mdi-account-off-outline</v-icon>
                     <b style="color: #cc0027">Оффлайн</b>
                   </div>
@@ -221,7 +221,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="left" label="Адрес работа" width="320">
+            <el-table-column align="left" label="Адреса все" width="320">
               <template slot-scope="scope">
                 <div>
                   <div class="container__text__cell">
@@ -229,32 +229,31 @@
                       <el-tooltip placement="right-start" style="right: 5px;" effect="light">
                         <v-icon v-show="scope.row.address1 !== null" color="primary">mdi-tooltip-text</v-icon>
                         <div slot="content" style="min-width: 10px; max-width: 600px;">
+                          <b>Адрес работа</b>
                           <span> {{ scope.row && scope.row.address1 }} </span>
                         </div>
                       </el-tooltip>
                     </div>
-                    <div class="size">
-                      {{ scope.row && scope.row.address1 }}
+                    <div v-if="scope.row.address1" class="size">
+                      <b>Адрес работа</b>
+                      <span> {{ scope.row && scope.row.address1 }} </span>
                     </div>
                   </div>
                 </div>
-              </template>
-            </el-table-column>
-
-            <el-table-column align="left" label="Адрес личный" width="320">
-              <template slot-scope="scope">
                 <div>
                   <div class="container__text__cell">
                     <div class="center__text__cell">
                       <el-tooltip placement="right-start" style="right: 5px;" effect="light">
                         <v-icon v-show="scope.row.address2 !== null" color="primary">mdi-tooltip-text</v-icon>
                         <div slot="content" style="min-width: 10px; max-width: 600px;">
+                          <b>Адрес личный</b>
                           <span> {{ scope.row && scope.row.address2 }} </span>
                         </div>
                       </el-tooltip>
                     </div>
-                    <div class="size">
-                      {{ scope.row && scope.row.address2 }}
+                    <div v-if="scope.row.address2" class="size">
+                      <b>Адрес личный</b>
+                      <span> {{ scope.row && scope.row.address2 }} </span>
                     </div>
                   </div>
                 </div>
@@ -407,13 +406,12 @@
 
 <script>
 import Pagination from '@/components/Pagination'; // Secondary package based on el-pagination
-import UserResource from '@/api/user';
-import Resource from '@/api/resource';
+import Resource from '@/api/user';
 import waves from '@/directive/waves'; // Waves directive
 import permission from '@/directive/permission'; // Waves directive
 import checkPermission from '@/utils/permission';
 
-const userResource = new UserResource();
+const userResource = new Resource('users');
 const permissionResource = new Resource('permissions');
 
 export default {
@@ -430,7 +428,6 @@ export default {
     };
     return {
       list: null,
-      onlineStatus: '',
       total: 1,
       loading: true,
       sortBy: 'id',
@@ -580,11 +577,11 @@ export default {
       this.loading = true;
       const { data, meta } = await userResource.list(this.query);
       this.list = data;
+
       this.list.forEach((element, index) => {
         element['index'] = (page - 1) * limit + index + 1;
       });
       this.total = meta.total;
-      this.list.onlineStatus = data.onlineStatus;
       this.loading = false;
     },
     handleFilter() {

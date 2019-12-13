@@ -8,6 +8,7 @@ const state = {
   token: getToken(),
   name: '',
   avatar: '',
+  onlineStatus: '',
   introduction: '',
   roles: [],
   permissions: [],
@@ -19,6 +20,9 @@ const mutations = {
   },
   SET_TOKEN: (state, token) => {
     state.token = token;
+  },
+  SET_ONLINE: (state, onlineStatus) => {
+    state.onlineStatus = onlineStatus;
   },
   SET_INTRODUCTION: (state, introduction) => {
     state.introduction = introduction;
@@ -65,7 +69,7 @@ const actions = {
             reject('Проверка не удалась, пожалуйста, войдите снова.');
           }
 
-          const { roles, name, avatar, introduction, permissions, id } = data;
+          const { roles, name, onlineStatus, avatar, introduction, permissions, id } = data;
           // roles must be a non-empty array
           if (!roles || roles.length <= 0) {
             reject('getInfo: roles must be a non-null array!');
@@ -74,6 +78,7 @@ const actions = {
           commit('SET_ROLES', roles);
           commit('SET_PERMISSIONS', permissions);
           commit('SET_NAME', name);
+          commit('SET_ONLINE', onlineStatus);
           commit('SET_AVATAR', avatar);
           commit('SET_INTRODUCTION', introduction);
           commit('SET_ID', id);
@@ -91,6 +96,7 @@ const actions = {
       logout(state.token)
         .then(() => {
           commit('SET_TOKEN', '');
+          commit('SET_ONLINE', '');
           commit('SET_ROLES', []);
           removeToken();
           resetRouter();
@@ -106,6 +112,7 @@ const actions = {
   resetToken({ commit }) {
     return new Promise(resolve => {
       commit('SET_TOKEN', '');
+      commit('SET_ONLINE', '');
       commit('SET_ROLES', []);
       removeToken();
       resolve();

@@ -3,7 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Cache;
 
 class UserResource extends JsonResource
 {
@@ -34,6 +34,17 @@ class UserResource extends JsonResource
         } else {
             $avatar_path = $url_uploads . '/uploads/avatars/' . $this->id . '/';
         }
+
+        $key_user_oline_status = 'user-is-online-' . $this->id;
+        $this->onlineStatus = false;
+        if (Cache::has($key_user_oline_status, false)) {
+
+            $value = Cache::get($key_user_oline_status, false);
+            if ($value) {
+                $this->onlineStatus = $value;
+            }
+        }
+
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -64,6 +75,7 @@ class UserResource extends JsonResource
                 function ($permission) {
                     return $permission['name'];
                 },
+
                 $this->getAllPermissions()->toArray()
             ),
             'avatar' => $avatar_path . $this->avatar . '?23423423424+' . $date_uploads,

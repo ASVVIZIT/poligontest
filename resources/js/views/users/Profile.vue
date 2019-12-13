@@ -3,7 +3,7 @@
     <el-form v-if="user" :model="user">
       <el-row :gutter="25">
         <el-col :span="23">
-          <user-activity :user="user" />
+          <user-profile :user="user" />
         </el-col>
       <!--  <el-col :span="6">
           <user-card :user="user" />
@@ -16,15 +16,17 @@
 
 <script>
 import Resource from '@/api/resource';
-import UserActivity from './components/UserActivity';
+import UserProfile from './components/UserProfile';
 
 const userResource = new Resource('users');
 export default {
   name: 'EditUser',
-  components: { UserActivity },
+  components: { UserProfile },
   data() {
     return {
-      user: {},
+      user: {
+        onlineStatus: '',
+      },
     };
   },
   watch: {

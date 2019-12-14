@@ -183,6 +183,19 @@ aside {
   word-break: break-word !important;
 }
 
+.v-icon.v-icon {
+  padding-right: 8px !important;
+  font-size: 22px !important;
+}
+
+.v-icon.v-icon.icon-list {
+  padding-right: 0px !important;
+  font-size: 22px !important;
+}
+.v-icon.v-icon.icon-list-profile {
+  padding-right: 0px !important;
+  font-size: 22px !important;
+}
 /* color: #f19944; */ /* Set the text color, you can choose not to set */
 table.v-table tbody td:first-child, table.v-table tbody td:not(:first-child), table.v-table tbody th:first-child, table.v-table tbody th:not(:first-child), table.v-table thead td:first-child, table.v-table thead td:not(:first-child), table.v-table thead th:first-child, table.v-table thead th:not(:first-child) {
   padding: 0 10px

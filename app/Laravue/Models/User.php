@@ -30,6 +30,8 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property data $birthday
  * @property data $deleted_at
  * @property string $email
+ * @property string $email1
+ * @property string $email2
  * @property string $password
  * @property Role[] $roles
  *
@@ -63,6 +65,8 @@ class User extends Authenticatable implements JWTSubject
         'birthday',
         'deleted_at',
         'email',
+        'email1',
+        'email2',
         'password',
     ];
 

@@ -15,12 +15,12 @@
           <lang-select class="right-menu-item hover-effect" />
         </template>
       </div>
-      <div class="right-menu-item">
+      <div v-show="device!=='mobile'" class="right-menu-item">
         <div class="right-menu-item hover-effect">
           <span> {{ name }} </span>
         </div>
         <div class="right-menu-item hover-effect" style="width: 40px">
-          <span style="display: inline-grid; position: absolute; top: 7px; right: 105px; margin-top: 5px">
+          <span class="right-menu-item hover-effect" style="display: inline-grid; position: absolute; top: 7px; right: 105px; margin-top: 5px">
             <el-icon v-if="onlineStatus === true" color="green" class="el-icon-circle-check" style="color: #0d8312; font-size: 28px; font-weight: 800;" />
             <el-icon v-else-if="onlineStatus === false" color="red" class="el-icon-circle-check" style="color: #0d8312; font-size: 32px; font-weight: 800;" />
           </span>

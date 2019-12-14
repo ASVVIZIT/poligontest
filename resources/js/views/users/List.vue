@@ -37,7 +37,7 @@
             :sort-desc.sync="descending"
             :row-key="getRowKeys"
             :min-height="300"
-            :max-height="700"
+            :max-height="665"
             style="width: 100%"
           >
             <el-table-column fixed="left" prop="ID" type="selection" :reserve-selection="true" width="45" />
@@ -60,11 +60,11 @@
               <template slot-scope="scope">
                 <div v-if="scope.row.deleted_at !== '' || scope.row.roles.includes('admin')">
                   <div v-if="scope.row.onlineStatus === true">
-                    <v-icon color="green">mdi mdi-account-check-outline</v-icon>
+                    <v-icon class="icon-list" color="green">mdi mdi-account-check-outline</v-icon>
                     <b style="color: #01c003">Онлайн</b>
                   </div>
                   <div v-else-if="scope.row.onlineStatus === false">
-                    <v-icon color="red">mdi mdi-account-off-outline</v-icon>
+                    <v-icon class="icon-list" color="red">mdi mdi-account-off-outline</v-icon>
                     <b style="color: #cc0027">Оффлайн</b>
                   </div>
                   <v-avatar
@@ -148,21 +148,51 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="left" label="E-mail" width="220">
+            <el-table-column align="left" label="E-mail (все)" width="220">
               <template slot-scope="scope">
-                <div>
-                  <div class="container__text__cell">
-                    <div class="center__text__cell">
-                      <el-tooltip placement="right-start" style="right: 5px;" effect="light">
-                        <v-icon v-show="scope.row.email !== null" color="primary">mdi mdi-email-outline</v-icon>
-                        <div slot="content" style="min-width: 10px; max-width: 200px;">
-                          <span> {{ scope.row && scope.row.email }} </span>
-                        </div>
-                      </el-tooltip>
-                    </div>
-                    <div class="size">
-                      {{ scope.row && scope.row.email }}
-                    </div>
+                <div class="container__text__cell">
+                  <div class="center__text__cell">
+                    <el-tooltip placement="right-start" style="right: 5px;" effect="light">
+                      <v-icon v-show="scope.row.email !== null" color="primary">mdi mdi-email-outline</v-icon>
+                      <div slot="content" style="min-width: 10px; max-width: 200px;">
+                        <b>Email для авторизации: </b>
+                        <span> {{ scope.row && scope.row.email }} </span>
+                      </div>
+                    </el-tooltip>
+                  </div>
+                  <div v-if="scope.row.email" class="size">
+                    <b>Для авторизации: </b>
+                    {{ scope.row && scope.row.email }}
+                  </div>
+                </div>
+                <div class="container__text__cell">
+                  <div class="center__text__cell">
+                    <el-tooltip placement="right-start" style="right: 5px;" effect="light">
+                      <v-icon v-show="scope.row.email1 !== null" color="primary">mdi mdi-email-outline</v-icon>
+                      <div slot="content" style="min-width: 10px; max-width: 200px;">
+                        <b>Email личный №1: </b>
+                        <span> {{ scope.row && scope.row.email1 }} </span>
+                      </div>
+                    </el-tooltip>
+                  </div>
+                  <div v-if="scope.row.email1" class="size">
+                    <b>Личный №1: </b>
+                    {{ scope.row && scope.row.email1 }}
+                  </div>
+                </div>
+                <div class="container__text__cell">
+                  <div class="center__text__cell">
+                    <el-tooltip placement="right-start" style="right: 5px;" effect="light">
+                      <v-icon v-show="scope.row.email2 !== null" color="primary">mdi mdi-email-outline</v-icon>
+                      <div slot="content" style="min-width: 10px; max-width: 200px;">
+                        <b>Email личный №2: </b>
+                        <span> {{ scope.row && scope.row.email2 }} </span>
+                      </div>
+                    </el-tooltip>
+                  </div>
+                  <div v-if="scope.row.email2" class="size">
+                    <b>Личный №2 </b>
+                    {{ scope.row && scope.row.email2 }}
                   </div>
                 </div>
               </template>
@@ -229,13 +259,13 @@
                       <el-tooltip placement="right-start" style="right: 5px;" effect="light">
                         <v-icon v-show="scope.row.address1 !== null" color="primary">mdi-tooltip-text</v-icon>
                         <div slot="content" style="min-width: 10px; max-width: 600px;">
-                          <b>Адрес работа</b>
+                          <b>Адрес работа: </b>
                           <span> {{ scope.row && scope.row.address1 }} </span>
                         </div>
                       </el-tooltip>
                     </div>
                     <div v-if="scope.row.address1" class="size">
-                      <b>Адрес работа</b>
+                      <b>Адрес работа: </b>
                       <span> {{ scope.row && scope.row.address1 }} </span>
                     </div>
                   </div>
@@ -246,13 +276,13 @@
                       <el-tooltip placement="right-start" style="right: 5px;" effect="light">
                         <v-icon v-show="scope.row.address2 !== null" color="primary">mdi-tooltip-text</v-icon>
                         <div slot="content" style="min-width: 10px; max-width: 600px;">
-                          <b>Адрес личный</b>
+                          <b>Адрес личный: </b>
                           <span> {{ scope.row && scope.row.address2 }} </span>
                         </div>
                       </el-tooltip>
                     </div>
                     <div v-if="scope.row.address2" class="size">
-                      <b>Адрес личный</b>
+                      <b>Адрес личный: </b>
                       <span> {{ scope.row && scope.row.address2 }} </span>
                     </div>
                   </div>
@@ -289,47 +319,152 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column fixed="right" align="center" label="Действия" width="260">
+            <el-table-column fixed="right" align="center" label="Действия" width="180">
               <template slot-scope="scope">
                 <div v-if="scope.row.deleted_at === ''">
-                  <router-link v-if="!scope.row.roles.includes('admin')" :to="'/administrator/users/edit/'+scope.row.id">
-                    <el-button v-permission="['manage user']" type="primary" size="small" icon="el-icon-edit" />
-                  </router-link>
-                  <div v-else-if="scope.row.roles.includes('admin')">
-                    <div>
-                      <span> Для профиля Администратора </span>
+                  <div v-if="scope.row.roles.includes('admin')">
+                    <div v-if="scope.row.id === userId && (scope.row.id === userId && scope.row.roles.includes('admin'))">
+                      <div v-if="scope.row.roles.includes('admin')">
+                        <router-link v-if="scope.row.roles.includes('admin')" v-show="(scope.row.id === userId && scope.row.roles.includes('admin')) " :to="`/administrator/users/edit/${userId}`">
+                          <el-button v-permission="['manage user']" type="primary" size="small" style="width: 150px" icon="el-icon-edit">
+                            Редактировать
+                          </el-button>
+                        </router-link>
+                      </div>
                     </div>
-                    <div>
-                      <span> Изменения запрещены </span>
+                    <div v-else-if="scope.row.roles.includes('admin')">
+                      <div>
+                        <span> Для профиля Администратора </span>
+                      </div>
+                      <div>
+                        <span> Изменения запрещены </span>
+                      </div>
+                    </div>
+                    <el-button v-if="scope.row.id === userId || (scope.row.roles.includes('admin') && (scope.row.id === userId && scope.row.roles.includes('admin')))" v-permission="['manage permission']" type="warning" size="small" style="width: 150px" icon="el-icon-edit" @click="handleEditPermissions(scope.row.id);">
+                      Разрешений
+                    </el-button>
+                    <div v-show="!scope.row.id === userId || (!scope.row.id === userId && scope.row.roles.includes('admin'))">
+                      <el-button v-permission="['manage user']" type="danger" size="small" style="width: 150px" icon="el-icon-delete" @click="handleDelete(scope.row.id, scope.row.name);" />
                     </div>
                   </div>
-                  <el-button v-if="!scope.row.roles.includes('admin')" v-permission="['manage permission']" type="warning" size="small" icon="el-icon-edit" @click="handleEditPermissions(scope.row.id);">
-                    Разрешений
-                  </el-button>
-                  <el-button v-if="!scope.row.roles.includes('admin') || scope.row.roles.includes('moderator') || scope.row.roles.includes('manager') || scope.row.roles.includes('editor') || scope.row.roles.includes('visitor') || scope.row.roles.includes('user') || scope.row.roles.includes('guest')" v-permission="['manage user']" type="danger" size="small" icon="el-icon-delete" @click="handleDelete(scope.row.id, scope.row.name);" />
+                  <div v-else-if="scope.row.roles.includes('moderator') || scope.row.roles.includes('admin')">
+                    <div v-if="scope.row.id === userId && (scope.row.id === userId && scope.row.roles.includes('moderator'))">
+                      <div v-if="scope.row.roles.includes('moderator') || scope.row.roles.includes('admin')">
+                        <router-link v-if="scope.row.roles.includes('moderator')" v-show="(scope.row.id === userId && scope.row.roles.includes('moderator'))" :to="`/administrator/users/edit/${userId}`">
+                          <el-button v-permission="['manage user']" type="primary" size="small" icon="el-icon-edit">
+                            Редактировать
+                          </el-button>
+                        </router-link>
+                      </div>
+                    </div>
+                    <div v-else-if="!scope.row.id === userId && (!scope.row.id === userId && !scope.row.roles.includes('moderator'))">
+                      <div>
+                        <span> Для профиля moderator </span>
+                      </div>
+                      <div>
+                        <span> Изменения запрещены </span>
+                      </div>
+                    </div>
+                    <div v-else-if="!scope.row.roles.includes('admin') || !scope.row.roles.includes('moderator')">
+                      <div>
+                        <router-link v-if="scope.row.roles.includes('moderator')" :to="`/administrator/users/edit/`+scope.row.id">
+                          <el-button v-permission="['manage user']" type="primary" size="small" style="width: 150px" icon="el-icon-edit">
+                            Редактировать
+                          </el-button>
+                        </router-link>
+                      </div>
+                      <div>
+                        <el-button v-if="scope.row.roles.includes('moderator')" v-permission="['manage permission']" type="warning" size="small" style="width: 150px" icon="el-icon-edit" @click="handleEditPermissions(scope.row.id);">
+                          Разрешения
+                        </el-button>
+                        <div v-show="(scope.row.roles.includes('moderator'))">
+                          <el-button v-permission="['manage user']" type="danger" size="small" style="width: 150px" icon="el-icon-delete" @click="handleDelete(scope.row.id, scope.row.name);">
+                            Удалить
+                          </el-button>
+                        </div>
+                      </div>
+                    </div>
+                    <el-button v-if="scope.row.id === userId || (scope.row.roles.includes('moderator') && (scope.row.id === userId && scope.row.roles.includes('moderator')))" v-permission="['manage permission']" type="warning" size="small" icon="el-icon-edit" @click="handleEditPermissions(scope.row.id);">
+                      Разрешения
+                    </el-button>
+                    <div v-show="!scope.row.id === userId || (!scope.row.id === userId && scope.row.roles.includes('moderator'))">
+                      <el-button v-permission="['manage user']" type="danger" size="small" icon="el-icon-delete" @click="handleDelete(scope.row.id, scope.row.name);">
+                        Удалить
+                      </el-button>
+                    </div>
+                  </div>
+                  <div v-else-if="scope.row.roles.includes('manager')">
+                    <div v-if="scope.row.id === userId && (scope.row.id === userId && scope.row.roles.includes('manager'))">
+                      <div v-if="scope.row.roles.includes('manager')">
+                        <router-link v-if="scope.row.roles.includes('manager')" v-show="(scope.row.id === userId && scope.row.roles.includes('manager'))" :to="`/administrator/users/edit/${userId}`">
+                          <el-button v-permission="['manage user']" type="primary" size="small" icon="el-icon-edit">
+                            Редактировать
+                          </el-button>
+                        </router-link>
+                      </div>
+                    </div>
+                    <div v-else-if="!scope.row.roles.includes('admin') || !scope.row.roles.includes('moderator')">
+                      <div>
+                        <router-link v-if="scope.row.roles.includes('manager')" :to="`/administrator/users/edit/`+scope.row.id">
+                          <el-button v-permission="['manage user']" type="primary" size="small" style="width: 150px" icon="el-icon-edit">
+                            Редактировать
+                          </el-button>
+                        </router-link>
+                      </div>
+                      <div>
+                        <el-button v-if="scope.row.roles.includes('manager')" v-permission="['manage permission']" type="warning" size="small" style="width: 150px" icon="el-icon-edit" @click="handleEditPermissions(scope.row.id);">
+                          Разрешения
+                        </el-button>
+                        <div v-show="(scope.row.roles.includes('manager'))">
+                          <el-button v-permission="['manage user']" type="danger" size="small" style="width: 150px" icon="el-icon-delete" @click="handleDelete(scope.row.id, scope.row.name);">
+                            Удалить
+                          </el-button>
+                        </div>
+                      </div>
+                    </div>
+                    <el-button v-if="scope.row.id === userId || (scope.row.roles.includes('manager') && (scope.row.id === userId && scope.row.roles.includes('manager')))" v-permission="['manage permission']" type="warning" size="small" icon="el-icon-edit" @click="handleEditPermissions(scope.row.id);">
+                      Разрешения
+                    </el-button>
+                    <div v-show="!scope.row.id === userId || (!scope.row.id === userId && scope.row.roles.includes('manager'))">
+                      <el-button v-permission="['manage user']" type="danger" size="small" icon="el-icon-delete" @click="handleDelete(scope.row.id, scope.row.name);">
+                        Удалить
+                      </el-button>
+                    </div>
+                  </div>
                 </div>
+
                 <div v-else-if="scope.row.deleted_at !== ''">
-                  <div v-if="!scope.row.roles.includes('admin')" :to="'/administrator/users/edit/'+scope.row.id">
-                    <el-button v-if="!scope.row.roles.includes('admin') || scope.row.roles.includes('moderator') || scope.row.roles.includes('manager') || scope.row.roles.includes('editor') || scope.row.roles.includes('visitor') || scope.row.roles.includes('user') || scope.row.roles.includes('guest')" v-permission="['manage user']" type="success" size="small" icon="el-icon-refresh" @click="handleRestore(scope.row.id, scope.row.name);">
+                  <div v-if="scope.row.roles.includes('admin')">
+                    <div v-if="!scope.row.roles.includes('admin')" v-show="userId === scope.row.id" :to="`/administrator/users/edit/${userId}`">
+                      <el-button v-if="!scope.row.roles.includes('admin') || scope.row.roles.includes('moderator') || scope.row.roles.includes('manager') || scope.row.roles.includes('editor') || scope.row.roles.includes('visitor') || scope.row.roles.includes('user') || scope.row.roles.includes('guest')" v-permission="['manage user']" type="success" size="small" style="width: 150px" icon="el-icon-refresh" @click="handleRestore(scope.row.id, scope.row.name);">
+                        Актвировать
+                      </el-button>
+                      <el-button v-if="!scope.row.roles.includes('admin') || scope.row.roles.includes('moderator') || scope.row.roles.includes('manager') || scope.row.roles.includes('editor') || scope.row.roles.includes('visitor') || scope.row.roles.includes('user') || scope.row.roles.includes('guest')" v-permission="['manage user']" type="danger" size="small" style="width: 150px" icon="el-icon-delete" @click="handleDeleteForever(scope.row.id, scope.row.name);">
+                        Удалить из базы
+                      </el-button>
+                    </div>
+                  </div>
+                  <div v-if="scope.row.roles.includes('moderator')">
+                    <el-button v-permission="['manage user']" type="success" size="small" style="width: 150px" icon="el-icon-refresh" @click="handleRestore(scope.row.id, scope.row.name);">
                       Актвировать
                     </el-button>
-                    <el-button v-if="!scope.row.roles.includes('admin') || scope.row.roles.includes('moderator') || scope.row.roles.includes('manager') || scope.row.roles.includes('editor') || scope.row.roles.includes('visitor') || scope.row.roles.includes('user') || scope.row.roles.includes('guest')" v-permission="['manage user']" type="danger" size="small" icon="el-icon-delete" @click="handleDeleteForever(scope.row.id, scope.row.name);">
-                      Удалить
+                    <el-button v-permission="['manage user']" type="danger" size="small" style="width: 150px" icon="el-icon-delete" @click="handleDeleteForever(scope.row.id, scope.row.name);">
+                      Удалить из базы
                     </el-button>
                   </div>
-                  <div v-else-if="scope.row.roles.includes('admin')">
-                    <div>
-                      <span> Для профиля Администратора </span>
-                    </div>
-                    <div>
-                      <span> Изменения запрещены </span>
-                    </div>
+                  <div v-if="scope.row.roles.includes('manager')">
+                    <el-button v-permission="['manage user']" type="success" size="small" style="width: 150px" icon="el-icon-refresh" @click="handleRestore(scope.row.id, scope.row.name);">
+                      Актвировать
+                    </el-button>
+                    <el-button v-permission="['manage user']" type="danger" size="small" style="width: 150px" icon="el-icon-delete" @click="handleDeleteForever(scope.row.id, scope.row.name);">
+                      Удалить из базы
+                    </el-button>
                   </div>
+
                 </div>
               </template>
             </el-table-column>
           </el-table>
-
           <pagination v-show="total>0" :total="total" :page.sync="query.page" :limit.sync="query.limit" @pagination="getList" />
 
           <el-dialog :visible.sync="dialogPermissionVisible" :title="'Edit Permissions - ' + currentUser.name">
@@ -410,7 +545,7 @@ import Resource from '@/api/user';
 import waves from '@/directive/waves'; // Waves directive
 import permission from '@/directive/permission'; // Waves directive
 import checkPermission from '@/utils/permission';
-
+import { mapGetters } from 'vuex';
 const userResource = new Resource('users');
 const permissionResource = new Resource('permissions');
 
@@ -483,6 +618,12 @@ export default {
     };
   },
   computed: {
+    ...mapGetters([
+      'avatar',
+      'onlineStatus',
+      'device',
+      'userId',
+    ]),
     normalizedMenuPermissions() {
       let tmp = [];
       this.currentUser.permissions.role.forEach(permission => {
@@ -719,9 +860,7 @@ export default {
         name: '',
         email: '',
         gender: '',
-        family_status: '',
         password: '',
-        confirmPassword: '',
         role: 'user',
       };
     },

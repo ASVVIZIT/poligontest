@@ -37,130 +37,159 @@
               </v-tab>
               <v-tab :key="4">
                 <v-icon>mdi-city-variant-outline</v-icon>
-                Адрес
+                Адреса
               </v-tab>
               <v-tab :key="5">
-                <v-icon>mdi-skype</v-icon>
-                Скайп
+                <v-icon>mdi-email</v-icon>
+                Email's
               </v-tab>
               <v-tab :key="6">
+                <v-icon>mdi-skype</v-icon>
+                Мессенджеры
+              </v-tab>
+              <v-tab :key="7">
                 <v-icon>mdi-phone-classic</v-icon>
                 Телефон
               </v-tab>
-              <v-tab :key="7">
+              <v-tab :key="8">
                 <v-icon>mdi-settings-outline</v-icon>
                 Настройки
               </v-tab>
               <v-tab-item :key="1">
                 <v-card>
-                  <v-card-text class="user-profile-grid-main">
-                    <div class="user-profile user-profile-grid-main-area1 user-profile-grid-avatar">
-                      <div class="user-avatar box-center user-profile-grid-main-avatar-area1">
-                        <div style="display: flex;justify-content: space-between;">
-                          <div v-if="user.onlineStatus">
-                            <v-icon v-show="user.onlineStatus !== null" color="green">mdi mdi-account-check-outline</v-icon>
-                            <b style="color: #01c003">Онлайн</b>
-                          </div>
-                          <div v-else-if="!user.onlineStatus">
-                            <v-icon v-show="user.onlineStatus !== null" color="red">mdi mdi-account-off-outline</v-icon>
-                            <b style="color: #cc0027">Оффлайн</b>
-                          </div>
-                          <div>
-                            Ваш ID: {{ user.id }}
-                          </div>
-                        </div>
-                        <a @click="imagecropperShow=true">
-                          <div v-show="user.avatar !== null" v-if="user.avatar" v-loading="avatarupdating">
-                            <pan-thumb v-if="user.avatar" v-loading="avatarupdating" :image="user.avatar" :src="user.avatar" :height="'250px'" :width="'250px'" :hoverable="false" />
-                          </div>
-                          <div v-show="user.avatar === null" v-loading="avatarupdating">
-                            <pan-thumb v-loading="avatarupdating" :image="'/uploads/avatars/default/v0/default.png'" :height="'250px'" :width="'250px'" :hoverable="false" />
-                          </div>
-                        </a>
-                        <image-cropper
-                          v-show="imagecropperShow"
-                          :key="imagecropperKey"
-                          :value.sync="imagecropperShow"
-                          :params="params"
-                          :headers="headers"
-                          :width="250"
-                          :height="250"
-                          field="avatar"
-                          ki="0"
-                          :url="'/users/' + user.id + '/avatarupload'"
-                          lang-type="ru"
-                          :no-circle="false"
-                          @close="close"
-                          @crop-upload-success="cropUploadSuccess"
-                          @crop-upload-fail="cropUploadFail"
-                        />
-                      </div>
-                      <div class="box-center user-profile-grid-main-avatar-area2">
-                        <div class="user-name text-center text-muted">
-                          <i>Имя:</i><b> {{ user.name }} </b>
-                        </div>
-                        <div class="user-role text-center text-muted">
-                          <i>Ваши текушие роли:</i><b> {{ getRole() }} </b>
-                        </div>
-                      </div>
-                      <div class="box-center user-profile-grid-main-avatar-area3">
-                        <el-button type="primary" icon="upload" style="bottom: 15px;" @click="imagecropperShow=true">
-                          Выбирите свой аватар
-                        </el-button>
-                      </div>
-                    </div>
-                    <div class="user-profile-grid-main-area2 user-profile-grid-parametrs">
-                      <div class="user-profile-grid-main-parametrs-area1">
-                        <el-form-item label="Имя">
-                          <el-input v-model="user.firstname" :disabled="user.role === 'admin'" />
-                        </el-form-item>
-                      </div>
-                      <div class="user-profile-grid-main-parametrs-area2">
-                        <el-form-item label="Фамилия">
-                          <el-input v-model="user.surname" :disabled="user.role === 'admin'" />
-                        </el-form-item>
-                      </div>
-                      <div class="user-profile-grid-main-parametrs-area3">
-                        <el-form-item label="Отчество">
-                          <el-input v-model="user.patronymic" :disabled="user.role === 'admin'" />
-                        </el-form-item>
-                      </div>
-                    </div>
-                    <div class="user-profile-grid-main-area3 user-profile-grid-parametrs">
-                      <div class="user-profile-grid-main-parametrs-area1">
-                        <div style="margin-right: 5px">
-                          <el-form-item label="Пол">
-                            <el-select v-model="user.gender" :disabled="user.role === 'admin'">
-                              <el-option v-for="item in genderVulue" :key="item" :label="item | uppercaseFirst" :value="item" />
-                            </el-select>
-                          </el-form-item>
-                        </div>
-                      </div>
-                      <div class="user-profile-grid-main-parametrs-area2">
-                        <div style="margin-right: 5px">
-                          <el-form-item label="День рождения">
-                            <el-date-picker
-                              v-model="user.birthday"
-                              type="date"
-                              format="dd.MM.yyyy"
-                              value-format="yyyy-MM-dd"
-                              placeholder="Дата дня рождения"
-                              :disabled="user.role === 'admin'"
+                  <v-card-text>
+                    <div class="user-profile-grid-main">
+                      <div class="flex-column flex-column1">
+                        <div class="user-profile user-profile-grid-avatar user-profile-grid-main-area1">
+                          <div class="user-avatar box-center user-profile-grid-main-avatar-area1">
+                            <div style="display: flex; justify-content: space-between;">
+                              <div v-if="user.onlineStatus">
+                                <v-icon v-show="user.onlineStatus !== null" class="icon-list-profile" color="green">mdi mdi-account-check-outline</v-icon>
+                                <b style="color: #01c003">Онлайн</b>
+                              </div>
+                              <div v-else-if="!user.onlineStatus">
+                                <v-icon v-show="user.onlineStatus !== null" class="icon-list-profile" color="red">mdi mdi-account-off-outline</v-icon>
+                                <b style="color: #cc0027">Оффлайн</b>
+                              </div>
+                              <div>
+                                Ваш ID: {{ user.id }}
+                              </div>
+                            </div>
+                            <a @click="imagecropperShow=true">
+                              <div v-show="user.avatar !== null" v-if="user.avatar" v-loading="avatarupdating">
+                                <pan-thumb v-if="user.avatar" v-loading="avatarupdating" :image="user.avatar" :src="user.avatar" class="avatar-pan-thumb" :hoverable="false" />
+                              </div>
+                              <div v-show="user.avatar === null" v-loading="avatarupdating">
+                                <pan-thumb v-loading="avatarupdating" :image="'/uploads/avatars/default/v0/default.png'" class="avatar-pan-thumb" :hoverable="false" />
+                              </div>
+                            </a>
+                            <image-cropper
+                              v-show="imagecropperShow"
+                              :key="imagecropperKey"
+                              :value.sync="imagecropperShow"
+                              :params="params"
+                              :headers="headers"
+                              :width="250"
+                              :height="250"
+                              field="avatar"
+                              ki="0"
+                              :url="'/users/' + user.id + '/avatarupload'"
+                              lang-type="ru"
+                              :no-circle="false"
+                              @close="close"
+                              @crop-upload-success="cropUploadSuccess"
+                              @crop-upload-fail="cropUploadFail"
                             />
-                          </el-form-item>
+                          </div>
+                          <div class="box-center user-profile-grid-main-avatar-area2">
+                            <div class="user-name text-center text-muted">
+                              <i>Имя:</i><b> {{ user.name }} </b>
+                            </div>
+                            <div class="user-role text-center text-muted">
+                              <i>Ваши текушие роли:</i><b> {{ getRole() }} </b>
+                            </div>
+                          </div>
+                          <div class="box-center user-profile-grid-main-avatar-area3">
+                            <el-button type="primary" icon="upload" style="bottom: 15px;" @click="imagecropperShow=true">
+                              Выбирите свой аватар
+                            </el-button>
+                          </div>
                         </div>
                       </div>
-                      <div class="user-profile-grid-main-parametrs-area3">
-                        <div style="margin-right: 5px">
-                          <el-form-item label="Семейное положение">
-                            <el-select v-model="user.family_status" :disabled="user.role === 'admin'">
-                              <el-option v-for="item in familyStatusVulue" :key="item" :label="item | uppercaseFirst" :value="item" />
-                            </el-select>
-                          </el-form-item>
+                      <div class="flex-column flex-column2">
+                        <div class="user-profile-grid-main-area2 user-profile-grid-parametrs">
+                          <div class="user-profile-grid-main-parametrs-area1">
+                            <el-form-item label="Ф.И.О. (Заполните ниже поля):" />
+                            <div>
+                              <label> {{ user.surname }} {{ user.firstname }} {{ user.patronymic }} </label>
+                            </div>
+                          </div>
+                          <div class="user-profile-grid-main-parametrs-area2-1">
+                            <el-form-item label="Фамилия">
+                              <el-input v-model="user.surname" :disabled="user.role === 'admin'" />
+                            </el-form-item>
+                          </div>
+                          <div class="user-profile-grid-main-parametrs-area2-2">
+                            <el-form-item label="Имя">
+                              <el-input v-model="user.firstname" :disabled="user.role === 'admin'" />
+                            </el-form-item>
+                          </div>
+                          <div class="user-profile-grid-main-parametrs-area3">
+                            <el-form-item label="Отчество">
+                              <el-input v-model="user.patronymic" :disabled="user.role === 'admin'" />
+                            </el-form-item>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="flex-column flex-column3">
+                        <div class="user-profile-grid-main-area3 user-profile-grid-parametrs">
+                          <div class="user-profile-grid-main-parametrs-area1">
+                            <div style="margin-right: 5px">
+                              <el-form-item label="Пол">
+                                <el-select v-model="user.gender" :disabled="user.role === 'admin'">
+                                  <el-option v-for="item in genderVulue" :key="item" :label="item | uppercaseFirst" :value="item" />
+                                </el-select>
+                              </el-form-item>
+                            </div>
+                          </div>
+                          <div class="user-profile-grid-main-parametrs-area2">
+                            <div style="margin-right: 5px">
+                              <el-form-item label="День рождения">
+                                <el-date-picker
+                                  v-model="user.birthday"
+                                  type="date"
+                                  format="dd.MM.yyyy"
+                                  value-format="yyyy-MM-dd"
+                                  placeholder="Дата дня рождения"
+                                  :disabled="user.role === 'admin'"
+                                />
+                              </el-form-item>
+                            </div>
+                          </div>
+                          <div class="user-profile-grid-main-parametrs-area3">
+                            <div style="margin-right: 5px">
+                              <el-form-item label="Семейное положение">
+                                <el-select v-model="user.family_status" :disabled="user.role === 'admin'">
+                                  <el-option v-for="item in familyStatusVulue" :key="item" :label="item | uppercaseFirst" :value="item" />
+                                </el-select>
+                              </el-form-item>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </v-card-text>
+                  <div class="container-test">
+                    <div>1</div>
+                    <div>2</div>
+                    <div>3</div>
+                    <div>4</div>
+                    <div>5</div>
+                    <div>6</div>
+                    <div>7</div>
+                    <div>8</div>
+                    <div>9</div>
+                  </div>
                   <v-card-text>
                     <el-form-item>
                       <el-button type="primary" :disabled="user.role === 'admin'" @click="onSubmitProfile">
@@ -172,31 +201,50 @@
               </v-tab-item>
               <v-tab-item :key="2">
                 <v-card>
-                  <v-card-text>
-                    <el-form-item label="Полное имя Ф.И.О.">
-                      <el-input v-model="user.name" :disabled="user.role === 'admin'" />
-                    </el-form-item>
-                    <el-form-item label="Имя">
-                      <el-input v-model="user.firstname" :disabled="user.role === 'admin'" />
-                    </el-form-item>
-                    <el-form-item label="Email">
-                      <el-input v-model="user.email" :disabled="user.role === 'admin'" />
-                    </el-form-item>
-                    <el-form-item label="Пароль">
-                      <span class="svg-container">
-                        <svg-icon icon-class="password" />
-                      </span>
-                      <span class="show-pwd" @click="showPwd">
-                        <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-                      </span>
-                      <el-input
-                        key="passwordType"
-                        v-model="user.password"
-                        :type="passwordType"
-                        placeholder="Введите пароль для его смены"
-                        :disabled="user.role === 'admin'"
-                      />
-                    </el-form-item>
+                  <v-card-text class="user-profile-grid-main-guard-menu">
+                    <div class="user-profile user-profile-grid-main-area1 user-profile-grid-guard-menu">
+                      <div class="user-profile-grid-main-avatar-area2">
+                        <el-form-item label="Имя:">
+                          <el-input v-model="user.name" :disabled="user.role === 'admin'" />
+                        </el-form-item>
+                        <el-form-item label="Email (Логин) для авторизации:">
+                          <el-input v-model="user.email" :disabled="user.role === 'admin'" />
+                        </el-form-item>
+                        <el-form-item label="Пароль:">
+                          <span class="svg-container">
+                            <svg-icon icon-class="password" />
+                          </span>
+                          <span class="show-pwd" @click="showPwd">
+                            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+                          </span>
+                          <el-input
+                            key="passwordType"
+                            v-model="user.password"
+                            :type="passwordType"
+                            placeholder="Введите пароль для его смены"
+                            required
+                            :disabled="user.role === 'admin'"
+                          />
+                        </el-form-item>
+                        <el-form-item label="Пароль повторить:">
+                          <span class="svg-container">
+                            <svg-icon icon-class="password" />
+                          </span>
+                          <span class="show-pwd" @click="showPwdConfirm">
+                            <svg-icon :icon-class="passwordTypeConfirm === 'password' ? 'eye' : 'eye-open'" />
+                          </span>
+                          <el-input
+                            key="passwordType"
+                            ref="repeatedPasswordEl"
+                            v-model="user.confirmPassword"
+                            :type="passwordTypeConfirm"
+                            placeholder="Введите пароль повторно"
+                            required
+                            :disabled="user.role === 'admin'"
+                          />
+                        </el-form-item>
+                      </div>
+                    </div>
                   </v-card-text>
                   <v-card-text>
                     <el-form-item>
@@ -210,7 +258,7 @@
               <v-tab-item :key="3">
                 <v-card>
                   <v-card-text>
-                    <el-form-item label="Пароль">
+                    <el-form-item label="Пароль:">
                       <span class="svg-container">
                         <svg-icon icon-class="password" />
                       </span>
@@ -222,6 +270,24 @@
                         v-model="user.password"
                         :type="passwordType"
                         placeholder="Введите пароль для его смены"
+                        required
+                        :disabled="user.role === 'admin'"
+                      />
+                    </el-form-item>
+                    <el-form-item label="Пароль повторить:">
+                      <span class="svg-container">
+                        <svg-icon icon-class="password" />
+                      </span>
+                      <span class="show-pwd" @click="showPwdConfirm">
+                        <svg-icon :icon-class="passwordTypeConfirm === 'password' ? 'eye' : 'eye-open'" />
+                      </span>
+                      <el-input
+                        key="passwordType"
+                        ref="repeatedPasswordEl"
+                        v-model="user.confirmPassword"
+                        :type="passwordTypeConfirm"
+                        placeholder="Введите пароль повторно"
+                        required
                         :disabled="user.role === 'admin'"
                       />
                     </el-form-item>
@@ -262,6 +328,34 @@
                 <v-card>
                   <el-form-item>
                     <v-card-text>
+                      <el-form-item label="Email для авторизации (нельзя оставить пустым)">
+                        <el-input v-model="user.email" :disabled="user.role === 'admin'" title="Только для чтения" required readonly />
+                      </el-form-item>
+                    </v-card-text>
+                    <v-card-text>
+                      <el-form-item label="Email личный №1">
+                        <el-input v-model="user.email1" type="email" :disabled="user.role === 'admin'" />
+                      </el-form-item>
+                    </v-card-text>
+                    <v-card-text>
+                      <el-form-item label="Email личный №2">
+                        <el-input v-model="user.email2" :disabled="user.role === 'admin'" />
+                      </el-form-item>
+                    </v-card-text>
+                    <v-card-text>
+                      <el-form-item>
+                        <el-button type="primary" :disabled="user.role === 'admin'" @click="onSubmitEmail">
+                          Обновить Email-ы
+                        </el-button>
+                      </el-form-item>
+                    </v-card-text>
+                  </el-form-item>
+                </v-card>
+              </v-tab-item>
+              <v-tab-item :key="6">
+                <v-card>
+                  <el-form-item>
+                    <v-card-text>
                       <el-form-item label="Скайп">
                         <el-input v-model="user.skype" :disabled="user.role === 'admin'" />
                       </el-form-item>
@@ -276,7 +370,7 @@
                   </el-form-item>
                 </v-card>
               </v-tab-item>
-              <v-tab-item :key="6">
+              <v-tab-item :key="7">
                 <v-card>
                   <el-form-item>
                     <v-card-text>
@@ -309,11 +403,10 @@
                   </el-form-item>
                 </v-card>
               </v-tab-item>
-              <v-tab-item :key="7">
+              <v-tab-item :key="8">
                 <v-card>
                   <v-card-text>
                     <v-row
-
                       justify="space-around"
                     >
                       <div>
@@ -322,7 +415,6 @@
                       </div>
                     </v-row>
                     <v-row
-
                       justify="space-around"
                     >
                       <v-switch
@@ -367,7 +459,30 @@
           </div>
         </v-app>
       </el-tab-pane>
-      <el-tab-pane label="Activity" name="second">
+      <el-tab-pane label="Статистика входа" name="second">
+        <div id="app">
+          <v-app id="inspire">
+            <v-card>
+              <h2>В место данной таблицы будут выводиться данные авторизации и тип входа пользователя,  с какого устройства вошли и дата время, текушее состояние</h2>
+              <v-card-title>
+                <v-text-field
+                  v-model="search"
+                  append-icon="search"
+                  label="Search"
+                  single-line
+                  hide-details
+                />
+              </v-card-title>
+              <v-data-table
+                :headers="headers_2"
+                :items="desserts"
+                :search="search"
+              />
+            </v-card>
+          </v-app>
+        </div>
+      </el-tab-pane>
+      <el-tab-pane label="Activity" name="third">
         <div class="user-activity">
           <div class="post">
             <div class="user-block">
@@ -483,7 +598,7 @@
           </div>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="Timeline" name="third">
+      <el-tab-pane label="Timeline" name="fourth">
         <div class="block">
           <el-timeline>
             <el-timeline-item timestamp="2019/4/17" placement="top">
@@ -529,6 +644,7 @@ export default {
   props: {
     user: {
       passwordType: '',
+      passwordTypeConfirm: '',
       updating: false,
       type: Object,
       default: () => {
@@ -548,9 +664,12 @@ export default {
           family_status: '',
           birthday: '',
           email: '',
-          password: '',
+          email1: '',
+          email2: '',
+          password: null,
+          confirmPassword: null,
           avatar: '',
-          onlineStatus: '',
+          onlineStatus: null,
           roles: [],
         };
       },
@@ -582,16 +701,113 @@ export default {
       genderVulue: ['male', 'female'],
       familyStatusVulue: ['unmarried', 'married', 'divorced'],
       passwordType: 'password',
+      passwordTypeConfirm: 'password',
       tab: {
         tab: null,
         icons: false,
-        centered: false,
-        grow: false,
-        vertical: true,
+        centered: true,
+        grow: true,
+        vertical: false,
         prevIcon: true,
         nextIcon: true,
         right: false,
       },
+      search: '',
+      headers_2: [
+        {
+          text: 'Dessert (100g serving)',
+          align: 'left',
+          filterable: false,
+          value: 'name',
+        },
+        { text: 'Calories', value: 'calories' },
+        { text: 'Fat (g)', value: 'fat' },
+        { text: 'Carbs (g)', value: 'carbs' },
+        { text: 'Protein (g)', value: 'protein' },
+        { text: 'Iron (%)', value: 'iron' },
+      ],
+      desserts: [
+        {
+          name: 'Frozen Yogurt',
+          calories: 159,
+          fat: 6.0,
+          carbs: 24,
+          protein: 4.0,
+          iron: '1%',
+        },
+        {
+          name: 'Ice cream sandwich',
+          calories: 237,
+          fat: 9.0,
+          carbs: 37,
+          protein: 4.3,
+          iron: '1%',
+        },
+        {
+          name: 'Eclair',
+          calories: 262,
+          fat: 16.0,
+          carbs: 23,
+          protein: 6.0,
+          iron: '7%',
+        },
+        {
+          name: 'Cupcake',
+          calories: 305,
+          fat: 3.7,
+          carbs: 67,
+          protein: 4.3,
+          iron: '8%',
+        },
+        {
+          name: 'Gingerbread',
+          calories: 356,
+          fat: 16.0,
+          carbs: 49,
+          protein: 3.9,
+          iron: '16%',
+        },
+        {
+          name: 'Jelly bean',
+          calories: 375,
+          fat: 0.0,
+          carbs: 94,
+          protein: 0.0,
+          iron: '0%',
+        },
+        {
+          name: 'Lollipop',
+          calories: 392,
+          fat: 0.2,
+          carbs: 98,
+          protein: 0,
+          iron: '2%',
+        },
+        {
+          name: 'Honeycomb',
+          calories: 408,
+          fat: 3.2,
+          carbs: 87,
+          protein: 6.5,
+          iron: '45%',
+        },
+        {
+          name: 'Donut',
+          calories: 452,
+          fat: 25.0,
+          carbs: 51,
+          protein: 4.9,
+          iron: '22%',
+        },
+        {
+          name: 'KitKat',
+          calories: 518,
+          fat: 26.0,
+          carbs: 65,
+          protein: 7,
+          iron: '6%',
+        },
+      ],
     };
   },
   watch: {
@@ -600,6 +816,8 @@ export default {
         this.reset();
       }
     },
+    confirmPassword: 'checkPasswordsEquality',
+    password: 'checkPasswordsEquality',
   },
   methods: {
     showPwd() {
@@ -612,8 +830,30 @@ export default {
         this.$refs.password;
       });
     },
+    showPwdConfirm() {
+      if (this.passwordTypeConfirm === 'password') {
+        this.passwordTypeConfirm = '';
+      } else {
+        this.passwordTypeConfirm = 'password';
+      }
+      this.$nextTick(() => {
+        this.$refs.confirmPassword;
+      });
+    },
+    checkPasswordsEquality() {
+      const { password, confirmPassword } = this.user;
+      const { repeatedPasswordEl } = this.$refs;
+
+      if (password !== confirmPassword) {
+        repeatedPasswordEl.setCustomValidity(
+          'Пароли должны совпадать',
+        );
+      } else {
+        repeatedPasswordEl.setCustomValidity('');
+      }
+    },
     handleClick(tab, event) {
-      console.log('Switching tab ', tab, event);
+      console.log('Переключение панели ', tab, event);
     },
     getRole() {
       const roles = this.user.roles.map(value => this.$options.filters.uppercaseFirst(value));
@@ -681,11 +921,56 @@ export default {
     onSubmitAddress() {
       this.updating = true;
       userResource
-        .update(this.user.id, this.user, this.address1, this.address2)
+        .update(this.user.id, this.user, this.address1)
         .then(response => {
           this.updating = false;
           this.$message({
-            message: 'Информация о адресе успешно обновлена',
+            message: 'Информация о адресе 1 успешно обновлена',
+            type: 'success',
+            duration: 5 * 1000,
+          });
+        })
+        .catch(error => {
+          console.log(error);
+          this.updating = false;
+        });
+      userResource
+        .update(this.user.id, this.user, this.address2)
+        .then(response => {
+          this.updating = false;
+          this.$message({
+            message: 'Информация о адресе 2 успешно обновлена',
+            type: 'success',
+            duration: 5 * 1000,
+          });
+        })
+        .catch(error => {
+          console.log(error);
+          this.updating = false;
+        });
+    },
+    onSubmitEmail() {
+      this.updating = true;
+      userResource
+        .update(this.user.id, this.user, this.email1)
+        .then(response => {
+          this.updating = false;
+          this.$message({
+            message: 'Информация о email №1 успешно обновлена',
+            type: 'success',
+            duration: 5 * 1000,
+          });
+        })
+        .catch(error => {
+          console.log(error);
+          this.updating = false;
+        });
+      userResource
+        .update(this.user.id, this.user, this.email2)
+        .then(response => {
+          this.updating = false;
+          this.$message({
+            message: 'Информация о email №2 успешно обновлена',
             type: 'success',
             duration: 5 * 1000,
           });
@@ -879,11 +1164,814 @@ export default {
   }
 }
 
+@media screen and (max-width: 1920px) {
+  // Делим страницу основного профиля на две части левую и правую
+  .user-profile-grid-main {
+    display: grid;
+    grid-gap: 15px;
+    grid-template-columns: minmax(320px, 24%) minmax(360px, 70%) minmax(260px, 0.3fr);
+    grid-template-areas: "user-profile-main-left user-profile-main-middle user-profile-main-right"
+  }
+  .avatar-pan-thumb {
+    height: 200px;
+    width: 200px;
+  }
+}
+
+@media screen and (max-width: 768px){
+  // Делим страницу основного профиля на две части левую и правую
+  .user-profile-grid-main {
+    display: grid;
+    grid-gap: 15px;
+    grid-template-columns: minmax(320px, 24%) minmax(320px, 50%);
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas: "user-profile-main-left user-profile-main-middle"
+                         "user-profile-main-right user-profile-main-right";
+  }
+
+  .flex-column.flex-column1 {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .flex-column.flex-column2 {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .flex-column.flex-column3 {
+    grid-column: 1/3;
+    grid-row: 2;
+  }
+
+  // Левая часть
+  .user-profile-grid-main-area1 {
+    grid-area: user-profile-main-left;
+    background: #dff0f6;
+    border: 1px solid rgba(16, 8, 188, 0.3);
+    border-radius: 5px 5px 5px 5px;
+    //background: #1e88e5; /* Цвет фона */
+    box-shadow: 2px 10px 12px rgba(0,0,0,0.3); /* Параметры тени */
+    padding: 15px;
+    height: 100%;
+  }
+
+  // Середина часть
+  .user-profile-grid-main-area2 {
+    grid-area: user-profile-main-middle;
+    //background: #ddd249;
+    border: 1px solid rgba(188, 19, 30, 0.3);
+    border-radius: 5px 5px 5px 5px;
+    //background: #1e88e5; /* Цвет фона */
+    box-shadow: 2px 10px 12px rgba(0,0,0,0.3); /* Параметры тени */
+    padding: 15px;
+    height: 100%;}
+
+  // Правая часть
+  .user-profile-grid-main-area3 {
+    grid-area: user-profile-main-right;
+    //background: #ddd249;
+    border: 1px solid rgba(0, 188, 12, 0.3);
+    border-radius: 5px 5px 5px 5px;
+    //background: #1e88e5; /* Цвет фона */
+    box-shadow: 2px 10px 12px rgba(0,0,0,0.3); /* Параметры тени */
+    padding: 15px;
+    height: 100%;}
+  .avatar-pan-thumb {
+    height: 200px;
+    width: 200px;
+  }
+}
+
+@media screen and (max-height: 1366px) and (max-width: 768px){
+  .avatar-pan-thumb {
+    height: 200px;
+    width: 200px;
+  }
+  // Делим страницу основного профиля на две части левую и правую
+  .user-profile-grid-main {
+    display: grid;
+    grid-gap: 15px;
+    grid-template-columns: minmax(320px, 20%) minmax(320px, 50%);
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas: "user-profile-main-left user-profile-main-middle"
+                         "user-profile-main-right user-profile-main-right";
+  }
+
+  .flex-column.flex-column1 {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .flex-column.flex-column2 {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .flex-column.flex-column3 {
+    grid-column: 1/3;
+    grid-row: 2;
+  }
+  .user-profile {
+    height: 100px;
+    .user-name {
+      font-weight: bold;
+    }
+    .box-center {
+      padding-top: 2px;
+    }
+    .user-role {
+      padding-top: 10px;
+      font-weight: 400;
+      font-size: 8px;
+    }
+    .box-social {
+      padding-top: 10px;
+      .el-table {
+        border-top: 1px solid #dfe6ec;
+      }
+    }
+    .user-follow {
+      padding-top: 10px;
+    }
+  }
+
+  .user-profile-grid-main-area1 {
+    grid-area: user-profile-main-left;
+    //background: #72aedd;
+    border: 1px solid rgba(16, 8, 188, 0.3);
+    border-radius: 5px 5px 5px 5px;
+    //background: #1e88e5; /* Цвет фона */
+    box-shadow: 2px 10px 12px rgba(0,0,0,0.3); /* Параметры тени */
+    padding: 7px;
+    height: 100%;
+  }
+
+  .user-profile-grid-avatar {
+    display: grid;
+    grid-gap: 1px;
+  }
+
+  .v-card__text, .v-card__title {
+    padding: 12px !important;
+  }
+
+  .avatar-pan-thumb {
+    height: 200px;
+    width: 200px;
+  }
+}
+
+@media screen and (max-width: 1366px) and (max-height: 768px){
+  .avatar-pan-thumb {
+    height: 200px;
+    width: 200px;
+  }
+  // Делим страницу основного профиля на две части левую и правую
+  .user-profile-grid-main {
+    display: grid;
+    grid-gap: 15px;
+    grid-template-columns: minmax(320px, 20%) minmax(390px, 70%) minmax(260px, 0.3fr);
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas: "user-profile-main-left user-profile-main-middle user-profile-main-right";
+  }
+
+  .flex-column.flex-column1 {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .flex-column.flex-column2 {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .flex-column.flex-column3 {
+    grid-column: 3;
+    grid-row: 1;
+  }
+  .user-profile {
+    height: 100px;
+    .user-name {
+      font-weight: bold;
+    }
+    .box-center {
+      padding-top: 2px;
+    }
+    .user-role {
+      padding-top: 10px;
+      font-weight: 400;
+      font-size: 8px;
+    }
+    .box-social {
+      padding-top: 10px;
+      .el-table {
+        border-top: 1px solid #dfe6ec;
+      }
+    }
+    .user-follow {
+      padding-top: 10px;
+    }
+  }
+
+  .user-profile-grid-main-area1 {
+    grid-area: user-profile-main-left;
+    //background: #72aedd;
+    border: 1px solid rgba(16, 8, 188, 0.3);
+    border-radius: 5px 5px 5px 5px;
+    //background: #1e88e5; /* Цвет фона */
+    box-shadow: 2px 10px 12px rgba(0,0,0,0.3); /* Параметры тени */
+    padding: 7px;
+    height: 100%;
+  }
+
+  .user-profile-grid-avatar {
+    display: grid;
+    grid-gap: 1px;
+  }
+
+  .v-card__text, .v-card__title {
+    padding: 12px !important;
+  }
+
+  .avatar-pan-thumb {
+    height: 200px;
+    width: 200px;
+  }
+}
+
+@media screen and (max-width: 1024px) and (max-height: 768px){
+  .avatar-pan-thumb {
+    height: 200px;
+    width: 200px;
+  }
+
+  // Делим страницу основного профиля на две части левую и правую
+  .user-profile-grid-main {
+    display: grid;
+    grid-gap: 8px;
+    grid-template-columns: minmax(250px, 21%) minmax(280px, 40%) minmax(250px, 0.3fr);
+    grid-template-areas: "user-profile-main-left user-profile-main-middle user-profile-main-right"
+  }
+  .user-profile {
+    height: 100px;
+    .user-name {
+      font-weight: bold;
+    }
+    .box-center {
+      padding-top: 2px;
+    }
+    .user-role {
+      padding-top: 10px;
+      font-weight: 400;
+      font-size: 8px;
+    }
+    .box-social {
+      padding-top: 10px;
+      .el-table {
+        border-top: 1px solid #dfe6ec;
+      }
+    }
+    .user-follow {
+      padding-top: 10px;
+    }
+  }
+
+  .user-profile-grid-main-area1 {
+    grid-area: user-profile-main-left;
+    //background: #72aedd;
+    border: 1px solid rgba(16, 8, 188, 0.3);
+    border-radius: 5px 5px 5px 5px;
+    //background: #1e88e5; /* Цвет фона */
+    box-shadow: 2px 10px 12px rgba(0,0,0,0.3); /* Параметры тени */
+    padding: 7px;
+    height: 100%;
+  }
+
+  .user-profile-grid-avatar {
+    display: grid;
+    grid-gap: 1px;
+  }
+
+  .v-card__text, .v-card__title {
+    padding: 12px !important;
+  }
+
+  .avatar-pan-thumb {
+    height: 200px;
+    width: 200px;
+  }
+}
+
+@media screen and (max-height: 823px) and (max-width: 411px) {
+  // Делим страницу основного профиля на две части левую и правую
+  .user-profile-grid-main {
+    display: grid;
+    grid-gap: 15px;
+    grid-template-columns: minmax(390px, 24%);
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-areas: "user-profile-main-left" "user-profile-main-middle" "user-profile-main-right";
+  }
+
+  .flex-column.flex-column1 {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .flex-column.flex-column2 {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .flex-column.flex-column3 {
+    grid-column: 1;
+    grid-row: 3;
+  }
+}
+
+@media screen and (max-width: 823px) and (max-height: 411px) {
+  // Делим страницу основного профиля на две части левую и правую
+  .user-profile-grid-main {
+    display: grid;
+    grid-gap: 15px;
+    grid-template-columns: minmax(390px, 24%) minmax(320px, 50%);
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas: "user-profile-main-left user-profile-main-middle"
+    "user-profile-main-right user-profile-main-right";
+  }
+
+  .flex-column.flex-column1 {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .flex-column.flex-column2 {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .flex-column.flex-column3 {
+    grid-column: 1/3;
+    grid-row: 2;
+  }
+}
+
+@media screen and (max-height: 736px) and (max-width: 414px) {
+  // Делим страницу основного профиля на две части левую и правую
+  .user-profile-grid-main {
+    display: grid;
+    grid-gap: 15px;
+    grid-template-columns: minmax(390px, 24%);
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-areas: "user-profile-main-left" "user-profile-main-middle" "user-profile-main-right";
+  }
+
+  .flex-column.flex-column1 {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .flex-column.flex-column2 {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .flex-column.flex-column3 {
+    grid-column: 1;
+    grid-row: 3;
+  }
+}
+
+@media screen and (max-height: 812px) and (max-width: 375px) {
+  // Делим страницу основного профиля на две части левую и правую
+  .user-profile-grid-main {
+    display: grid;
+    grid-gap: 15px;
+    grid-template-columns: minmax(360px, 24%);
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-areas: "user-profile-main-left" "user-profile-main-middle" "user-profile-main-right";
+  }
+
+  .flex-column.flex-column1 {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .flex-column.flex-column2 {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .flex-column.flex-column3 {
+    grid-column: 1;
+    grid-row: 3;
+  }
+}
+
+@media screen and (max-width: 812px) and (max-height: 375px){
+  .avatar-pan-thumb {
+    height: 200px;
+    width: 200px;
+  }
+
+  // Делим страницу основного профиля на две части левую и правую
+  .user-profile-grid-main {
+    display: grid;
+    grid-gap: 3px;
+    grid-template-columns: minmax(225px, 21%) minmax(250px, 40%) minmax(240px, 0.3fr);
+    grid-template-areas: "user-profile-main-left user-profile-main-middle user-profile-main-right"
+  }
+
+  .user-profile {
+    height: 100px;
+    .user-name {
+      font-weight: bold;
+    }
+    .box-center {
+      padding-top: 2px;
+    }
+    .user-role {
+      padding-top: 10px;
+      font-weight: 400;
+      font-size: 8px;
+    }
+    .box-social {
+      padding-top: 10px;
+      .el-table {
+        border-top: 1px solid #dfe6ec;
+      }
+    }
+    .user-follow {
+      padding-top: 10px;
+    }
+  }
+
+  .user-profile-grid-main-area1 {
+    grid-area: user-profile-main-left;
+    //background: #72aedd;
+    border: 1px solid rgba(16, 8, 188, 0.3);
+    border-radius: 5px 5px 5px 5px;
+    //background: #1e88e5; /* Цвет фона */
+    box-shadow: 2px 10px 12px rgba(0,0,0,0.3); /* Параметры тени */
+    padding: 2px;
+    height: 100%;
+  }
+
+  .user-profile-grid-avatar {
+    display: grid;
+    grid-gap: 1px;
+  }
+
+  .v-card__text, .v-card__title {
+    padding: 2px !important;
+  }
+
+  .avatar-pan-thumb {
+    height: 200px;
+    width: 200px;
+  }
+}
+
+@media screen and (max-width: 375px){
+  // Делим страницу основного профиля на две части левую и правую
+  .user-profile-grid-main {
+    display: grid;
+    grid-gap: 5px;
+    grid-template-columns: minmax(230px, 100%);
+    grid-auto-rows: 1fr 1fr 1fr;
+    grid-template-areas: "user-profile-main-left"
+    "user-profile-main-middle"
+    "user-profile-main-right";
+  }
+  .user-profile {
+    height: 100px;
+    .user-name {
+      font-weight: bold;
+    }
+    .box-center {
+      padding-top: 2px;
+    }
+    .user-role {
+      padding-top: 10px;
+      font-weight: 400;
+      font-size: 8px;
+    }
+    .box-social {
+      padding-top: 10px;
+      .el-table {
+        border-top: 1px solid #dfe6ec;
+      }
+    }
+    .user-follow {
+      padding-top: 10px;
+    }
+  }
+
+  .user-profile-grid-main-area1 {
+    grid-area: user-profile-main-left;
+    //background: #72aedd;
+    border: 1px solid rgba(16, 8, 188, 0.3);
+    border-radius: 5px 5px 5px 5px;
+    //background: #1e88e5; /* Цвет фона */
+    box-shadow: 2px 10px 12px rgba(0,0,0,0.3); /* Параметры тени */
+    padding: 2px;
+    height: 100%;
+  }
+
+  .user-profile-grid-avatar {
+    display: grid;
+    grid-gap: 1px;
+  }
+
+  .v-card__text, .v-card__title {
+    padding: 2px !important;
+  }
+
+  .avatar-pan-thumb {
+    height: 200px;
+    width: 200px;
+  }
+}
+
+@media screen and (max-width: 736px) and (max-height: 414px){
+
+  // Делим страницу основного профиля на две части левую и правую
+  .user-profile-grid-main {
+    display: grid;
+    grid-gap: 15px;
+    grid-template-columns: minmax(390px, 1fr);
+    grid-template-areas: "user-profile-main-left"
+                         "user-profile-main-middle"
+                         "user-profile-main-right";
+  }
+  .avatar-pan-thumb {
+    height: 200px;
+    width: 200px;
+  }
+
+  // Делим страницу основного профиля на две части левую и правую
+  .user-profile-grid-main {
+    display: grid;
+    grid-gap: 5px;
+    grid-template-columns: minmax(390px, 1fr);
+    grid-auto-rows: 1fr 1fr 1fr;
+    grid-template-areas: "user-profile-main-left"
+                          "user-profile-main-middle"
+                           "user-profile-main-right";
+  }
+  .user-profile {
+    height: 100px;
+    .user-name {
+      font-weight: bold;
+    }
+    .box-center {
+      padding-top: 2px;
+    }
+    .user-role {
+      padding-top: 10px;
+      font-weight: 400;
+      font-size: 8px;
+    }
+    .box-social {
+      padding-top: 10px;
+      .el-table {
+        border-top: 1px solid #dfe6ec;
+      }
+    }
+    .user-follow {
+      padding-top: 10px;
+    }
+  }
+
+  .user-profile-grid-main-area1 {
+    grid-area: user-profile-main-left;
+    //background: #72aedd;
+    border: 1px solid rgba(16, 8, 188, 0.3);
+    border-radius: 5px 5px 5px 5px;
+    //background: #1e88e5; /* Цвет фона */
+    box-shadow: 2px 10px 12px rgba(0,0,0,0.3); /* Параметры тени */
+    padding: 2px;
+    height: 100%;
+  }
+
+  .user-profile-grid-avatar {
+    display: grid;
+    grid-gap: 1px;
+  }
+
+  .v-card__text, .v-card__title {
+    padding: 2px !important;
+  }
+
+  .avatar-pan-thumb {
+    height: 260px;
+    width: 260px;
+  }
+}
+
+@media screen and (max-width: 414px){
+  // Делим страницу основного профиля на две части левую и правую
+  .user-profile-grid-main {
+    display: grid;
+    grid-gap: 5px;
+    grid-template-columns: minmax(230px, 100%);
+    grid-auto-rows: 1fr 1fr 1fr;
+    grid-template-areas: "user-profile-main-left"
+    "user-profile-main-middle"
+    "user-profile-main-right";
+  }
+  .user-profile {
+    height: 100px;
+    .user-name {
+      font-weight: bold;
+    }
+    .box-center {
+      padding-top: 2px;
+    }
+    .user-role {
+      padding-top: 10px;
+      font-weight: 400;
+      font-size: 8px;
+    }
+    .box-social {
+      padding-top: 10px;
+      .el-table {
+        border-top: 1px solid #dfe6ec;
+      }
+    }
+    .user-follow {
+      padding-top: 10px;
+    }
+  }
+
+  .user-profile-grid-main-area1 {
+    grid-area: user-profile-main-left;
+    //background: #72aedd;
+    border: 1px solid rgba(16, 8, 188, 0.3);
+    border-radius: 5px 5px 5px 5px;
+    //background: #1e88e5; /* Цвет фона */
+    box-shadow: 2px 10px 12px rgba(0,0,0,0.3); /* Параметры тени */
+    padding: 2px;
+    height: 100%;
+  }
+
+  .user-profile-grid-avatar {
+    display: grid;
+    grid-gap: 1px;
+  }
+
+  .v-card__text, .v-card__title {
+    padding: 2px !important;
+  }
+
+  .avatar-pan-thumb {
+    height: 200px;
+    width: 200px;
+  }
+}
+
+@media screen and (max-width: 667px) and (max-height: 375px){
+
+  // Делим страницу основного профиля на две части левую и правую
+  .user-profile-grid-main {
+    display: grid;
+    grid-gap: 15px;
+    grid-template-columns: minmax(320px, 1fr);
+    grid-template-areas: "user-profile-main-left"
+                         "user-profile-main-middle"
+                         "user-profile-main-right";
+  }
+  .avatar-pan-thumb {
+    height: 200px;
+    width: 200px;
+  }
+
+  // Делим страницу основного профиля на две части левую и правую
+  .user-profile-grid-main {
+    display: grid;
+    grid-gap: 5px;
+    grid-template-columns: minmax(230px, 100%);
+    grid-auto-rows: 1fr 1fr 1fr;
+    grid-template-areas: "user-profile-main-left"
+    "user-profile-main-middle"
+    "user-profile-main-right";
+  }
+  .user-profile {
+    height: 100px;
+    .user-name {
+      font-weight: bold;
+    }
+    .box-center {
+      padding-top: 2px;
+    }
+    .user-role {
+      padding-top: 10px;
+      font-weight: 400;
+      font-size: 8px;
+    }
+    .box-social {
+      padding-top: 10px;
+      .el-table {
+        border-top: 1px solid #dfe6ec;
+      }
+    }
+    .user-follow {
+      padding-top: 10px;
+    }
+  }
+
+  .user-profile-grid-main-area1 {
+    grid-area: user-profile-main-left;
+    //background: #72aedd;
+    border: 1px solid rgba(16, 8, 188, 0.3);
+    border-radius: 5px 5px 5px 5px;
+    //background: #1e88e5; /* Цвет фона */
+    box-shadow: 2px 10px 12px rgba(0,0,0,0.3); /* Параметры тени */
+    padding: 2px;
+    height: 100%;
+  }
+
+  .user-profile-grid-avatar {
+    display: grid;
+    grid-gap: 1px;
+  }
+
+  .v-card__text, .v-card__title {
+    padding: 2px !important;
+  }
+
+  .avatar-pan-thumb {
+    height: 200px;
+    width: 200px;
+  }
+}
+
+@media screen and (max-width: 320px){
+  // Делим страницу основного профиля на две части левую и правую
+  .user-profile-grid-main {
+    display: grid;
+    grid-gap: 5px;
+    grid-template-columns: minmax(230px, 100%);
+    grid-auto-rows: 1fr 1fr 1fr;
+    grid-template-areas: "user-profile-main-left"
+                         "user-profile-main-middle"
+                         "user-profile-main-right";
+  }
+  .user-profile {
+    height: 100px;
+    .user-name {
+      font-weight: bold;
+    }
+    .box-center {
+      padding-top: 2px;
+    }
+    .user-role {
+      padding-top: 10px;
+      font-weight: 400;
+      font-size: 8px;
+    }
+    .box-social {
+      padding-top: 10px;
+      .el-table {
+        border-top: 1px solid #dfe6ec;
+      }
+    }
+    .user-follow {
+      padding-top: 10px;
+    }
+  }
+
+  .user-profile-grid-main-area1 {
+    grid-area: user-profile-main-left;
+    //background: #72aedd;
+    border: 1px solid rgba(16, 8, 188, 0.3);
+    border-radius: 5px 5px 5px 5px;
+    //background: #1e88e5; /* Цвет фона */
+    box-shadow: 2px 10px 12px rgba(0,0,0,0.3); /* Параметры тени */
+    padding: 2px;
+    height: 100%;
+  }
+
+  .user-profile-grid-avatar {
+    display: grid;
+    grid-gap: 1px;
+  }
+
+  .v-card__text, .v-card__title {
+    padding: 2px !important;
+  }
+
+  .avatar-pan-thumb {
+    height: 200px;
+    width: 200px;
+  }
+}
+
 // Делим страницу основного профиля на две части левую и правую
-.user-profile-grid-main {
+.user-profile-grid-main-guard-menu {
   display: grid;
   grid-gap: 15px;
-  grid-template-columns: minmax(320px, 24%) 1fr minmax(250px, 0.3fr);
+  grid-template-columns: minmax(350px, 35%) 1fr minmax(250px, 0.3fr);
   grid-template-areas: "user-profile-main-left user-profile-main-middle user-profile-main-right";
 }
 
@@ -930,6 +2018,15 @@ export default {
                        "user-profile-grid-avatar-bottom";
 }
 
+.user-profile-grid-guard-menu {
+  display: grid;
+  grid-gap: 5px;
+  grid-template-columns: 2fr;
+  grid-template-areas: "user-profile-grid-avatar-top"
+  "user-profile-grid-avatar-middle"
+  "user-profile-grid-avatar-bottom";
+}
+
 // Верхння часть блока автараки
 .user-profile-grid-main-avatar-area1 {
   grid-area: user-profile-grid-avatar-top;
@@ -951,9 +2048,10 @@ export default {
 .user-profile-grid-parametrs {
   display: grid;
   grid-gap: 5px;
-  grid-template-columns: 1fr;
+  grid-template-columns: 2fr;
   grid-template-areas: "user-profile-grid-parametrs-top"
-                       "user-profile-grid-parametrs-middle"
+                       "user-profile-grid-parametrs-middle-1"
+                       "user-profile-grid-parametrs-middle-2"
                        "user-profile-grid-parametrs-bottom";
 }
 
@@ -963,8 +2061,13 @@ export default {
   //background: #40c1dd;
 }
 // Средняя часть блока данных
-.user-profile-grid-main-parametrs-area2 {
-  grid-area: user-profile-grid-parametrs-middle;
+.user-profile-grid-main-parametrs-area2-1 {
+  grid-area: user-profile-grid-parametrs-middle-1;
+  //background: #989edd;
+}
+// Средняя часть 2 блока данных
+.user-profile-grid-main-parametrs-area2-2 {
+  grid-area: user-profile-grid-parametrs-middle-2;
   //background: #989edd;
 }
 // Нижнняя часть блока данных
@@ -973,4 +2076,25 @@ export default {
   //background: #989edd;
 }
 
+.container-test {
+  border: 5px solid rgb(111,41,97);
+  border-radius: .5em;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 20px;
+  column-count: 3;
+}
+
+.container-test > div {
+  padding: 10px;
+  background-color: rgba(111,41,97,.3);
+  border: 2px solid rgba(111,41,97,.5);
+}
+
+.container-test > div:nth-child(3n+1) {
+  grid-row-end: span 2;
+  background-color: rgba(193,225,237,.3);
+  border: 2px solid rgba(193,225,237,.5);
+}
 </style>

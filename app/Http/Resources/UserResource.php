@@ -47,6 +47,7 @@ class UserResource extends JsonResource
 
         return [
             'id' => $this->id,
+            'index' => $this->index,
             'name' => $this->name,
             'surname' => $this->surname,
             'firstname' => $this->firstname,
@@ -61,6 +62,8 @@ class UserResource extends JsonResource
             'address1' => $this->address1,
             'address2' => $this->address2,
             'email' => $this->email,
+            'email1' => $this->email1,
+            'email2' => $this->email2,
             'birthday' => $this->birthday,
             'created_at' => $this->created_at ?? '',
             'updated_at' => $this->updated_at ?? '',

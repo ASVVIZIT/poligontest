@@ -132,6 +132,8 @@ class UsersTableSeeder extends Seeder
                 'avatar' => $avatar_default,
                 'birthday' => $arrayRundomTime[rand(1, 4)],
                 'email' => strtolower($firstname_email . str_replace('.', '_', str_replace(' ', '', $surname))) . '@laravue.dev',
+                'email1' => strtolower($firstname_email . str_replace('.', '_', str_replace(' ', '', $surname))) . '@test1laravue.dev',
+                'email2' => strtolower($firstname_email . str_replace('.', '_', str_replace(' ', '', $surname))) . '@test2laravue.dev',
                 'phone1' => $faker->phoneNumber,
                 'phone2' => $faker->phoneNumber,
                 'phone3' => $faker->phoneNumber,

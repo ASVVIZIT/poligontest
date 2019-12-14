@@ -3,6 +3,7 @@
 use App\Laravue\Acl;
 use Faker\Generator as Faker;
 use App\Laravue\Models\Role;
+use Illuminate\Support\Str;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +45,8 @@ $factory->define(App\User::class, function (Faker $faker) {
             'avatar' => $avatar_default,
             'birthday' => $arrayRundomTime[rand(1, 4)],
             'email' => $faker->unique()->safeEmail,
+            'email1' => $faker->unique()->safeEmail,
+            'email2' => $faker->unique()->safeEmail,
             'email_verified_at' => now(),
             'phone1' => $faker->phoneNumber,
             'phone2' => $faker->phoneNumber,
@@ -53,7 +56,7 @@ $factory->define(App\User::class, function (Faker $faker) {
             'address1' => $faker->address,
             'address2' => $faker->address,
             'password' => \Illuminate\Support\Facades\Hash::make('secretsecret'), // secretsecret
-            'remember_token' => str_random(20),
+            'remember_token' => str::random(20),
         ];
     }
 });

@@ -65,6 +65,8 @@ class UserController extends Controller
             $userQuery->orWhere('family_status', 'LIKE', '%' . $keyword . '%');
            // $userQuery->orWhere('gender', 'LIKE', '%' . $keyword . '%');
             $userQuery->orWhere('email', 'LIKE', '%' . $keyword . '%');
+            $userQuery->orWhere('email1', 'LIKE', '%' . $keyword . '%');
+            $userQuery->orWhere('email2', 'LIKE', '%' . $keyword . '%');
             $userQuery->orWhere('skype', 'LIKE', '%' . $keyword . '%');
             $userQuery->orWhere('phone1', 'LIKE', '%' . $keyword . '%');
             $userQuery->orWhere('phone2', 'LIKE', '%' . $keyword . '%');
@@ -216,6 +218,7 @@ class UserController extends Controller
         } elseif (!$user_auth->isModerator()) {
             return response()->json(['error' => 'Модератор ' . $user_auth_id . ' ' . $user_id . ' не может быть изменен'], 403);
         }*/
+
             $validator = Validator::make($request->all(), $this->getValidationRules(false));
             if ($validator->fails()) {
                 return response()->json(['errors' => $validator->errors()], 403);
@@ -245,6 +248,8 @@ class UserController extends Controller
                 if ($found && $found->id !== $user->id) {
                     return response()->json(['error' => 'Email has been taken'], 403);
                 }
+                $email1 = $request->get('email1');
+                $email2 = $request->get('email2');
                 $password = $request->get('password');
                 $found = User::where('password', $password)->first();
                 if ($found && $found->id !== $user->id) {
@@ -268,6 +273,8 @@ class UserController extends Controller
                 $user->address2 = $request->get('address2');
                 $user->birthday = $request->get('birthday');
                 $user->email = $email;
+                $user->email1 = $request->get('email1');
+                $user->email2 = $request->get('email2');
                 $user->password = \Illuminate\Support\Facades\Hash::make($password);
                 //$user->created_at = Carbon::now()->setTime(0,0)->format('Y-m-d H:i:s');
                 $user->save();
@@ -388,7 +395,7 @@ class UserController extends Controller
      * @param bool $isNew
      * @return array
      */
-    private function getValidationRules($isNew = false)
+    private function getValidationRules($isNew = true)
     {
         return [
             'name' => 'nullable',
@@ -406,7 +413,11 @@ class UserController extends Controller
             'skype' => 'nullable',
             'address1' => 'nullable',
             'address2' => 'nullable',
-            'email' => $isNew ? 'nullable|email|unique:users' : 'nullable|email',
+            'password' => ['required', 'min:8'],
+            'confirmPassword' => 'required|min:8',
+            'email' => $isNew ? 'required|email|unique:users' : 'required|email',
+            'email1' => $isNew ? 'nullable|email|unique:users' : 'nullable|email',
+            'email2' => $isNew ? 'nullable|email|unique:users' : 'nullable|email',
             'roles' => [
                 'nullable',
                 'array'

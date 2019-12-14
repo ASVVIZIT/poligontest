@@ -1,8 +1,8 @@
 <template>
   <div class="app-container">
     <el-form v-if="user" :model="user">
-      <el-row :gutter="25">
-        <el-col :span="23">
+      <el-row :gutter="26">
+        <el-col :span="24">
           <user-profile :user="user" />
         </el-col>
       <!--  <el-col :span="6">

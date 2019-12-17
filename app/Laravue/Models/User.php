@@ -118,6 +118,15 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
+     * get id
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
      * @return bool
      */
     public function isAdmin(): bool

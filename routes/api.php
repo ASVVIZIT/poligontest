@@ -19,6 +19,16 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::group(['middleware' => 'api'], function () {
+
+    /* Route::group(['/'], function() {
+        app('rinvex.statistics.agent')->first();
+        App\Jobs\SendMessage::withChain([
+            new \Rinvex\Statistics\Jobs\CrunchStatistics,
+            new \Rinvex\Statistics\Jobs\CleanStatisticsRequests,
+        ])->dispatch("Запуск Задания сбора статистики")->delay(now()->addMinute(1));
+        //dispatch("Запуск Задания отправки Письма уведомления")->delay(now()->addMinute(1));
+    }); */
+
     Route::post('auth/login', 'AuthController@login');
     Route::group(['middleware' => 'auth:api'], function () {
         Route::get('auth/user', 'AuthController@user');

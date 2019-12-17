@@ -147,7 +147,7 @@
                             <div style="margin-right: 5px">
                               <el-form-item label="Пол">
                                 <el-select v-model="user.gender" :disabled="user.role === 'admin'">
-                                  <el-option v-for="item in genderVulue" :key="item" :label="item | uppercaseFirst" :value="item" />
+                                  <el-option v-for="item in genderVulue" :key="item.id" :label="item.name | uppercaseFirst" :value="item.value" />
                                 </el-select>
                               </el-form-item>
                             </div>
@@ -170,7 +170,7 @@
                             <div style="margin-right: 5px">
                               <el-form-item label="Семейное положение">
                                 <el-select v-model="user.family_status" :disabled="user.role === 'admin'">
-                                  <el-option v-for="item in familyStatusVulue" :key="item" :label="item | uppercaseFirst" :value="item" />
+                                  <el-option v-for="item in familyStatusVulue" :key="item.id" :label="item.name | uppercaseFirst" :value="item.value" />
                                 </el-select>
                               </el-form-item>
                             </div>
@@ -698,8 +698,17 @@ export default {
       },
       updating: false,
       avatarupdating: false,
-      genderVulue: ['male', 'female'],
-      familyStatusVulue: ['unmarried', 'married', 'divorced'],
+      // genderVulue: ['male', 'female'],
+      genderVulue: [
+        { id: 1, value: 'male', name: 'Мужской' },
+        { id: 2, value: 'female', name: 'Женский' },
+      ],
+      // familyStatusVulue: ['unmarried', 'married', 'divorced'],
+      familyStatusVulue: [
+        { id: 1, value: 'unmarried', name: 'Не женат/Не замужем' },
+        { id: 2, value: 'married', name: 'Женат/Замужем' },
+        { id: 3, value: 'divorced', name: 'Разведен/Разведена' },
+      ],
       passwordType: 'password',
       passwordTypeConfirm: 'password',
       tab: {

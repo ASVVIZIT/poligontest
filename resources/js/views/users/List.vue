@@ -8,8 +8,8 @@
         <v-card-text>
           <div class="filter-container">
             <v-toolbar flat color="white" dark height="30px">
-              <el-select v-model="query.role" :placeholder="$t('table.role')" clearable style="width: 110px; margin-left: 80px; margin-right: 10px;" class="filter-item" @change="handleFilter">
-                <el-option v-for="item in roles" :key="item" :label="item | uppercaseFirst" :value="item" />
+              <el-select v-model="query.role" :placeholder="$t('table.role')" clearable style="width: 170px; margin-left: 50px; margin-right: 10px;" class="filter-item" @change="handleFilter">
+                <el-option v-for="item in rolesSelect" :key="item.id" :label="item.name | uppercaseFirst" :value="item.value" />
               </el-select>
               <el-input v-model="query.keyword" :placeholder="$t('table.keyword')" clearable style="width: 950px; margin-right: 10px;" class="filter-item" @keyup.enter.native="handleFilter" />
               <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
@@ -31,8 +31,10 @@
             :default-sort="{prop: 'value', order: 'descending'}"
             :sortable="false"
             border
+            lazy
             fit
             highlight-current-row
+            :load="loading"
             :sort-by.sync="sortBy"
             :sort-desc.sync="descending"
             :row-key="getRowKeys"
@@ -40,19 +42,19 @@
             :max-height="665"
             style="width: 100%"
           >
-            <el-table-column fixed="left" prop="ID" type="selection" :reserve-selection="true" width="45" />
+            <el-table-column fixed="left" prop="ID" type="selection" :reserve-selection="true" width="40" />
             <el-table-column fixed="left" prop="value" :sortable="true" :sort-method="(a, b) => sortData(a, b, 'value')" :sort-orders="['descending']" align="center" label="ID" width="60">
               <template slot-scope="scope">
                 <span>{{ scope.row.index }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="roles" :sortable="true" column-key="roles" align="center" label="Роль" width="100">
+            <el-table-column prop="roles" :sortable="true" column-key="roles" align="center" label="Роль" width="130">
               <template slot-scope="scope">
                 <div v-show="scope.row.roles.join(', ') === ''">
                   <span>Нет роли</span>
                 </div>
                 <div v-show="scope.row.roles.join(', ') !== null">
-                  <span>{{ scope.row.roles.join(', ') }}</span>
+                  <span v-for="item in rolesSelect" v-show="scope.row.roles.join(', ') === item.value" :key="item.id" :value="item.value"> {{ item.name | uppercaseFirst }} </span>
                 </div>
               </template>
             </el-table-column>
@@ -60,17 +62,17 @@
               <template slot-scope="scope">
                 <div v-if="scope.row.deleted_at !== '' || scope.row.roles.includes('admin')">
                   <div v-if="scope.row.onlineStatus === true">
-                    <v-icon class="icon-list" color="green">mdi mdi-account-check-outline</v-icon>
-                    <b style="color: #01c003">Онлайн</b>
+                    <v-icon class="icon-list; font-size: 12px" color="green">mdi-account-check-outline</v-icon>
+                    <b style="color: #01c003; font-size: 12px">Онлайн</b>
                   </div>
                   <div v-else-if="scope.row.onlineStatus === false">
-                    <v-icon class="icon-list" color="red">mdi mdi-account-off-outline</v-icon>
-                    <b style="color: #cc0027">Оффлайн</b>
+                    <v-icon class="icon-list; font-size: 12px" color="#ce3a52">mdi-account-off-outline</v-icon>
+                    <b style="color: #ce3a52; font-size: 12px">Оффлайн</b>
                   </div>
                   <v-avatar
                     class="profile"
                     color="grey"
-                    size="80"
+                    size="60"
                   >
                     <v-img
                       :src="scope.row.avatar"
@@ -86,18 +88,18 @@
                 </div>
                 <div v-else-if="scope.row.deleted_at === '' || !scope.row.roles.includes('admin') ">
                   <div v-if="scope.row.onlineStatus">
-                    <v-icon color="green">mdi mdi-account-check-outline</v-icon>
-                    <b style="color: #01c003">Онлайн</b>
+                    <v-icon class="icon-list; font-size: 12px" color="green">mdi-account-check-outline</v-icon>
+                    <b style="color: #01c003; font-size: 12px">Онлайн</b>
                   </div>
                   <div v-else-if="!scope.row.onlineStatus">
-                    <v-icon color="red">mdi mdi-account-off-outline</v-icon>
-                    <b style="color: #cc0027">Оффлайн</b>
+                    <v-icon class="icon-list; font-size: 12px" color="#ce3a52">mdi-account-off-outline</v-icon>
+                    <b style="color: #ce3a52; font-size: 12px">Оффлайн</b>
                   </div>
                   <router-link :to="'/administrator/users/edit/'+scope.row.id">
                     <v-avatar
                       class="profile"
                       color="grey"
-                      size="80"
+                      size="60"
                     >
                       <v-img
                         :src="scope.row.avatar"
@@ -128,8 +130,8 @@
               :sortable="true"
               column-key="gender"
               label="Пол"
-              width="120"
-              :filters="[{text: 'Женщина', value: 'female'}, {text: 'Мужчина', value: 'male'}]"
+              width="124"
+              :filters="genderVulueForTable"
               :filter-method="filterHandler"
             >
               <template slot-scope="scope">
@@ -148,7 +150,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="left" label="E-mail (все)" width="220">
+            <el-table-column align="left" label="E-mail (все)" width="330">
               <template slot-scope="scope">
                 <div class="container__text__cell">
                   <div class="center__text__cell">
@@ -467,19 +469,19 @@
           </el-table>
           <pagination v-show="total>0" :total="total" :page.sync="query.page" :limit.sync="query.limit" @pagination="getList" />
 
-          <el-dialog :visible.sync="dialogPermissionVisible" :title="'Edit Permissions - ' + currentUser.name">
+          <el-dialog :visible.sync="dialogPermissionVisible" :title="'Изменить разрешения - ' + currentUser.name">
             <div v-if="currentUser.name" v-loading="dialogPermissionLoading" class="form-container">
               <div class="permissions-container">
                 <div class="block">
                   <el-form :model="currentUser" label-width="80px" label-position="top">
-                    <el-form-item label="Menus">
+                    <el-form-item label="Меню">
                       <el-tree ref="menuPermissions" :data="normalizedMenuPermissions" :default-checked-keys="permissionKeys(userMenuPermissions)" :props="permissionProps" show-checkbox node-key="id" class="permission-tree" />
                     </el-form-item>
                   </el-form>
                 </div>
                 <div class="block">
                   <el-form :model="currentUser" label-width="80px" label-position="top">
-                    <el-form-item label="Permissions">
+                    <el-form-item label="Разрешения">
                       <el-tree ref="otherPermissions" :data="normalizedOtherPermissions" :default-checked-keys="permissionKeys(userOtherPermissions)" :props="permissionProps" show-checkbox node-key="id" class="permission-tree" />
                     </el-form-item>
                   </el-form>
@@ -500,9 +502,9 @@
           <el-dialog :title="'Создать нового пользователя'" :visible.sync="dialogFormVisible">
             <div v-loading="userCreating" class="form-container">
               <el-form ref="userForm" :rules="rules" :model="newUser" label-position="left" label-width="170px" style="max-width: 500px;">
-                <el-form-item :label="$t('user.role')" prop="role">
-                  <el-select v-model="newUser.role" class="filter-item" placeholder="Выберите роль">
-                    <el-option v-for="item in nonAdminRoles" :key="item" :label="item | uppercaseFirst" :value="item" />
+                <el-form-item :label="$t('user.role')" prop="rolesSelect">
+                  <el-select v-model="newUser.rolesSelect" class="filter-item" placeholder="Выберите роль" style="max-width: 500px;">
+                    <el-option v-for="item in nonAdminRoles" :key="item.id" :label="item.name | uppercaseFirst" :value="item.value" />
                   </el-select>
                 </el-form-item>
                 <el-form-item :label="$t('user.name')" prop="name">
@@ -510,7 +512,8 @@
                 </el-form-item>
                 <el-form-item :label="$t('user.gender')" prop="gender">
                   <el-select v-model="newUser.gender" class="filter-item" placeholder="Выберите пол">
-                    <el-option v-for="item in genderVulue" :key="item" :label="item | uppercaseFirst" :value="item" />
+                    <!--<el-option v-for="item in genderVulue" :key="item" :label="item | uppercaseFirst" v-bind:value="{ id: item.id, text: item.name }" />-->
+                    <el-option v-for="item in genderVulue" :key="item.id" :label="item.name | uppercaseFirst" :value="item.value" />
                   </el-select>
                 </el-form-item>
                 <el-form-item :label="$t('user.email')" prop="email">
@@ -580,11 +583,54 @@ export default {
         role: '',
       },
       roles: ['admin', 'moderator', 'manager', 'editor', 'user', 'visitor', 'guest'],
-      nonAdminRoles: ['moderator', 'manager', 'editor', 'user', 'visitor', 'guest'],
-      nonModeratorRoles: ['manager', 'editor', 'user', 'visitor', 'guest'],
-      nonManagerRoles: ['editor', 'user', 'visitor', 'guest'],
-      genderVulue: ['male', 'female'],
-      familyStatusVulue: ['unmarried', 'married', 'divorced'],
+      rolesSelect: [
+        { id: 1, value: 'admin', name: 'Администратор' },
+        { id: 2, value: 'moderator', name: 'Модератор' },
+        { id: 3, value: 'manager', name: 'Менеджер' },
+        { id: 4, value: 'editor', name: 'Редактор' },
+        { id: 5, value: 'user', name: 'Пользователь' },
+        { id: 6, value: 'visitor', name: 'Визитёр' },
+        { id: 7, value: 'guest', name: 'Гость' },
+      ],
+      // nonAdminRoles: ['moderator', 'manager', 'editor', 'user', 'visitor', 'guest'],
+      nonAdminRoles: [
+        { id: 1, value: 'moderator', name: 'Модератор' },
+        { id: 2, value: 'manager', name: 'Менеджер' },
+        { id: 3, value: 'editor', name: 'Редактор' },
+        { id: 4, value: 'user', name: 'Пользователь' },
+        { id: 5, value: 'visitor', name: 'Визитёр' },
+        { id: 6, value: 'guest', name: 'Гость' },
+      ],
+      // nonModeratorRoles: ['manager', 'editor', 'user', 'visitor', 'guest'],
+      nonModeratorRoles: [
+        { id: 1, value: 'manager', name: 'Менеджер' },
+        { id: 2, value: 'editor', name: 'Редактор' },
+        { id: 3, value: 'user', name: 'Пользователь' },
+        { id: 4, value: 'visitor', name: 'Визитёр' },
+        { id: 5, value: 'guest', name: 'Гость' },
+      ],
+      // nonManagerRoles: ['editor', 'user', 'visitor', 'guest'],
+      nonManagerRoles: [
+        { id: 1, value: 'editor', name: 'Редактор' },
+        { id: 2, value: 'user', name: 'Пользователь' },
+        { id: 3, value: 'visitor', name: 'Визитёр' },
+        { id: 4, value: 'guest', name: 'Гость' },
+      ],
+      // genderVulue: ['male', 'female'],
+      genderVulue: [
+        { id: 1, value: 'male', name: 'Мужской' },
+        { id: 2, value: 'female', name: 'Женский' },
+      ],
+      genderVulueForTable: [
+        { id: 1, value: 'male', text: 'Мужской' },
+        { id: 2, value: 'female', text: 'Женский' },
+      ],
+      // familyStatusVulue: ['unmarried', 'married', 'divorced'],
+      familyStatusVulue: [
+        { id: 1, value: 'unmarried', name: 'Не женат/Не замужем' },
+        { id: 2, value: 'married', name: 'Женат/Замужем' },
+        { id: 3, value: 'divorced', name: 'Разведен/Разведена' },
+      ],
       newUser: {},
       dialogFormVisible: false,
       dialogPermissionVisible: false,
@@ -596,16 +642,16 @@ export default {
         rolePermissions: [],
       },
       rules: {
-        role: [{ required: true, message: 'Role is required', trigger: 'change' }],
-        name: [{ required: true, message: 'Поле Имя обязательно для заполнения', trigger: 'blur' }],
-        gender: [{ required: true, message: 'Поле пол обязательно для заполнения', trigger: 'blur' }],
-        family_status: [{ required: true, message: 'Поле семейное положение обязательно для заполнения', trigger: 'blur' }],
+        rolesSelect: [{ required: true, message: 'Роль должна быть выбрана обязательно', trigger: 'blur' }],
+        name: [{ required: true, message: 'Поле "Имя" обязательно для заполнения', trigger: 'blur' }],
+        gender: [{ required: true, message: 'Поле "Пол" обязательно для заполнения', trigger: 'blur' }],
+        family_status: [{ required: true, message: 'Поле "Семейное положение" обязательно для заполнения', trigger: 'blur' }],
         email: [
-          { required: true, message: 'Поле Email обязательно для заполнения', trigger: 'blur' },
-          { type: 'email', message: 'Пожалуйста, введите правильный адрес электронной почты', trigger: ['blur', 'change'] },
+          { required: true, message: 'Поле "Email" обязательно для заполнения', trigger: 'blur' },
+          { type: 'email', message: 'Пожалуйста, введите в поле "Email" правильный адрес электронной почты', trigger: ['blur', 'change'] },
         ],
-        password: [{ required: true, message: 'Поле Пароль обязательно для заполнения', trigger: 'blur' }],
-        confirmPassword: [{ validator: validateConfirmPassword, trigger: 'blur' }],
+        password: [{ required: true, message: 'Поле "Пароль" обязательно для заполнения', trigger: 'blur' }],
+        confirmPassword: [{ required: true, validator: validateConfirmPassword, trigger: 'blur' }],
       },
       permissionProps: {
         children: 'children',
@@ -635,7 +681,7 @@ export default {
       });
       const rolePermissions = {
         id: -1, // Just a faked ID
-        name: 'Inherited from role',
+        name: 'Наследуется от роли',
         disabled: true,
         children: this.classifyPermissions(tmp).menu,
       };
@@ -643,7 +689,7 @@ export default {
       tmp = this.menuPermissions.filter(permission => !this.currentUser.permissions.role.find(p => p.id === permission.id));
       const userPermissions = {
         id: 0, // Faked ID
-        name: 'Extra menus',
+        name: 'Дополнительные меню',
         children: tmp,
         disabled: tmp.length === 0,
       };
@@ -661,7 +707,7 @@ export default {
       });
       const rolePermissions = {
         id: -1,
-        name: 'Inherited from role',
+        name: 'Наследуется от роли',
         disabled: true,
         children: this.classifyPermissions(tmp).other,
       };
@@ -669,7 +715,7 @@ export default {
       tmp = this.otherPermissions.filter(permission => !this.currentUser.permissions.role.find(p => p.id === permission.id));
       const userPermissions = {
         id: 0,
-        name: 'Extra permissions',
+        name: 'Дополнительные разрешения',
         children: tmp,
         disabled: tmp.length === 0,
       };
@@ -781,7 +827,7 @@ export default {
       });
     },
     handleRestore(id, name) {
-      this.$confirm('Это восстановит пользователя ' + name + '. Продолжить?', 'Внимание!!!', {
+      this.$confirm('Это дейстие восстановит пользователя ' + name + '. Продолжить?', 'Внимание!!!', {
         confirmButtonText: 'Да',
         cancelButtonText: 'Отмена',
         type: 'warning',
@@ -790,7 +836,7 @@ export default {
         userResource.restore(id).then(response => {
           this.$message({
             type: 'success',
-            message: 'Восстановление прошло успешно',
+            message: 'Восстановление пользователя прошло успешно',
           });
           this.handleFilter();
         }).catch(error => {
@@ -800,7 +846,7 @@ export default {
         console.log(id);
         this.$message({
           type: 'info',
-          message: 'Восстановление отменено',
+          message: 'Восстановление пользователя отменено',
         });
       });
     },
@@ -868,8 +914,58 @@ export default {
       const fileNameDateTime = 'Data: ' + new Date().getFullYear() + '_' + new Date().getDate() + '_' + new Date().getMonth() + ' ' + new Date().getHours() + '-' + new Date().getMinutes() + '-' + new Date().getSeconds();
       this.downloading = true;
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['id', 'user_id', 'name', 'gender', 'family_status', 'email', 'roles'];
-        const filterVal = ['index', 'id', 'name', 'gender', 'family_status', 'email', 'roles'];
+        const tHeader = [
+          'id',
+          'user_id',
+          'roles',
+          'name',
+          'firstname',
+          'surname',
+          'patronymic',
+          'gender',
+          'family_status',
+          'phone1',
+          'phone2',
+          'phone3',
+          'phone4',
+          'skype',
+          'address1',
+          'address2',
+          'birthday',
+          'email',
+          'email1',
+          'email2',
+          'email_verified_at',
+          'created_at',
+          'updated_at',
+          'deleted_at',
+        ];
+        const filterVal = [
+          'index',
+          'id',
+          'roles',
+          'name',
+          'firstname',
+          'surname',
+          'patronymic',
+          'gender',
+          'family_status',
+          'phone1',
+          'phone2',
+          'phone3',
+          'phone4',
+          'skype',
+          'address1',
+          'address2',
+          'birthday',
+          'email',
+          'email1',
+          'email2',
+          'email_verified_at',
+          'created_at',
+          'updated_at',
+          'deleted_at',
+        ];
         const data = this.formatJson(filterVal, this.list);
         excel.export_json_to_excel({
           header: tHeader,

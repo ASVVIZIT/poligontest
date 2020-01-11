@@ -21,6 +21,10 @@ $subMenuHover:#001528;
 
 $sideBarWidth: 280px;
 
+//email
+//$box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+$box-shadow: 0px 0px 5px 5px rgba(0, 0, 0, 0.25);
+
 // the :export directive is the magic sauce for webpack
 // https://www.bluematador.com/blog/how-to-share-variables-between-js-and-sass
 :export {
@@ -32,4 +36,5 @@ $sideBarWidth: 280px;
   subMenuBg: $subMenuBg;
   subMenuHover: $subMenuHover;
   sideBarWidth: $sideBarWidth;
+  box-shadow: $box-shadow;
 }

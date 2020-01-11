@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Console;
-
+use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -13,7 +13,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        'App\Console\Commands\StartSerializingStatistics',
     ];
 
     /**
@@ -26,6 +26,17 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
+
+         $schedule->command('statist:run')
+                  ->cron("*/1 * * * *");
+         $schedule->command('queue:work')
+                  ->cron("*/1 * * * *");
+        // $schedule->job(new \Rinvex\Statistics\Jobs\CrunchStatistics())
+        //          ->everyMinute( Carbon::now()->addMinutes(1) )->cron("*/1 * * * *");
+
+       // $schedule->job(\App\Jobs\SendMessage::withChain([
+       //     new \Rinvex\Statistics\Jobs\CrunchStatistics(),
+       // ])->dispatch("Запуск Задания сбора статистики")->delay(now()->addMinute(1)));
     }
 
     /**

@@ -36,13 +36,6 @@ const orderRoutes = {
       hidden: true,
     },
     {
-      path: 'orders/order/create',
-      component: () => import('@/views/order/form/formOrder/Create'),
-      name: 'CreateOrder',
-      meta: { title: 'CreateOrder', icon: 'create', permissions: ['manage order'] },
-      hidden: true,
-    },
-    {
       path: 'reports/report/edit/:id(\\d+)',
       component: () => import('@/views/order/form/formReport/Edit'),
       name: 'EditReport',

@@ -19,7 +19,7 @@
         </v-expansion-panel-content>
       </v-expansion-panel>
       <v-expansion-panel>
-        <github-corner style="position: absolute; top: 0px; border: 0; right: 0;" />
+        <!-- <github-corner style="position: absolute; top: 0px; border: 0; right: 0;" />-->
         <panel-group @handleSetLineChartData="handleSetLineChartData" />
         <v-expansion-panel-header class="panel-header-customization"><h3>Графики Сводки</h3></v-expansion-panel-header>
         <v-expansion-panel-content style="display: inline;position: relative">
@@ -77,7 +77,7 @@
 </template>
 
 <script>
-import GithubCorner from '@/components/GithubCorner';
+// import GithubCorner from '@/components/GithubCorner';
 import OrderStatisticsGroup from './components/OrderStatisticsGroup';
 import PanelGroup from './components/PanelGroup';
 import LineChart from './components/LineChart';
@@ -115,7 +115,7 @@ const lineChartData = {
 export default {
   name: 'DashboardAdmin',
   components: {
-    GithubCorner,
+    // GithubCorner,
     OrderStatisticsGroup,
     OrderTable,
     PanelGroup,

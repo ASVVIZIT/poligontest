@@ -1,8 +1,10 @@
 <?php
 
-use Illuminate\Http\Request;
 use \App\Laravue\Faker;
 use \App\Laravue\JsonResponse;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,26 +16,26 @@ use \App\Laravue\JsonResponse;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
+Route::middleware('auth:api')->get('/users', function (Request $request) {
     return $request->user();
 });
 
 Route::group(['middleware' => 'api'], function () {
 
-    /* Route::group(['/'], function() {
-        app('rinvex.statistics.agent')->first();
-        App\Jobs\SendMessage::withChain([
-            new \Rinvex\Statistics\Jobs\CrunchStatistics,
-            new \Rinvex\Statistics\Jobs\CleanStatisticsRequests,
-        ])->dispatch("Запуск Задания сбора статистики")->delay(now()->addMinute(1));
-        //dispatch("Запуск Задания отправки Письма уведомления")->delay(now()->addMinute(1));
-    }); */
+   // Route::group(['/'], function() {
+   //     App\Jobs\SendMessage::withChain([
+   //         new \Rinvex\Statistics\Jobs\CrunchStatistics,
+   //     ])->dispatch("Запуск Задания сбора статистики")->delay(now()->addMinute(1));
+   // });
 
     Route::post('auth/login', 'AuthController@login');
     Route::group(['middleware' => 'auth:api'], function () {
         Route::get('auth/user', 'AuthController@user');
         Route::post('auth/logout', 'AuthController@logout');
     });
+
+    Route::get('email/create', 'EmailController@create');
+    Route::post('email/create', 'EmailController@send');
 
     Route::apiResource('users', 'UserController')->middleware('permission:' . \App\Laravue\Acl::PERMISSION_USER_ADMIN);
     Route::post('users/{id}/avatarupload', 'UserController@avatarupload');
@@ -57,6 +59,11 @@ Route::group(['middleware' => 'api'], function () {
     Route::put('reports/{report}/permissions', 'ReportController@updatePermissions')->middleware('permission:' . \App\Laravue\Acl::PERMISSION_PERMISSION_MANAGE);
     Route::post('reports/{id}','ReportController@restore');
     Route::get('reports/{id}','ReportController@destroy');
+
+
+  //  Route::get('sendbasicemail','MailController@basic_email');
+  //  Route::get('sendhtmlemail','MailController@html_email');
+  //  Route::get('sendattachmentemail','MailController@attachment_email');
 
     // Fake APIs
     Route::get('/table/list', function () {

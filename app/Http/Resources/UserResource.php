@@ -36,9 +36,9 @@ class UserResource extends JsonResource
         }
 
         $key_user_oline_status = 'user-is-online-' . $this->id;
-        $this->onlineStatus = false;
+       // $this->onlineStatus = false;
         if (Cache::has($key_user_oline_status, false)) {
-
+            $this->onlineStatus = true;
             $value = Cache::get($key_user_oline_status, false);
             if ($value) {
                 $this->onlineStatus = $value;
@@ -81,7 +81,7 @@ class UserResource extends JsonResource
 
                 $this->getAllPermissions()->toArray()
             ),
-            'avatar' => $avatar_path . $this->avatar . '?23423423424+' . $date_uploads,
+            'avatar' => $avatar_path . $this->avatar . '?' . $date_uploads,
             'onlineStatus' => $this->onlineStatus,
         ];
         //'avatar' => 'http://i.pravatar.cc',

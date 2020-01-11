@@ -8,7 +8,7 @@
 @import 'btn';
 @import 'laravue';
 @import url('https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css');
-
+@import 'email';
 body {
   height: 100%;
   -moz-osx-font-smoothing: grayscale;
@@ -125,7 +125,7 @@ aside {
 
 // main-container padding
 .app-container {
-  padding: 20px;
+  padding: 10px 15px 10px 15px ;
 }
 
 .components-container {
@@ -207,6 +207,11 @@ table.v-table tbody td:first-child, table.v-table tbody td:not(:first-child), ta
 
 .text-center {
   text-align: center
+}
+
+//body card
+.el-card > .el-card__body {
+  padding: 6px 12px 6px 12px !important;
 }
 
 .sub-navbar {

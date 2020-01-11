@@ -1173,29 +1173,19 @@ export default {
   }
 }
 
-@media screen and (max-width: 1920px) {
-  // Делим страницу основного профиля на две части левую и правую
-  .user-profile-grid-main {
-    display: grid;
-    grid-gap: 15px;
-    grid-template-columns: minmax(320px, 24%) minmax(360px, 70%) minmax(260px, 0.3fr);
-    grid-template-areas: "user-profile-main-left user-profile-main-middle user-profile-main-right"
-  }
+@media screen and (max-width: 1080px) and (max-height: 1920px){
   .avatar-pan-thumb {
     height: 200px;
     width: 200px;
   }
-}
-
-@media screen and (max-width: 768px){
   // Делим страницу основного профиля на две части левую и правую
   .user-profile-grid-main {
     display: grid;
     grid-gap: 15px;
-    grid-template-columns: minmax(320px, 24%) minmax(320px, 50%);
+    grid-template-columns: minmax(320px, 30%) minmax(440px, 70%);
     grid-template-rows: 1fr 1fr;
     grid-template-areas: "user-profile-main-left user-profile-main-middle"
-                         "user-profile-main-right user-profile-main-right";
+    "user-profile-main-right user-profile-main-right";
   }
 
   .flex-column.flex-column1 {
@@ -1212,40 +1202,123 @@ export default {
     grid-column: 1/3;
     grid-row: 2;
   }
+  .user-profile {
+    height: 100px;
+    .user-name {
+      font-weight: bold;
+    }
+    .box-center {
+      padding-top: 2px;
+    }
+    .user-role {
+      padding-top: 10px;
+      font-weight: 400;
+      font-size: 8px;
+    }
+    .box-social {
+      padding-top: 10px;
+      .el-table {
+        border-top: 1px solid #dfe6ec;
+      }
+    }
+    .user-follow {
+      padding-top: 10px;
+    }
+  }
 
-  // Левая часть
   .user-profile-grid-main-area1 {
     grid-area: user-profile-main-left;
-    background: #dff0f6;
+    //background: #72aedd;
     border: 1px solid rgba(16, 8, 188, 0.3);
     border-radius: 5px 5px 5px 5px;
     //background: #1e88e5; /* Цвет фона */
     box-shadow: 2px 10px 12px rgba(0,0,0,0.3); /* Параметры тени */
-    padding: 15px;
+    padding: 7px;
     height: 100%;
   }
 
-  // Середина часть
-  .user-profile-grid-main-area2 {
-    grid-area: user-profile-main-middle;
-    //background: #ddd249;
-    border: 1px solid rgba(188, 19, 30, 0.3);
-    border-radius: 5px 5px 5px 5px;
-    //background: #1e88e5; /* Цвет фона */
-    box-shadow: 2px 10px 12px rgba(0,0,0,0.3); /* Параметры тени */
-    padding: 15px;
-    height: 100%;}
+  .user-profile-grid-avatar {
+    display: grid;
+    grid-gap: 1px;
+  }
 
-  // Правая часть
-  .user-profile-grid-main-area3 {
-    grid-area: user-profile-main-right;
-    //background: #ddd249;
-    border: 1px solid rgba(0, 188, 12, 0.3);
+  .v-card__text, .v-card__title {
+    padding: 12px !important;
+  }
+
+  .avatar-pan-thumb {
+    height: 200px;
+    width: 200px;
+  }
+}
+
+@media screen and (max-height: 1080px) and (max-width: 1920px){
+  .avatar-pan-thumb {
+    height: 200px;
+    width: 200px;
+  }
+  // Делим страницу основного профиля на две части левую и правую
+  .user-profile-grid-main {
+    display: grid;
+    grid-gap: 15px;
+    grid-template-columns: minmax(320px, 20%) minmax(390px, 70%) minmax(260px, 0.3fr);
+    grid-template-rows: 1fr;
+    grid-template-areas: "user-profile-main-left user-profile-main-middle user-profile-main-right";
+  }
+
+  .flex-column.flex-column1 {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .flex-column.flex-column2 {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .user-profile {
+    height: 100px;
+    .user-name {
+      font-weight: bold;
+    }
+    .box-center {
+      padding-top: 2px;
+    }
+    .user-role {
+      padding-top: 10px;
+      font-weight: 400;
+      font-size: 8px;
+    }
+    .box-social {
+      padding-top: 10px;
+      .el-table {
+        border-top: 1px solid #dfe6ec;
+      }
+    }
+    .user-follow {
+      padding-top: 10px;
+    }
+  }
+
+  .user-profile-grid-main-area1 {
+    grid-area: user-profile-main-left;
+    //background: #72aedd;
+    border: 1px solid rgba(16, 8, 188, 0.3);
     border-radius: 5px 5px 5px 5px;
     //background: #1e88e5; /* Цвет фона */
     box-shadow: 2px 10px 12px rgba(0,0,0,0.3); /* Параметры тени */
-    padding: 15px;
-    height: 100%;}
+    padding: 7px;
+    height: 100%;
+  }
+
+  .user-profile-grid-avatar {
+    display: grid;
+    grid-gap: 1px;
+  }
+
+  .v-card__text, .v-card__title {
+    padding: 12px !important;
+  }
+
   .avatar-pan-thumb {
     height: 200px;
     width: 200px;
@@ -1264,7 +1337,7 @@ export default {
     grid-template-columns: minmax(320px, 20%) minmax(320px, 50%);
     grid-template-rows: 1fr 1fr;
     grid-template-areas: "user-profile-main-left user-profile-main-middle"
-                         "user-profile-main-right user-profile-main-right";
+    "user-profile-main-right user-profile-main-right";
   }
 
   .flex-column.flex-column1 {
@@ -1341,7 +1414,7 @@ export default {
     display: grid;
     grid-gap: 15px;
     grid-template-columns: minmax(320px, 20%) minmax(390px, 70%) minmax(260px, 0.3fr);
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: 1fr;
     grid-template-areas: "user-profile-main-left user-profile-main-middle user-profile-main-right";
   }
 
@@ -1358,6 +1431,85 @@ export default {
   .flex-column.flex-column3 {
     grid-column: 3;
     grid-row: 1;
+  }
+  .user-profile {
+    height: 100px;
+    .user-name {
+      font-weight: bold;
+    }
+    .box-center {
+      padding-top: 2px;
+    }
+    .user-role {
+      padding-top: 10px;
+      font-weight: 400;
+      font-size: 8px;
+    }
+    .box-social {
+      padding-top: 10px;
+      .el-table {
+        border-top: 1px solid #dfe6ec;
+      }
+    }
+    .user-follow {
+      padding-top: 10px;
+    }
+  }
+
+  .user-profile-grid-main-area1 {
+    grid-area: user-profile-main-left;
+    //background: #72aedd;
+    border: 1px solid rgba(16, 8, 188, 0.3);
+    border-radius: 5px 5px 5px 5px;
+    //background: #1e88e5; /* Цвет фона */
+    box-shadow: 2px 10px 12px rgba(0,0,0,0.3); /* Параметры тени */
+    padding: 7px;
+    height: 100%;
+  }
+
+  .user-profile-grid-avatar {
+    display: grid;
+    grid-gap: 1px;
+  }
+
+  .v-card__text, .v-card__title {
+    padding: 12px !important;
+  }
+
+  .avatar-pan-thumb {
+    height: 200px;
+    width: 200px;
+  }
+}
+
+@media screen and (max-width: 768px) and (max-height: 1366px){
+  .avatar-pan-thumb {
+    height: 200px;
+    width: 200px;
+  }
+  // Делим страницу основного профиля на две части левую и правую
+  .user-profile-grid-main {
+    display: grid;
+    grid-gap: 15px;
+    grid-template-columns: minmax(260px, 30%) minmax(260px, 70%);
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas: "user-profile-main-left user-profile-main-middle"
+    "user-profile-main-right user-profile-main-right";
+  }
+
+  .flex-column.flex-column1 {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .flex-column.flex-column2 {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .flex-column.flex-column3 {
+    grid-column: 1/3;
+    grid-row: 2;
   }
   .user-profile {
     height: 100px;

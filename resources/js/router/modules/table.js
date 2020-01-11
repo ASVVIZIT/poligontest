@@ -14,19 +14,19 @@ const tableRoutes = {
       path: '/table/list',
       component: () => import('@/views/table/DragTable'),
       name: 'DragTableList',
-      meta: { title: 'DragTableList' },
+      meta: { title: 'dragTableList' },
     },
     {
       path: '/table/DragTable',
       component: () => import('@/views/table/DragTable'),
       name: 'DragTable',
-      meta: { title: 'DragTable' },
+      meta: { title: 'dragTable' },
     },
     {
       path: '/table/DynamicTable/index',
       component: () => import('@/views/table/DynamicTable/index'),
       name: 'DynamicTable',
-      meta: { title: 'DynamicTable' },
+      meta: { title: 'dynamicTable' },
     },
     {
       path: '/table/InlineEditTable',

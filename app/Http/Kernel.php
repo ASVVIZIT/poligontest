@@ -14,12 +14,14 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middleware = [
+        \Illuminate\Session\Middleware\StartSession::class,
         \App\Http\Middleware\CheckForMaintenanceMode::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\TrustProxies::class,
         \App\Http\Middleware\IsUserOnline::class,
+        \Rinvex\Statistics\Http\Middleware\TrackStatistics::class,
     ];
 
     /**
@@ -37,6 +39,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\IsUserOnline::class,
+            \Rinvex\Statistics\Http\Middleware\TrackStatistics::class,
         ],
 
         'api' => [
@@ -81,5 +84,6 @@ class Kernel extends HttpKernel
         \Illuminate\Session\Middleware\AuthenticateSession::class,
         \Illuminate\Routing\Middleware\SubstituteBindings::class,
         \Illuminate\Auth\Middleware\Authorize::class,
+        \Rinvex\Statistics\Http\Middleware\TrackStatistics::class,
     ];
 }

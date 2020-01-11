@@ -112,6 +112,19 @@ export const constantRoutes = [
       },
     ],
   },
+  {
+    path: '/api/email',
+    component: Layout,
+    redirect: '/api/email/create',
+    children: [
+      {
+        path: '/api/email/create',
+        component: () => import('@/views/email/email'),
+        name: 'email',
+        meta: { title: 'email', icon: 'email', noCache: true },
+      },
+    ],
+  },
 ];
 
 export const asyncRoutes = [
